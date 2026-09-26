@@ -148,3 +148,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .rings { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 .ringcard { background: var(--card); border-radius: 16px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+.form label { display: block; font-size: 13px; color: var(--label2); margin: 10px 0 0; }
+.form input { display: block; width: 100%; margin-top: 4px; font: inherit; font-size: 16px; color: var(--label); background: var(--fill); border: 0; border-radius: 10px; padding: 10px 12px; }

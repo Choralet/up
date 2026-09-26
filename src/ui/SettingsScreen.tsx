@@ -5,6 +5,7 @@ import { plural } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useServices } from '../store/services'
 import { ConfirmSheet } from './ConfirmSheet'
+import { GithubSection } from './GithubSection'
 import { DAY_LABEL, DAY_TYPES, WEEKDAYS } from '../data/schedule'
 import type { DayType } from '../data/types'
 import { useProgress } from '../store/ProgressContext'
@@ -60,6 +61,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <input ref={fileInput} type="file" accept="application/json,.json" aria-label="Import backup file" hidden onChange={(e) => importFile(e.target.files?.[0])} />
         {message && <p className="sub" role="status">{message}</p>}
         <p className="sub">Your progress lives on this phone. Export a file now and then, or connect GitHub below.</p>
+        <GithubSection onRestore={(p) => setPending(p)} />
         <div className="hdr">Level</div>
         <button className="cta sec" onClick={() => { restartOnboarding(); onClose() }}>Find your level again</button>
       </div>

@@ -3,6 +3,7 @@ import { NODES } from './data/nodes'
 import { ProgressProvider, useProgress } from './store/ProgressContext'
 import { ServicesProvider, realServices, type Services } from './store/services'
 import { idbStorage, type ProgressStorage } from './store/storage'
+import { AutoBackup } from './ui/AutoBackup'
 import { LogScreen } from './ui/LogScreen'
 import { Onboarding } from './ui/Onboarding'
 import { ProgressScreen } from './ui/ProgressScreen'
@@ -27,6 +28,7 @@ function Shell() {
       {logId && <LogScreen nodeId={logId} onClose={() => setLogId(null)} />}
       {settings && <SettingsScreen onClose={() => setSettings(false)} />}
       {!progress.onboarded && <Onboarding />}
+      <AutoBackup />
     </div>
   )
 }

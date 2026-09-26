@@ -4,6 +4,7 @@ import App from './App'
 import { NODES } from './data/nodes'
 import { memoryStorage } from './store/storage'
 import { memoryServices } from './store/services'
+import { fakeGithub } from './test/fakeGithub'
 
 /** A save that has finished onboarding, so tests start on the Today screen. */
 const seed = (extra: Record<string, unknown> = {}) => memoryStorage({ onboarded: true, ...extra })
@@ -536,5 +537,88 @@ describe('Backup file', () => {
     await user.click(await screen.findByRole('button', { name: 'Cancel' }))
     await user.click(screen.getByRole('button', { name: 'Done' }))
     expect(await screen.findByRole('button', { name: /Wall push-up/ })).toBeInTheDocument()
+  })
+})
+
+describe('GitHub backup', () => {
+  const connect = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.type(screen.getByLabelText('GitHub owner'), 'me')
+    await user.type(screen.getByLabelText('Repository'), 'up-data')
+    await user.type(screen.getByLabelText('Token'), 't0ken')
+    await user.click(screen.getByRole('button', { name: 'Connect' }))
+  }
+
+  it('connects, backs up now, and never puts the token in the backup', async () => {
+    const user = userEvent.setup()
+    const gh = fakeGithub()
+    render(<App storage={seed({ completed: ['push-wall'] })} services={memoryServices({ fetch: gh.fetch })} />)
+    await connect(user)
+    expect(await screen.findByText(/Connected to me\/up-data/)).toBeInTheDocument()
+    expect(screen.queryByLabelText('Token')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Back Up Now' }))
+    expect(await screen.findByText(/Last backup:/)).toBeInTheDocument()
+    expect(JSON.parse(gh.text()!).progress.completed).toEqual(['push-wall'])
+    expect(gh.text()).not.toContain('t0ken')
+  })
+
+  it('shows a clear message when the token is rejected', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices({ fetch: fakeGithub({ status: 401 }).fetch })} />)
+    await connect(user)
+    expect(await screen.findByText(/GitHub rejected the token/)).toBeInTheDocument()
+    expect(screen.getByLabelText('Token')).toBeInTheDocument()
+  })
+
+  it('restores from GitHub after confirmation', async () => {
+    const user = userEvent.setup()
+    const gh = fakeGithub()
+    const services = memoryServices({ fetch: gh.fetch })
+    const { unmount } = render(<App storage={seed({ completed: ['push-wall'] })} services={services} />)
+    await connect(user)
+    await user.click(await screen.findByRole('button', { name: 'Back Up Now' }))
+    await screen.findByText(/Last backup:/)
+    unmount()
+    render(<App storage={seed()} services={services} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(await screen.findByRole('button', { name: 'Restore from GitHub' }))
+    await user.click(await screen.findByRole('button', { name: 'Replace' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
+  })
+
+  it('backs up automatically when the app goes to the background, only after changes', async () => {
+    const user = userEvent.setup()
+    const gh = fakeGithub()
+    const services = memoryServices({ fetch: gh.fetch })
+    await services.github.save({ owner: 'me', repo: 'up-data', token: 't0ken' })
+    render(<App storage={seed()} services={services} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    const hide = async () => {
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+      Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true })
+      await new Promise((r) => setTimeout(r, 0))
+    }
+    await hide()
+    await vi.waitFor(() => expect(gh.text()).not.toBeNull())
+    const puts = () => gh.calls.filter((c) => c.method === 'PUT').length
+    expect(puts()).toBe(1)
+    await hide()
+    expect(puts()).toBe(1) // nothing changed, nothing sent
+    await user.click(screen.getByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'Log Set' }))
+    await hide()
+    await vi.waitFor(() => expect(puts()).toBe(2))
+  })
+
+  it('disconnect forgets the token', async () => {
+    const user = userEvent.setup()
+    const services = memoryServices({ fetch: fakeGithub().fetch })
+    render(<App storage={seed()} services={services} />)
+    await connect(user)
+    await user.click(await screen.findByRole('button', { name: 'Disconnect' }))
+    expect(await services.github.load()).toBeNull()
+    expect(screen.getByLabelText('Token')).toBeInTheDocument()
   })
 })
