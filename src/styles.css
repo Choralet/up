@@ -141,3 +141,5 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .goaled .field b { font-size: 24px; font-variant-numeric: tabular-nums; min-width: 56px; text-align: center; }
 .goaled .field .steps { margin: 0; gap: 12px; }
 .goaled .field .steps button { width: 44px; height: 44px; font-size: 24px; }
+
+.onboarding { z-index: 40; }

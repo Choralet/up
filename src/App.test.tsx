@@ -356,3 +356,53 @@ describe('Node sheet and level-up for skills and goals', () => {
     expect(await screen.findByText(/Unlocks a skill: Chest-to-wall handstand hold/)).toBeInTheDocument()
   })
 })
+
+describe('Find your level', () => {
+  it('walks up each branch until the first "Not yet", then starts training there', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    expect(await screen.findByRole('heading', { name: 'Find your level' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(screen.getByText(/Can you do 3 × 10 clean/)).toHaveTextContent('Wall push-up')
+    await user.click(screen.getByRole('button', { name: 'Yes' }))
+    expect(screen.getByText(/Can you do 3 × 10 clean/)).toHaveTextContent('Incline push-up')
+    await user.click(screen.getByRole('button', { name: 'Not yet' })) // push done
+    expect(screen.getByText(/Can you do 3 × 30 s clean/)).toHaveTextContent('Dead hang')
+    await user.click(screen.getByRole('button', { name: 'Not yet' })) // pull done
+    await user.click(screen.getByRole('button', { name: 'Not yet' })) // legs done
+    await user.click(screen.getByRole('button', { name: 'Not yet' })) // core done
+    expect(screen.getByRole('heading', { name: "You're set" })).toBeInTheDocument()
+    expect(screen.getByText(/Push: Incline push-up/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Start Training' }))
+    expect(screen.queryByRole('heading', { name: 'Find your level' })).not.toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
+  })
+
+  it('can be skipped, keeping the beginner exercises', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Skip for now' }))
+    expect(await screen.findByRole('button', { name: /Wall push-up/ })).toBeInTheDocument()
+  })
+
+  it('never completes a skill step and ends with a valid focus when everything is a Yes', async () => {
+    const user = userEvent.setup()
+    const store = memoryStorage()
+    render(<App storage={store} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    for (let i = 0; i < 60 && screen.queryByRole('button', { name: 'Yes' }); i++) {
+      await user.click(screen.getByRole('button', { name: 'Yes' }))
+    }
+    await user.click(screen.getByRole('button', { name: 'Start Training' }))
+    const saved = (await store.load()) as { completed: string[]; skillFocus: object }
+    const skillIds = NODES.filter((n) => n.skill).map((n) => n.id)
+    expect(saved.completed.some((id) => skillIds.includes(id))).toBe(false)
+    expect(saved.completed).toContain('push-wall')
+  })
+
+  it('does not show for a returning user', async () => {
+    render(<App storage={seed()} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    expect(screen.queryByRole('heading', { name: 'Find your level' })).not.toBeInTheDocument()
+  })
+})
