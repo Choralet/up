@@ -89,3 +89,7 @@ Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for
 ## Plan 4 built: Roadmap (2026-09-26)
 
 - User asked to turn STRIQfit's "Every Calisthenics Skill to Learn in Order" videos (Year 1-3) into the app, step by step with prerequisites, plus a button to each skill's chapter in the video. Chosen design: Roadmap view inside Skills, trainable (Train This = one of the 2 active skills), "I can already do this", video links. Transcripts were not accessible, so only the order comes from the videos; steps and prerequisites are standard progressions (stated in the app). Open questions answered by the agent at the user's request (see docs/ROADMAP.md, Decisions).
+
+## Plan 5 built: UX (2026-09-27)
+
+- User: "Build all 5 phases plus find a way to make skills tab better… Remove Library in my skills tab and make an adjustment that you think is the best." Agent decisions: workout ≈ 15–20 min (warm-up → skill → main → Volume variation → Core finisher on Push/Pull days); soft goal tone ON by default with a Settings switch; Skills tab = Now (Training + Ready to Start + Replace) | Roadmap (only catalog); Roadmap names unified to app names with the video chapter name shown as "In the video"; buttons in Title Case; level-up primary button "Level Up".
