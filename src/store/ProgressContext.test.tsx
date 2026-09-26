@@ -38,4 +38,10 @@ describe('ProgressProvider', () => {
     render(<ProgressProvider storage={storage} nodes={NODES}><Probe /></ProgressProvider>)
     expect(await screen.findByRole('button')).toHaveTextContent('focus:push-wall logs:0')
   })
+
+  it('warns when progress cannot be saved', async () => {
+    const storage = { load: async () => undefined, save: () => Promise.reject(new Error('disk full')) }
+    render(<ProgressProvider storage={storage} nodes={NODES}><Probe /></ProgressProvider>)
+    expect(await screen.findByRole('alert')).toHaveTextContent("Couldn't save")
+  })
 })

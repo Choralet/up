@@ -23,6 +23,7 @@ export function ProgressProvider({
   storage, nodes, children,
 }: { storage: ProgressStorage; nodes: ExerciseNode[]; children: ReactNode }) {
   const [progress, setProgress] = useState<Progress | null>(null)
+  const [saveFailed, setSaveFailed] = useState(false)
   const byId = useMemo(() => indexNodes(nodes), [nodes])
 
   useEffect(() => {
@@ -37,7 +38,8 @@ export function ProgressProvider({
   }, [storage, nodes])
 
   useEffect(() => {
-    if (progress) void storage.save(progress).catch(() => {})
+    if (!progress) return
+    storage.save(progress).then(() => setSaveFailed(false), () => setSaveFailed(true))
   }, [progress, storage])
 
   if (!progress) return null
@@ -50,7 +52,12 @@ export function ProgressProvider({
     levelUp: (fromId, toId) => setProgress((p) => (p ? levelUpRule(nodes, p, fromId, toId) : p)),
     setFocus: (nodeId) => setProgress((p) => (p ? setFocusRule(nodes, p, nodeId) : p)),
   }
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+  return (
+    <Ctx.Provider value={value}>
+      {saveFailed && <div className="banner" role="alert">Couldn't save your progress on this device.</div>}
+      {children}
+    </Ctx.Provider>
+  )
 }
 
 export function useProgress(): ProgressValue {

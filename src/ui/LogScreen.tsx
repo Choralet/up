@@ -19,11 +19,16 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const values = todaysValues(progress, nodeId, today)
   const atGoal = values.filter((v) => v >= node.goal.target).length
 
+  const isFocus = nodeState(node, progress) === 'focus'
+  const ready = isFocus && goalMet(node.goal, values)
+
   const record = (value: number) => {
     if (value < 1) return
+    // read "today" at tap time so a session left open past midnight counts the right day
+    const before = todaysValues(progress, nodeId, localDate())
     log(nodeId, value)
-    const focusNow = nodeState(node, progress) === 'focus'
-    if (focusNow && goalMet(node.goal, [...values, value])) setShowLevelUp(true)
+    const crossed = !goalMet(node.goal, before) && goalMet(node.goal, [...before, value])
+    if (isFocus && crossed) setShowLevelUp(true)
   }
 
   return (
@@ -54,6 +59,10 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           </>
         ) : (
           <HoldTimer target={node.goal.target} onStop={(s) => record(s)} />
+        )}
+
+        {ready && !showLevelUp && (
+          <button className="cta sec" onClick={() => setShowLevelUp(true)}>Level Up</button>
         )}
 
         {values.length > 0 && (

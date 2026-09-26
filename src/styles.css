@@ -17,7 +17,7 @@ body {
   font: 15px/1.35 -apple-system, 'SF Pro Text', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
 }
-button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
 
 .app { max-width: 480px; margin: 0 auto; min-height: 100dvh; }
 .screen { padding: calc(env(safe-area-inset-top) + 16px) 16px calc(90px + env(safe-area-inset-bottom)); }
@@ -106,3 +106,5 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .steps button { width: 68px; height: 68px; border-radius: 50%; background: var(--fill); font-size: 34px; font-weight: 300; }
 .chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
 .ring text { font-family: inherit; }
+
+.banner { position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding: calc(env(safe-area-inset-top) + 8px) 12px 8px; background: var(--skill); color: #fff; text-align: center; font-size: 13px; font-weight: 600; }

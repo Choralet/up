@@ -79,7 +79,7 @@ describe('Logging and level-up', () => {
     expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument()
   })
 
-  it('"Not yet" keeps the same focus and does not re-trigger on the next set', async () => {
+  it('"Not yet" keeps the same focus, and a 4th set does not re-open the sheet', async () => {
     const user = userEvent.setup()
     render(<App storage={memoryStorage()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
@@ -87,7 +87,21 @@ describe('Logging and level-up', () => {
     await user.click(log); await user.click(log); await user.click(log)
     await user.click(await screen.findByRole('button', { name: 'Not yet' }))
     expect(screen.queryByText('You hit 3 × 10')).not.toBeInTheDocument()
+    await user.click(log)
+    expect(screen.queryByText('You hit 3 × 10')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Wall push-up' })).toBeInTheDocument()
+  })
+
+  it('offers a Level Up button to come back to the sheet after "Not yet"', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    expect(screen.queryByRole('button', { name: 'Level Up' })).not.toBeInTheDocument()
+    await user.click(log); await user.click(log); await user.click(log)
+    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(screen.getByRole('button', { name: 'Level Up' }))
+    expect(await screen.findByText('You hit 3 × 10')).toBeInTheDocument()
   })
 
   it('steps the rep count and never goes below 1', async () => {
