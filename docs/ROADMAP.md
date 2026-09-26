@@ -1,6 +1,6 @@
 # Roadmap: every skill in order (for review)
 
-**Status: draft for your review. Nothing is built yet.**
+**Status: built (Plan 4).** In the app: Skills → Roadmap. Data: `src/data/roadmap.json`, steps in `src/data/nodes.json` (`roadmapOnly`), generated once by `scripts/add-roadmap-data.py`.
 
 ## Where this comes from
 
@@ -95,12 +95,13 @@
 - Linked skills keep the requirements they already have in the tree (new Roadmap-only moves never lock an existing tree exercise).
 - New skills: Hollow body hang, Frog stand, Pseudo planche lean, Elbow lever, German hang, Butcher's block, Back lever, Compact leg lifts, Reverse Nordic, Straddle sit, Shoulder stand, Single-arm hang, V-sit, Sissy squat, Gymnastics swing, Single-leg Romanian deadlift, Kip-up, Dragon squat, Back bridge, Bulgarian dip, L-sit pull-up, False-grip pull-up, L-sit to handstand, 90-degree hold, Straddle press, Pelican push-up, Ring muscle-up, Straddle planche, Handstand to kip-up.
 
-## Please confirm (ambiguous video chapters)
+## Decisions (user: "do what you think is best")
 
-1. **Year 1 "Archer"**: archer **push-up** (my pick) or archer pull-up? (Year 2 has archer pull-up separately.)
-2. **Year 2 "Bodyweight deadlift"**: single-leg Romanian deadlift (my pick), or something else?
-3. **Year 2 "Wrist pull-ups"**: false-grip pull-ups, the wrist-over-the-bar grip used for muscle-ups (my pick)?
-4. **Year 3 "Pelican push-up"**: I am not sure of the exact move. Keep it with a short cue, or drop it?
-5. **Year 3 "Straddle push-up"**: straddle **planche** push-up (my pick)?
-6. **Year 3 "Handstand to kip-up"**: roll down from a handstand into a kip-up (my pick)?
-7. **Equipment**: Bulgarian dip and Ring muscle-up need rings; Butcher's block needs a bench and a stick. Keep them (my pick) or drop moves you have no equipment for?
+1. Year 1 "Archer" = archer **push-up** (archer pull-up is its own Year 2 item).
+2. Year 2 "Bodyweight deadlift" = single-leg Romanian deadlift.
+3. Year 2 "Wrist pull-ups" = false-grip pull-ups (the muscle-up grip).
+4. Year 3 "Pelican push-up" kept, with a cautious cue that points to the video chapter.
+5. Year 3 "Straddle push-up" = straddle planche push-up.
+6. Year 3 "Handstand to kip-up" = roll down from a handstand into a kip-up.
+7. Equipment moves kept; the cue says what is needed (rings, bench and stick).
+8. Every Roadmap skill has a **Watch in video** button that opens the video at that skill's chapter (timestamps from the video chapters).

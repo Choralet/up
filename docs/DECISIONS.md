@@ -85,3 +85,7 @@ Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for
 
 - Connecting to a repo that already has a backup pauses automatic backup until you choose **Restore It** or **Replace with This Phone** (stops a new phone overwriting your backup). Today shows **Backup needs attention** if backups fail, are paused, or are over a week old. Uploads happen only when progress changed. Disconnect asks first.
 - Deferred: the ~1 MB GitHub file limit (years of logs away) and its error wording; a negligible wake-lock leak on Stop then Start before the lock is granted. Two phones at once: last write wins (documented).
+
+## Plan 4 built: Roadmap (2026-09-26)
+
+- User asked to turn STRIQfit's "Every Calisthenics Skill to Learn in Order" videos (Year 1-3) into the app, step by step with prerequisites, plus a button to each skill's chapter in the video. Chosen design: Roadmap view inside Skills, trainable (Train This = one of the 2 active skills), "I can already do this", video links. Transcripts were not accessible, so only the order comes from the videos; steps and prerequisites are standard progressions (stated in the app). Open questions answered by the agent at the user's request (see docs/ROADMAP.md, Decisions).
