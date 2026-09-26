@@ -15,10 +15,26 @@ export interface ExerciseNode {
   short?: string
   branch: Branch
   kind: 'strength' | 'skill'
+  /** skill chain this step belongs to; only skill steps have one */
+  skill?: string
   /** ids of nodes that must be completed first (all of them) */
   requires: string[]
   /** column 0..3 in the tree drawing */
   col: number
   goal: Goal
   cue: string
+}
+
+export type DayType = 'push' | 'pull' | 'legs' | 'rest'
+
+export interface SkillChain {
+  id: string
+  name: string
+  /** day type whose workout trains this skill */
+  day: Exclude<DayType, 'rest'>
+}
+
+export interface GoalOverride {
+  sets: number
+  target: number
 }
