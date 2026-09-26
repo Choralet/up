@@ -21,6 +21,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
   const exportFile = async () => {
     try {
       await services.saveFile(`up-backup-${localDate()}.json`, exportBackup(progress))
+      setSettings({ lastExportAt: Date.now() })
       setMessage(null)
     } catch {
       setMessage("Couldn't save the file.")
@@ -71,13 +72,14 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
 
         <div className="hdr">Backup</div>
         <button className="cta sec" onClick={exportFile}>Export Backup File</button>
+        {progress.settings.lastExportAt && <p className="sub status">Last exported: {new Date(progress.settings.lastExportAt).toLocaleString()}</p>}
         <button className="cta sec" onClick={() => fileInput.current?.click()}>Import Backup File</button>
         <input ref={fileInput} type="file" accept="application/json,.json" aria-label="Import backup file" hidden onChange={(e) => importFile(e.target.files?.[0])} />
-        {message && <p className="sub" role="status">{message}</p>}
+        {message && <p className="sub status" role="status">{message}</p>}
         <p className="sub">Your progress lives on this phone. Export a file now and then, or connect GitHub below.</p>
         <GithubSection onRestore={(p, after) => setPending({ progress: p, after })} />
         <div className="hdr">Level</div>
-        <button className="cta sec" onClick={() => setAskRedo(true)}>Find your level again</button>
+        <button className="cta sec" onClick={() => setAskRedo(true)}>Find Your Level Again</button>
       </div>
       {askRedo && (
         <ConfirmSheet

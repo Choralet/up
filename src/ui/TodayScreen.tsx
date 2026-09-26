@@ -74,8 +74,8 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           <div className="hdr">Feeling fresh?</div>
           <div style={{ marginTop: 16 }}>
             {TRAIN_ANYWAY.map((d) => (
-              <button key={d} className="pillbtn" aria-label={`Train ${ANYWAY_LABEL[d]} anyway`} onClick={() => setDayPick(d)}>
-                Train {ANYWAY_LABEL[d]} anyway
+              <button key={d} className="pillbtn" aria-label={`Train ${ANYWAY_LABEL[d]} Anyway`} onClick={() => setDayPick(d)}>
+                Train {ANYWAY_LABEL[d]} Anyway
               </button>
             ))}
           </div>
@@ -83,17 +83,18 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
       ) : (
         <>
           {pick && (
-            <button className="pillbtn" onClick={() => setDayPick(null)}>Back to {DAY_LABEL[progress.schedule[weekday]].toLowerCase()}</button>
+            <button className="pillbtn" onClick={() => setDayPick(null)}>Back to {DAY_LABEL[progress.schedule[weekday]]}</button>
           )}
           <div className="hdr">Warm-up</div>
           <div className="group">
             {WARMUP[day].map((item) => {
-              const key = `${day}:${item}`
+              const key = `${day}:${item.name}`
               const on = warm.includes(key)
               return (
-                <button key={key} className="check" role="checkbox" aria-checked={on} aria-label={item} onClick={() => toggleWarm(key)}>
+                <button key={key} className="check" role="checkbox" aria-checked={on} aria-label={item.name} onClick={() => toggleWarm(key)}>
                   <span className="box" aria-hidden="true">{on ? '✓' : ''}</span>
-                  <span className="lbl">{item}</span>
+                  <span className="lbl">{item.name}</span>
+                  <span className="amount">{item.amount}</span>
                 </button>
               )
             })}

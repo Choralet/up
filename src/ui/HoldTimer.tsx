@@ -142,7 +142,7 @@ export function HoldTimer({ target, onStop, onRunningChange, sound = false }: Pr
     <div>
       {ring}
       {logged !== null && <div className="sub" style={{ marginTop: 8 }}>Logged {formatClock(logged)}</div>}
-      <button className="cta" style={{ background: 'var(--accent)', marginTop: 20 }} onClick={start}>Start</button>
+      <button className="cta" style={{ background: 'var(--accent-strong, var(--accent))', marginTop: 20 }} onClick={start}>Start</button>
     </div>
   )
 }

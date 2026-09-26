@@ -3,7 +3,7 @@ import type { ExerciseNode } from '../data/types'
 import { nodeState } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META } from './branches'
+import { BRANCH_META, SKILL_STRONG } from './branches'
 import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
 
@@ -20,7 +20,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
   return (
     <>
       <div className="scrim" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={node.name} style={{ '--accent': meta.color } as CSSProperties}>
+      <div className="sheet" role="dialog" aria-modal="true" aria-label={node.name} style={{ '--accent': meta.color, '--accent-strong': node.kind === 'skill' ? SKILL_STRONG : meta.strong } as CSSProperties}>
         <div className="eyebrow">{meta.label} · {LABEL[state]}</div>
         <h2>{node.name}</h2>
         <div className="pills">

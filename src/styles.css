@@ -31,7 +31,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .tabbar button { min-width: 72px; min-height: 44px; font-size: 11px; color: var(--label2); }
 .tabbar button[aria-current='page'] { color: var(--blue); font-weight: 600; }
-.tabbar i { display: block; width: 24px; height: 24px; margin: 0 auto 2px; border-radius: 8px; background: currentColor; opacity: 0.85; }
 
 .group { background: var(--card); border-radius: 14px; overflow: hidden; margin: 16px 0; }
 .row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; text-align: left; min-height: 56px; }
@@ -212,3 +211,18 @@ a.howto { text-decoration: none; }
 .gain { color: var(--legs); font-weight: 600; }
 .obnav { display: flex; justify-content: space-between; }
 .obnav .close { margin: 0 0 8px; }
+
+/* Plan 5 polish: readable buttons, 44 pt targets */
+.cta { background: var(--blue-strong, #0064d2); }
+.cta.sec { background: var(--fill); }
+.pill.chip { min-height: 44px; min-width: 44px; }
+.howto { min-height: 44px; }
+.choice b { color: var(--label); }
+.tsvg .n.locked .lb { fill: var(--label2); opacity: 1; }
+.medal, .choice em { background: var(--accent-strong, var(--accent, var(--push))); }
+.check .amount { margin-left: auto; font-size: 13px; color: var(--label2); }
+.status { margin: 8px 4px 12px; }
+.howtoken { margin: 8px 0; font-size: 14px; }
+.howtoken summary { color: var(--blue); font-weight: 600; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
+.howtoken ol { padding-left: 20px; color: var(--label2); }
+.tabbar svg { display: block; margin: 0 auto 2px; }

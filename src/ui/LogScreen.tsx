@@ -4,7 +4,7 @@ import { goalText } from '../lib/format'
 import { stepperStart } from '../engine/workout'
 import { formatClock, localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META } from './branches'
+import { BRANCH_META, SKILL_STRONG } from './branches'
 import { ConfirmSheet } from './ConfirmSheet'
 import { DemoButton } from './DemoButton'
 import { demoUrl } from '../data/demos'
@@ -65,7 +65,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   }
 
   return (
-    <div className="log" style={{ '--accent': meta.color } as CSSProperties}>
+    <div className="log" style={{ '--accent': meta.color, '--accent-strong': node.kind === 'skill' ? SKILL_STRONG : meta.strong } as CSSProperties}>
       <div className="screen">
         <button className="close" onClick={() => (holdStart !== null ? setAskClose(true) : onClose())}>Done</button>
         <div className="eyebrow" style={{ color: node.kind === 'skill' ? 'var(--skill)' : undefined }}>
@@ -92,7 +92,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
               <button aria-label="Decrease reps" onClick={() => setReps((r) => Math.max(1, r - 1))}>−</button>
               <button aria-label="Increase reps" onClick={() => setReps((r) => r + 1)}>+</button>
             </div>
-            <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => record(reps)}>Log Set</button>
+            <button className="cta" style={{ background: 'var(--accent-strong, var(--accent))' }} onClick={() => record(reps)}>Log Set</button>
           </>
         ) : (
           <HoldTimer key={timerKey} target={node.goal.target} sound={progress.settings.holdSound} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
@@ -115,6 +115,8 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           </>
         )}
         <p className="cue sub" style={{ marginTop: 16 }}>{node.cue}</p>
+        {/* a second, thumb-reachable way out */}
+        <button className="cta sec" style={{ marginTop: 24 }} onClick={() => (holdStart !== null ? setAskClose(true) : onClose())}>Back to Workout</button>
       </div>
 
       {askClose && holdStart !== null && (

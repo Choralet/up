@@ -70,7 +70,7 @@ export function Onboarding() {
           A few quick questions so Up starts each muscle group at the right exercise. It takes about a minute, and nothing changes until you finish.
         </p>
         <button className="cta" onClick={() => setStep(0)}>Start</button>
-        <button className="cta sec" onClick={finishOnboarding}>Skip for now</button>
+        <button className="cta sec" onClick={finishOnboarding}>Skip for Now</button>
       </>
     )
   } else if (branch && node) {
@@ -81,7 +81,7 @@ export function Onboarding() {
         <p style={{ fontSize: 17, margin: '8px 0' }}>{question(node)}</p>
         <p className="sub">{node.cue}</p>
         <button className="cta" style={{ marginTop: 24 }} onClick={answer(() => setDraft((d) => levelUp(nodes, d, node.id, null)))}>Yes</button>
-        <button className="cta sec" onClick={answer(() => setStep(s + 1))}>Not yet</button>
+        <button className="cta sec" onClick={answer(() => setStep(s + 1))}>Not Yet</button>
       </>
     )
   } else {

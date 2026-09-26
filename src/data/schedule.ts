@@ -23,8 +23,8 @@ export const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
 /** Default only: Monday Push, Wednesday Pull, Friday Legs + Core. The user can change every day. */
 export const DEFAULT_SCHEDULE: DayType[] = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest']
 
-export const WARMUP: Record<Exclude<DayType, 'rest'>, string[]> = {
-  push: ['Wrist circles', 'Arm circles', 'Scapular push-ups'],
-  pull: ['Arm circles', 'Passive hang 20 s', 'Scapular pulls'],
-  legs: ['Hip circles', 'Leg swings', 'Bodyweight squats'],
+export const WARMUP: Record<Exclude<DayType, 'rest'>, { name: string; amount: string }[]> = {
+  push: [{ name: 'Wrist circles', amount: '10 each way' }, { name: 'Arm circles', amount: '10 each way' }, { name: 'Scapular push-ups', amount: '10' }],
+  pull: [{ name: 'Arm circles', amount: '10 each way' }, { name: 'Passive hang', amount: '20 s' }, { name: 'Scapular pulls', amount: '10' }],
+  legs: [{ name: 'Hip circles', amount: '10 each way' }, { name: 'Leg swings', amount: '10 each leg' }, { name: 'Bodyweight squats', amount: '10' }],
 }

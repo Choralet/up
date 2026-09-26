@@ -71,10 +71,10 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     render(<App storage={seed()} />)
     expect(await screen.findByRole('heading', { name: 'Rest Day' })).toBeInTheDocument()
     expect(screen.getByText(/Next: Monday · Push Day/)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Train Pull anyway' }))
+    await user.click(screen.getByRole('button', { name: 'Train Pull Anyway' }))
     expect(screen.getByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Dead hang/ })).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Back to rest day' }))
+    await user.click(screen.getByRole('button', { name: 'Back to Rest Day' }))
     expect(screen.getByRole('heading', { name: 'Rest Day' })).toBeInTheDocument()
   })
 
@@ -109,13 +109,13 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
-    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(await screen.findByRole('button', { name: 'Not Yet' }))
     await user.click(screen.getByRole('button', { name: 'Done' }))
     expect(screen.queryByText('Workout complete')).not.toBeInTheDocument() // the core finisher is still to do
     await user.click(await screen.findByRole('button', { name: /Dead bug/ }))
     const log2 = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log2); await user.click(log2); await user.click(log2)
-    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(await screen.findByRole('button', { name: 'Not Yet' }))
     await user.click(screen.getByRole('button', { name: 'Done' }))
     expect(await screen.findByText('Workout complete')).toBeInTheDocument()
   })
@@ -167,7 +167,7 @@ describe('Logging and level-up', () => {
     await user.click(log)
     expect(await screen.findByText('You hit 3 × 10')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /Incline push-up/ }))
-    await user.click(screen.getByRole('button', { name: 'Set Focus' }))
+    await user.click(screen.getByRole('button', { name: 'Level Up' }))
     expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Wall push-up/ })).toHaveTextContent('Volume') // the finished variation stays as extra volume
   })
@@ -178,7 +178,7 @@ describe('Logging and level-up', () => {
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
-    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(await screen.findByRole('button', { name: 'Not Yet' }))
     expect(screen.queryByText('You hit 3 × 10')).not.toBeInTheDocument()
     await user.click(log)
     expect(screen.queryByText('You hit 3 × 10')).not.toBeInTheDocument()
@@ -192,7 +192,7 @@ describe('Logging and level-up', () => {
     const log = screen.getByRole('button', { name: 'Log Set' })
     expect(screen.queryByRole('button', { name: 'Level Up' })).not.toBeInTheDocument()
     await user.click(log); await user.click(log); await user.click(log)
-    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(await screen.findByRole('button', { name: 'Not Yet' }))
     await user.click(screen.getByRole('button', { name: 'Level Up' }))
     expect(await screen.findByText('You hit 3 × 10')).toBeInTheDocument()
   })
@@ -263,7 +263,7 @@ describe('Logging and level-up', () => {
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
-    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(await screen.findByRole('button', { name: 'Not Yet' }))
     expect(screen.getByRole('button', { name: 'Level Up' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /Edit set 3/ }))
     await user.click(screen.getByRole('button', { name: 'Remove Set' }))
@@ -384,12 +384,12 @@ describe('Find your level', () => {
     expect(screen.getByText('Can you do 3 sets of 10 clean reps?')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Yes' }))
     expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Not yet' })) // push done
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // push done
     expect(screen.getByRole('heading', { name: 'Dead hang' })).toBeInTheDocument()
     expect(screen.getByText('Can you hold it for 30 s, 3 times?')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Not yet' })) // pull done
-    await user.click(screen.getByRole('button', { name: 'Not yet' })) // legs done
-    await user.click(screen.getByRole('button', { name: 'Not yet' })) // core done
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // pull done
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // legs done
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // core done
     expect(screen.getByRole('heading', { name: "You're set" })).toBeInTheDocument()
     expect(screen.getByText(/Push: Incline push-up/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
@@ -400,7 +400,7 @@ describe('Find your level', () => {
   it('can be skipped, keeping the beginner exercises', async () => {
     const user = userEvent.setup()
     render(<App storage={memoryStorage()} />)
-    await user.click(await screen.findByRole('button', { name: 'Skip for now' }))
+    await user.click(await screen.findByRole('button', { name: 'Skip for Now' }))
     expect(await screen.findByRole('button', { name: /Wall push-up/ })).toBeInTheDocument()
   })
 
@@ -459,7 +459,7 @@ describe('Settings', () => {
 
   it('lets you redo Find your level', async () => {
     const user = await openSettings()
-    await user.click(screen.getByRole('button', { name: 'Find your level again' }))
+    await user.click(screen.getByRole('button', { name: 'Find Your Level Again' }))
     await user.click(within(screen.getByRole('dialog', { name: 'Find your level again?' })).getByRole('button', { name: 'Start' }))
     expect(await screen.findByRole('heading', { name: 'Find your level' })).toBeInTheDocument()
   })
@@ -678,7 +678,7 @@ describe('A new day while the app is open', () => {
     vi.setSystemTime(new Date(2026, 8, 27, 23, 50)) // Sunday night, rest day
     const user = userEvent.setup()
     render(<App storage={seed()} />)
-    await user.click(await screen.findByRole('button', { name: 'Train Pull anyway' }))
+    await user.click(await screen.findByRole('button', { name: 'Train Pull Anyway' }))
     await user.click(screen.getByRole('checkbox', { name: 'Arm circles' }))
     vi.setSystemTime(new Date(2026, 8, 28, 7, 0)) // Monday morning
     document.dispatchEvent(new Event('visibilitychange'))
@@ -919,7 +919,7 @@ describe('Roadmap', () => {
     expect(dialog).toHaveTextContent('Needs')
     expect(dialog).toHaveTextContent('Knee push-up')
     expect(dialog).toHaveTextContent('Frog stand, toes touching')
-    const link = within(dialog).getByRole('link', { name: /Watch in video/ })
+    const link = within(dialog).getByRole('link', { name: /Watch in Video/ })
     expect(link).toHaveAttribute('href', 'https://www.youtube.com/watch?v=J2JHDavNZB4&t=49s')
     expect(link).toHaveAttribute('target', '_blank')
   })
@@ -1027,7 +1027,7 @@ describe('Plan 5 · Phase 1 slips', () => {
     const user = userEvent.setup()
     const storage = seed()
     const first = render(<App storage={storage} />)
-    await user.click(await screen.findByRole('button', { name: /Train Pull anyway/i }))
+    await user.click(await screen.findByRole('button', { name: /Train Pull Anyway/i }))
     await user.click(screen.getByRole('checkbox', { name: /Arm circles/ }))
     await user.click(screen.getByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('button', { name: 'Today' }))
@@ -1238,7 +1238,7 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Back' }))
     expect(screen.getByRole('heading', { name: 'Wall push-up' })).toBeInTheDocument()
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not yet' }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
     expect(((await store.load()) as { completed: string[] }).completed).toEqual([])
   })
@@ -1247,7 +1247,7 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     const user = userEvent.setup()
     render(<App storage={seed({ completed: ['push-wall'] })} />)
     await user.click(await screen.findByRole('button', { name: 'Settings' }))
-    await user.click(screen.getByRole('button', { name: 'Find your level again' }))
+    await user.click(screen.getByRole('button', { name: 'Find Your Level Again' }))
     await user.click(within(screen.getByRole('dialog', { name: 'Find your level again?' })).getByRole('button', { name: 'Start' }))
     await user.click(await screen.findByRole('button', { name: 'Start' }))
     await user.click(screen.getByRole('button', { name: 'Yes' })) // Incline push-up
@@ -1260,7 +1260,7 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     const user = userEvent.setup()
     render(<App storage={memoryStorage()} />)
     await user.click(await screen.findByRole('button', { name: 'Start' }))
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not yet' }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
     expect(screen.getByRole('checkbox', { name: 'Monday' })).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByRole('checkbox', { name: 'Tuesday' })).toHaveAttribute('aria-checked', 'false')
     await user.click(screen.getByRole('checkbox', { name: 'Tuesday' }))
@@ -1270,5 +1270,39 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('pull')
     expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('legs')
     expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('push')
+  })
+})
+
+describe('Plan 5 · Phase 5 icons and polish', () => {
+  it('every tab has an icon', async () => {
+    const { container } = render(<App storage={seed()} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    const tabs = container.querySelectorAll('nav.tabbar button')
+    expect(tabs).toHaveLength(4)
+    tabs.forEach((b) => expect(b.querySelector('svg')).not.toBeNull())
+  })
+
+  it('the log screen has a bottom Back to Workout button', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'Back to Workout' }))
+    expect(await screen.findByRole('heading', { name: 'Push Day' })).toBeInTheDocument()
+  })
+
+  it('warm-up items say how much to do', async () => {
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('checkbox', { name: 'Arm circles' })).toHaveTextContent('10 each way')
+  })
+
+  it('Settings: token help in the app, placeholders, and the last export date', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    expect(screen.getByText('How to Make a Token')).toBeInTheDocument()
+    expect(screen.getByLabelText('Repository')).toHaveAttribute('placeholder', 'up-data')
+    expect(screen.queryByText(/Last exported/)).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Export Backup File' }))
+    expect(await screen.findByText(/Last exported:/)).toBeInTheDocument()
   })
 })

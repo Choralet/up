@@ -96,7 +96,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
           )}
           {next && <button className="cta sec" onClick={() => setEditing(true)}>Edit Goal</button>}
           <a className="cta sec videolink" href={videoUrl(item)} target="_blank" rel="noopener noreferrer">
-            Watch in video ({formatStamp(item.t)})
+            Watch in Video ({formatStamp(item.t)})
           </a>
           <button className="cta sec" onClick={onClose}>Close</button>
         </>

@@ -89,10 +89,19 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress, after: (
         </div>
       ) : (
         <div className="card form">
-          <p className="sub" style={{ marginTop: 0 }}>Saves a copy of your progress to a private GitHub repository. See docs/BACKUP.md for making the token.</p>
-          <label>GitHub owner<input aria-label="GitHub owner" autoCapitalize="none" autoCorrect="off" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} /></label>
-          <label>Repository<input aria-label="Repository" autoCapitalize="none" autoCorrect="off" value={form.repo} onChange={(e) => setForm({ ...form, repo: e.target.value })} /></label>
-          <label>Token<input aria-label="Token" type="password" autoComplete="off" value={form.token} onChange={(e) => setForm({ ...form, token: e.target.value })} /></label>
+          <p className="sub" style={{ marginTop: 0 }}>Saves a copy of your progress to a private GitHub repository, automatically when you leave the app.</p>
+          <details className="howtoken">
+            <summary>How to Make a Token</summary>
+            <ol>
+              <li>On github.com: your picture → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.</li>
+              <li>Repository access: Only select repositories → your backup repository (for example up-data).</li>
+              <li>Permissions → Repository permissions → Contents: Read and write.</li>
+              <li>Generate, copy, and paste it below. It stays on this phone and only goes to GitHub.</li>
+            </ol>
+          </details>
+          <label>GitHub owner<input aria-label="GitHub owner" placeholder="your GitHub name" autoCapitalize="none" autoCorrect="off" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} /></label>
+          <label>Repository<input aria-label="Repository" placeholder="up-data" autoCapitalize="none" autoCorrect="off" value={form.repo} onChange={(e) => setForm({ ...form, repo: e.target.value })} /></label>
+          <label>Token<input aria-label="Token" placeholder="github_pat_…" type="password" autoComplete="off" value={form.token} onChange={(e) => setForm({ ...form, token: e.target.value })} /></label>
           <button className="cta" disabled={busy || !form.owner || !form.repo || !form.token} onClick={connect}>Connect</button>
         </div>
       )}
