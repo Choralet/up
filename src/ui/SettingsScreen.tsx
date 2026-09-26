@@ -11,7 +11,7 @@ import type { DayType } from '../data/types'
 import { useProgress } from '../store/ProgressContext'
 
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
-  const { progress, nodes, setDayType, restartOnboarding, replaceProgress } = useProgress()
+  const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings } = useProgress()
   const services = useServices()
   const [pending, setPending] = useState<{ progress: Progress; after?: () => void } | null>(null)
   const [message, setMessage] = useState<string | null>(null)
@@ -59,6 +59,14 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <p className="sub">Default is Monday Push, Wednesday Pull, Friday Legs + Core. Change any day you like.</p>
+
+        <div className="hdr">Hold Timer</div>
+        <div className="group">
+          <button className="row switchrow" role="switch" aria-checked={progress.settings.holdSound} aria-label="Sound at Hold Goal" onClick={() => setSettings({ holdSound: !progress.settings.holdSound })}>
+            <span className="t"><b>Sound at Hold Goal</b><span>A soft tone when a hold reaches its goal</span></span>
+            <span className={`switch${progress.settings.holdSound ? ' on' : ''}`} aria-hidden="true" />
+          </button>
+        </div>
 
         <div className="hdr">Backup</div>
         <button className="cta sec" onClick={exportFile}>Export Backup File</button>

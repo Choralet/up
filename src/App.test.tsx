@@ -689,7 +689,7 @@ describe('Done while a hold is running', () => {
     render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 31_000))
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 34_000)) // 3 s countdown + 31 s hold
     await user.click(screen.getByRole('button', { name: 'Done' }))
     return user
   }
@@ -1041,7 +1041,7 @@ describe('Plan 5 · Phase 1 slips', () => {
     render(<App storage={seed({ logs })} />)
     await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 40_000))
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 43_000)) // 3 s countdown + 40 s hold
     await user.click(screen.getAllByRole('button', { name: 'Done' })[0])
     await user.click(screen.getByRole('button', { name: 'Log It' }))
     expect(await screen.findByRole('dialog', { name: 'Level up' })).toBeInTheDocument()
@@ -1115,5 +1115,33 @@ describe('Plan 5 · Phase 2 complete workout', () => {
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     expect(screen.getByTestId('rep-value')).toHaveTextContent('6')
     expect(screen.getByText(/last session 6/)).toBeInTheDocument()
+  })
+})
+
+describe('Plan 5 · Phase 3 hold settings', () => {
+  it('Settings has a Sound at Hold Goal switch, on by default, saved when turned off', async () => {
+    const user = userEvent.setup()
+    const storage = seed()
+    render(<App storage={storage} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    const sw = screen.getByRole('switch', { name: 'Sound at Hold Goal' })
+    expect(sw).toHaveAttribute('aria-checked', 'true')
+    await user.click(sw)
+    expect(sw).toHaveAttribute('aria-checked', 'false')
+    await vi.waitFor(async () => expect(((await storage.load()) as { settings: { holdSound: boolean } }).settings.holdSound).toBe(false))
+  })
+
+  it('the running-hold prompt shows the live time', async () => {
+    vi.setSystemTime(WEDNESDAY)
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 13_000))
+    await user.click(screen.getAllByRole('button', { name: 'Done' })[0])
+    expect(screen.getByRole('dialog', { name: 'A hold is running' })).toHaveTextContent('0:10 so far')
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 20_000))
+    await new Promise((r) => setTimeout(r, 600))
+    expect(screen.getByRole('dialog', { name: 'A hold is running' })).toHaveTextContent('0:17 so far')
   })
 })

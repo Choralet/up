@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react'
 import { goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { stepperStart } from '../engine/workout'
@@ -25,6 +25,14 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const [editing, setEditing] = useState<number | null>(null)
   const [holdStart, setHoldStart] = useState<number | null>(null)
   const [askClose, setAskClose] = useState(false)
+  const [timerKey, setTimerKey] = useState(0)
+  const [, tick] = useReducer((n: number) => n + 1, 0)
+  // keep the "A hold is running" sheet's time live
+  useEffect(() => {
+    if (!askClose) return
+    const id = setInterval(tick, 500)
+    return () => clearInterval(id)
+  }, [askClose])
 
   const today = localDate()
   const entries = progress.logs.flatMap((l, i) => (l.nodeId === nodeId && l.date === today ? [{ value: l.value, index: i }] : []))
@@ -82,7 +90,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
             <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => record(reps)}>Log Set</button>
           </>
         ) : (
-          <HoldTimer target={node.goal.target} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
+          <HoldTimer key={timerKey} target={node.goal.target} sound={progress.settings.holdSound} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
         )}
 
         {ready && !showLevelUp && holdStart === null && (
@@ -107,9 +115,9 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
       {askClose && holdStart !== null && (
         <ConfirmSheet
           title="A hold is running"
-          message={`${formatClock((Date.now() - holdStart) / 1000)} so far. Log it before you leave?`}
+          message={`${formatClock(Math.max(0, Date.now() - holdStart) / 1000)} so far. Log it before you leave?`}
           actions={[
-            { label: 'Log It', tone: 'primary', onClick: () => { setAskClose(false); lastTap.current = -Infinity; if (!record(Math.floor((Date.now() - holdStart) / 1000))) onClose() } },
+            { label: 'Log It', tone: 'primary', onClick: () => { const s = Math.floor((Date.now() - holdStart) / 1000); setAskClose(false); setHoldStart(null); setTimerKey((k) => k + 1); lastTap.current = -Infinity; if (!record(s)) onClose() } },
             { label: 'Discard', tone: 'danger', onClick: onClose },
           ]}
           onCancel={() => setAskClose(false)}
