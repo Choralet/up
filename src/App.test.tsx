@@ -406,3 +406,41 @@ describe('Find your level', () => {
     expect(screen.queryByRole('heading', { name: 'Find your level' })).not.toBeInTheDocument()
   })
 })
+
+describe('Settings', () => {
+  const openSettings = async (storage = seed()) => {
+    const user = userEvent.setup()
+    render(<App storage={storage} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    return user
+  }
+
+  it('shows the schedule with the Monday / Wednesday / Friday default', async () => {
+    await openSettings()
+    expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('push')
+    expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('rest')
+    expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('pull')
+    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('legs')
+  })
+
+  it('changing a day changes what Today shows', async () => {
+    const user = await openSettings()
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Monday' }), 'pull')
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Dead hang/ })).toBeInTheDocument()
+  })
+
+  it('every day can be set to rest', async () => {
+    const user = await openSettings()
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Monday' }), 'rest')
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('heading', { name: 'Rest Day' })).toBeInTheDocument()
+  })
+
+  it('lets you redo Find your level', async () => {
+    const user = await openSettings()
+    await user.click(screen.getByRole('button', { name: 'Find your level again' }))
+    expect(await screen.findByRole('heading', { name: 'Find your level' })).toBeInTheDocument()
+  })
+})
