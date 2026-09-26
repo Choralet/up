@@ -2,13 +2,17 @@ import type { Branch, DayType, ExerciseNode } from '../data/types'
 import type { Progress, SetLog } from './progress'
 import { addDays, weekStart } from '../lib/time'
 
+/** Logged days a week needs to count toward the streak: 2, or 1 if fewer than 2 days are planned. */
+export function streakDaysNeeded(schedule: DayType[]): number {
+  return Math.max(1, Math.min(2, schedule.filter((d) => d !== 'rest').length))
+}
+
 /**
  * Consecutive weeks (Monday to Sunday) in which you trained on enough days.
  * "Enough" is 2 logged days, or fewer if fewer are planned (at least 1). The current unfinished week never breaks a streak.
  */
 export function weeklyStreak(logs: SetLog[], schedule: DayType[], today: string): number {
-  const planned = schedule.filter((d) => d !== 'rest').length
-  const need = Math.max(1, Math.min(2, planned))
+  const need = streakDaysNeeded(schedule)
   const daysByWeek = new Map<string, Set<string>>()
   for (const l of logs) {
     const w = weekStart(l.date)

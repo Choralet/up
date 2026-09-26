@@ -1,6 +1,6 @@
 import { BRANCHES } from '../engine/graph'
-import { branchProgress, personalBests, weeklyStreak } from '../engine/stats'
-import { goalText } from '../lib/format'
+import { branchProgress, personalBests, streakDaysNeeded, weeklyStreak } from '../engine/stats'
+import { goalText, plural } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
@@ -17,7 +17,7 @@ export function ProgressScreen() {
       <div className="card" style={{ marginTop: 12 }}>
         <b>{streak > 0 ? `${streak} week streak` : 'No streak yet'}</b>
         <div className="sub" style={{ marginTop: 4 }}>
-          Train on 2 days in a week to keep it going. Rest weeks are fine, and an unfinished week never breaks it.
+          {`Train on ${plural(streakDaysNeeded(progress.schedule), 'day')} in a week to keep it going.`} Rest weeks are fine, and an unfinished week never breaks it.
         </div>
       </div>
 
@@ -28,7 +28,7 @@ export function ProgressScreen() {
             <div className="ringcard" key={b}>
               <Ring value={total ? done / total : 0} color={BRANCH_META[b].color} label={`${BRANCH_META[b].label}: ${done} of ${total} steps`} />
               <b>{BRANCH_META[b].label}</b>
-              <span className="sub">{done} of {total} steps</span>
+              <span className="sub">{done} of {plural(total, 'step')}</span>
             </div>
           )
         })}

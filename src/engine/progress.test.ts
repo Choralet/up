@@ -384,3 +384,24 @@ describe('finished skills free their slot; the level-up hint ignores the chain y
     expect(p.skillFocus).toEqual({ k2: 'k2' })
   })
 })
+
+describe('sanitizeProgress, Plan 3 repairs', () => {
+  it('floors stored fractional set values and drops ones below 1', () => {
+    const p = sanitizeProgress(g2, {
+      logs: [
+        { nodeId: 'a', value: 9.7, date: '2026-09-26', at: 1 },
+        { nodeId: 'a', value: 0.5, date: '2026-09-26', at: 2 },
+      ],
+    })
+    expect(p.logs.map((l) => l.value)).toEqual([9])
+  })
+  it('moves a skill step stored as branch focus (Plan 1 save) into the active skills', () => {
+    const p = sanitizeProgress(g2, { completed: ['a'], focus: { push: 's1' } })
+    expect(p.focus.push).toBe('b')
+    expect(p.skillFocus).toEqual({ sk: 's1' })
+  })
+  it('does not migrate a skill focus when two skills are already active', () => {
+    const p = sanitizeProgress(g2, { completed: ['a'], focus: { push: 's1' }, skillFocus: { k2: 'k2', k3: 'k3' } })
+    expect(p.skillFocus).toEqual({ k2: 'k2', k3: 'k3' })
+  })
+})

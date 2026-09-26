@@ -2,7 +2,7 @@ import { DAY_LABEL } from '../data/schedule'
 import { SKILLS } from '../data/skills'
 import { MAX_ACTIVE_SKILLS } from '../engine/progress'
 import { skillStatus } from '../engine/skills'
-import { goalText } from '../lib/format'
+import { goalText, plural } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 
 export function SkillsScreen({ onLog }: { onLog: (nodeId: string) => void }) {
@@ -42,13 +42,14 @@ export function SkillsScreen({ onLog }: { onLog: (nodeId: string) => void }) {
       </ul>
 
       <div className="hdr">Library</div>
+      {activeCount >= MAX_ACTIVE_SKILLS && <p className="sub" style={{ margin: '12px 4px 0' }}>Stop an active skill to start another.</p>}
       <ul className="group list">
         {library.map(({ chain, s }) => (
           <li className="row skillrow" key={chain.id}>
             <span className="t">
               <b>{chain.name}</b>
               <span>
-                {DAY_LABEL[chain.day]} · {s.done} of {s.total} steps
+                {DAY_LABEL[chain.day]} · {s.done} of {plural(s.total, 'step')}
                 {s.status === 'finished' && ' · Complete'}
                 {s.status === 'locked' && ` · Needs: ${s.needs.join(', ')}`}
               </span>

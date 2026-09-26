@@ -217,13 +217,16 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     ? [...new Set(r.completed.filter((x): x is string => typeof x === 'string' && byId.has(x)))]
     : []
   const logs: SetLog[] = Array.isArray(r.logs)
-    ? r.logs.filter(
-        (l): l is SetLog =>
-          !!l && typeof l === 'object' &&
-          typeof (l as SetLog).nodeId === 'string' && byId.has((l as SetLog).nodeId) &&
-          Number.isFinite((l as SetLog).value) && (l as SetLog).value >= 1 &&
-          typeof (l as SetLog).date === 'string' && typeof (l as SetLog).at === 'number',
-      )
+    ? r.logs
+        .filter(
+          (l): l is SetLog =>
+            !!l && typeof l === 'object' &&
+            typeof (l as SetLog).nodeId === 'string' && byId.has((l as SetLog).nodeId) &&
+            Number.isFinite((l as SetLog).value) &&
+            typeof (l as SetLog).date === 'string' && typeof (l as SetLog).at === 'number',
+        )
+        .map((l) => ({ nodeId: l.nodeId, value: Math.floor(l.value), date: l.date, at: l.at }))
+        .filter((l) => l.value >= 1)
     : []
   const done = new Set(completed)
 
@@ -244,6 +247,15 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     const stored = typeof rawSkill[chain] === 'string' ? byId.get(rawSkill[chain] as string) : undefined
     const ok = !!stored && stored.skill === chain && !done.has(stored.id) && isUnlocked(stored, done)
     skillFocus[chain] = ok ? stored!.id : firstStep(nodes, done, chain)
+  }
+
+  // Plan 1 saves could hold a skill step as a branch focus: carry it over as an active skill when there is room
+  for (const b of BRANCHES) {
+    const id = rawFocus[b]
+    const n = typeof id === 'string' ? byId.get(id) : undefined
+    if (!n?.skill || n.skill in skillFocus || Object.keys(skillFocus).length >= MAX_ACTIVE_SKILLS) continue
+    const step = !done.has(n.id) && isUnlocked(n, done) ? n.id : firstStep(nodes, done, n.skill)
+    if (step) skillFocus[n.skill] = step
   }
 
   const schedule =

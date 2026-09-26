@@ -1,6 +1,6 @@
 import type { ExerciseNode } from '../data/types'
 import { initialProgress, type Progress, type SetLog } from './progress'
-import { branchProgress, personalBests, weeklyStreak } from './stats'
+import { branchProgress, personalBests, streakDaysNeeded, weeklyStreak } from './stats'
 
 const L = (date: string, nodeId = 'a', value = 10, at = 0): SetLog => ({ nodeId, value, date, at })
 const three = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] as const
@@ -61,5 +61,13 @@ describe('branchProgress', () => {
     expect(branchProgress(nodes, p, 'push')).toEqual({ done: 1, total: 2 })
     expect(branchProgress(nodes, p, 'pull')).toEqual({ done: 0, total: 1 })
     expect(branchProgress(nodes, p, 'legs')).toEqual({ done: 0, total: 0 })
+  })
+})
+
+describe('streakDaysNeeded', () => {
+  it('is 2 with two or more planned days, otherwise 1', () => {
+    expect(streakDaysNeeded(['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'])).toBe(2)
+    expect(streakDaysNeeded(['push', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'])).toBe(1)
+    expect(streakDaysNeeded(['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'])).toBe(1)
   })
 })

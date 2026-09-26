@@ -19,3 +19,7 @@ export function wrapLabel(text: string, max = 13): string[] {
   lines.push(line)
   return lines
 }
+
+export function plural(n: number, word: string): string {
+  return `${n} ${word}${n === 1 ? '' : 's'}`
+}

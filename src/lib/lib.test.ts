@@ -1,5 +1,5 @@
 import { addDays, formatClock, localDate, weekdayIndex, weekStart } from './time'
-import { goalText, wrapLabel } from './format'
+import { goalText, plural, wrapLabel } from './format'
 
 describe('time helpers', () => {
   it('formats local dates with zero padding', () => {
@@ -48,5 +48,13 @@ describe('week helpers (Monday is day 0)', () => {
     expect(weekStart('2026-09-23')).toBe('2026-09-21')
     expect(weekStart('2026-09-27')).toBe('2026-09-21')
     expect(weekStart('2026-09-28')).toBe('2026-09-28')
+  })
+})
+
+describe('plural', () => {
+  it('uses the singular only for 1', () => {
+    expect(plural(1, 'step')).toBe('1 step')
+    expect(plural(0, 'step')).toBe('0 steps')
+    expect(plural(3, 'step')).toBe('3 steps')
   })
 })

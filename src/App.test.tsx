@@ -471,3 +471,23 @@ describe('Progress tab', () => {
     expect(screen.getByText('Log a set to see your bests here.')).toBeInTheDocument()
   })
 })
+
+describe('Plan 3 wording fixes', () => {
+  it('Skills uses "step" for one step and explains a full slot list', async () => {
+    const user = userEvent.setup()
+    const pikeDone = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike', 'push-diamond', 'push-archer']
+    render(<App storage={seed({ completed: pikeDone })} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    expect(screen.getAllByText(/0 of 1 step(?!s)/).length).toBeGreaterThan(0) // One-arm push-up, Pistol and Dragon flag are one-step chains
+    await user.click(screen.getByRole('button', { name: 'Start Handstand' }))
+    await user.click(screen.getByRole('button', { name: 'Start One-arm push-up' }))
+    expect(screen.getByText('Stop an active skill to start another.')).toBeInTheDocument()
+  })
+
+  it('the streak card states the real rule for a one-day schedule', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ schedule: ['push', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.getByText(/Train on 1 day in a week/)).toBeInTheDocument()
+  })
+})
