@@ -226,3 +226,13 @@ a.howto { text-decoration: none; }
 .howtoken summary { color: var(--blue); font-weight: 600; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
 .howtoken ol { padding-left: 20px; color: var(--label2); }
 .tabbar svg { display: block; margin: 0 auto 2px; }
+
+/* Plan 5 review polish */
+.pillbtn, .linkbtn { min-height: 44px; }
+.linkbtn.inline { min-height: 0; }
+.sheet { max-height: 88dvh; overflow: auto; }
+.tag { text-transform: uppercase; }
+.tag.extra { color: var(--label2); }
+:root { --blue-text: #0060c8; }
+@media (prefers-color-scheme: dark) { :root { --blue-text: #0a84ff; } }
+.cta.sec { color: var(--blue-text); }

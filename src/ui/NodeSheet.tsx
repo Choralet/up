@@ -6,11 +6,12 @@ import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META, SKILL_STRONG } from './branches'
 import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
+import { skillName } from '../data/names'
 
 const LABEL = { locked: 'Locked', available: 'Ready', focus: 'Training', completed: 'Done' } as const
 
 export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClose: () => void; onLog: (id: string) => void }) {
-  const { progress, byId, defaults, setFocus, activateSkill, setGoal } = useProgress()
+  const { progress, byId, defaults, setFocus, activateSkill, deactivateSkill, setGoal } = useProgress()
   const [editing, setEditing] = useState(false)
   const state = nodeState(node, progress)
   const meta = BRANCH_META[node.branch]
@@ -51,11 +52,18 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
             {state === 'available' && !node.skill && (
               <button className="cta" onClick={() => { setFocus(node.id); onClose() }}>Make This My Focus</button>
             )}
-            {state === 'available' && node.skill && !chainActive && (
-              <button className="cta" disabled={slotsFull} onClick={() => { activateSkill(node.skill!); onClose() }}>Train This Skill</button>
+            {state === 'available' && node.skill && !chainActive && !slotsFull && (
+              <button className="cta" onClick={() => { activateSkill(node.skill!); onClose() }}>Train This Skill</button>
             )}
             {state === 'available' && node.skill && !chainActive && slotsFull && (
-              <p className="sub">Two skills are already active. Stop one in the Skills tab first.</p>
+              <>
+                <p className="sub">Two skills are active. Replace one to train this:</p>
+                {Object.keys(progress.skillFocus).map((id) => (
+                  <button key={id} className="cta sec" onClick={() => { deactivateSkill(id); activateSkill(node.skill!); onClose() }}>
+                    Replace {skillName(id, progress.skillFocus[id])}
+                  </button>
+                ))}
+              </>
             )}
             {state === 'focus' && (
               <button className="cta" onClick={() => { onLog(node.id); onClose() }}>Log This Exercise</button>

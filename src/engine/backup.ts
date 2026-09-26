@@ -3,9 +3,10 @@ import { sanitizeProgress, type Progress } from './progress'
 
 export class BackupError extends Error {}
 
-/** The backup text: only progress, never settings or tokens. */
+/** The backup text: progress (and app settings), never tokens, and never today's warm-up ticks. */
 export function exportBackup(progress: Progress, now: Date = new Date()): string {
-  return JSON.stringify({ app: 'up', version: 1, exportedAt: now.toISOString(), progress }, null, 2)
+  const { day: _day, ...kept } = progress
+  return JSON.stringify({ app: 'up', version: 1, exportedAt: now.toISOString(), progress: kept }, null, 2)
 }
 
 export function parseBackup(text: string, nodes: ExerciseNode[]): Progress {
@@ -24,7 +25,8 @@ export function parseBackup(text: string, nodes: ExerciseNode[]): Progress {
 
 /** Short fingerprint of progress, to tell whether anything changed since the last upload. */
 export function progressHash(progress: Progress): string {
-  const text = JSON.stringify(progress)
+  const { day: _day, ...kept } = progress // warm-up ticks alone should not trigger an upload
+  const text = JSON.stringify(kept)
   let h = 5381
   for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0
   return `${text.length.toString(36)}-${(h >>> 0).toString(36)}`

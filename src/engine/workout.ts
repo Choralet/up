@@ -10,7 +10,7 @@ export interface Workout {
   /** focus exercise of each branch trained on this day type; null = branch finished */
   main: { branch: Branch; node: ExerciseNode | null }[]
   /** "Also today": the finished variation for volume, and a core finisher on Push and Pull days */
-  extra: { node: ExerciseNode; role: 'volume' | 'core' }[]
+  extra: { node: ExerciseNode; role: 'volume' | 'core'; of?: string }[]
 }
 
 export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: DayType, chains: SkillChain[]): Workout {
@@ -28,7 +28,7 @@ export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: Day
   for (const { node } of main) {
     // the variation you just finished, for easy extra volume (none below a branch root)
     const parent = node?.requires.map((r) => byId.get(r)).find((p) => p && !p.skill && p.branch === node.branch && done.has(p.id))
-    if (parent) extra.push({ node: parent, role: 'volume' })
+    if (parent) extra.push({ node: parent, role: 'volume', of: node!.id })
   }
   const core = progress.focus.core ? byId.get(progress.focus.core) : undefined
   if ((day === 'push' || day === 'pull') && core) extra.push({ node: core, role: 'core' })
@@ -47,10 +47,21 @@ export function nextTrainingDay(schedule: DayType[], weekday: number): { daysAhe
 /** Every exercise of the workout, in the order shown. */
 export const workoutItems = (w: Workout): ExerciseNode[] => [...w.skill, ...w.main.flatMap((m) => (m.node ? [m.node] : [])), ...w.extra.map((e) => e.node)]
 
-/** True when the workout has exercises and each has its number of sets logged on `date` (at any level). */
+/**
+ * True when the workout has exercises and each part has its sets logged on `date` (at any level).
+ * A main exercise and its Volume variation count as one part, so levelling up mid-session
+ * (the finished variation's sets are logged, the new focus is not) still completes the day.
+ */
 export function workoutDone(workout: Workout, progress: Progress, date: string): boolean {
-  const items = workoutItems(workout)
-  return items.length > 0 && items.every((n) => todaysValues(progress, n.id, date).length >= n.goal.sets)
+  const logged = (n: ExerciseNode) => todaysValues(progress, n.id, date).length >= n.goal.sets
+  const volumeOf = new Map(workout.extra.filter((e) => e.role === 'volume').map((e) => [e.of, e.node]))
+  const mains = workout.main.flatMap((m) => (m.node ? [m.node] : []))
+  if (workout.skill.length + mains.length + workout.extra.length === 0) return false
+  return (
+    workout.skill.every(logged) &&
+    mains.every((n) => logged(n) || (volumeOf.has(n.id) && logged(volumeOf.get(n.id)!))) &&
+    workout.extra.filter((e) => e.role === 'core').every((e) => logged(e.node))
+  )
 }
 
 export interface SummaryLine {

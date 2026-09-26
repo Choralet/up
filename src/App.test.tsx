@@ -97,7 +97,7 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     const done = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike']
     render(<App storage={seed({ completed: done, skillFocus: { handstand: 'push-hs-chest' } })} />)
     const skill = await screen.findByRole('button', { name: /Chest-to-wall handstand hold/ })
-    expect(skill).toHaveTextContent('SKILL')
+    expect(skill).toHaveTextContent('Skill') // shown in capitals by CSS, like the other tags
     expect(skill).toHaveTextContent('4 × 20 s')
     await user.click(skill)
     expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
@@ -1267,9 +1267,9 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
     await user.click(await screen.findByRole('button', { name: 'Settings' }))
     expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('push')
-    expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('pull')
-    expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('legs')
-    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('push')
+    expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('push')
+    expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('pull')
+    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('legs')
   })
 })
 
@@ -1304,5 +1304,96 @@ describe('Plan 5 · Phase 5 icons and polish', () => {
     expect(screen.queryByText(/Last exported/)).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Export Backup File' }))
     expect(await screen.findByText(/Last exported:/)).toBeInTheDocument()
+  })
+})
+
+describe('Plan 5 review fixes', () => {
+  it('levelling up does not make today look unfinished', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['core-deadbug'], focus: { core: 'core-plank' } , logs: [1, 2, 3].map((at) => ({ nodeId: 'core-plank', value: 30, date: '2026-09-21', at })) })} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    await user.click(await screen.findByRole('button', { name: 'Level Up' }))
+    expect(await screen.findByText('Workout complete')).toBeInTheDocument()
+  })
+
+  it('Find Your Level Again keeps a custom schedule', async () => {
+    const user = userEvent.setup()
+    const custom = ['legs', 'rest', 'push', 'rest', 'pull', 'rest', 'rest']
+    render(<App storage={seed({ schedule: custom })} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('button', { name: 'Find Your Level Again' }))
+    await user.click(within(screen.getByRole('dialog', { name: 'Find your level again?' })).getByRole('button', { name: 'Start' }))
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    await user.click(screen.getByRole('button', { name: 'Start Training' }))
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('legs')
+    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('pull')
+  })
+
+  it('the day picker shows which workout each day gets', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    expect(screen.getByRole('checkbox', { name: 'Friday' })).toHaveTextContent('Legs + Core')
+  })
+
+  it('"Last exported" only changes when a file was saved', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices({ saveFile: async () => false })} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('button', { name: 'Export Backup File' }))
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.queryByText(/Last exported/)).not.toBeInTheDocument()
+  })
+
+  it('a hold under a second says it was too short; Done during the countdown just cancels', async () => {
+    vi.setSystemTime(WEDNESDAY)
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 3500))
+    await new Promise((r) => setTimeout(r, 50)) // let an animation frame redraw the cover
+    await user.click(screen.getByRole('button', { name: 'Stop and Log' }))
+    expect(screen.getByText('Too short to log')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    await user.click(screen.getAllByRole('button', { name: 'Done' })[0])
+    expect(screen.queryByRole('dialog', { name: 'A hold is running' })).not.toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
+  })
+
+  it('the tree skill sheet offers Replace when both slots are in use', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike'], skillFocus: { 'butchers-block': 'rm-butcher', 'straddle-sit': 'rm-straddle-sit' } })} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, ready, skill' }))
+    await user.click(screen.getByRole('button', { name: "Replace Butcher's block" }))
+    expect(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, training, skill' })).toBeInTheDocument()
+  })
+
+  it('training on a rest day never shows more days than planned; hold gains show seconds', async () => {
+    vi.setSystemTime(new Date(2026, 8, 24, 12))
+    const user = userEvent.setup()
+    const logs = ['2026-09-21', '2026-09-22', '2026-09-23', '2026-09-24'].map((date, at) => ({ nodeId: 'pull-hang', value: 20 + at, date, at }))
+      .concat([{ nodeId: 'pull-hang', value: 10, date: '2026-09-15', at: 9 }])
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.getByText('4 days this week · 3 planned')).toBeInTheDocument()
+    expect(screen.getByText(/\+13 s vs last week/)).toBeInTheDocument()
+  })
+
+  it('importing a backup keeps this phone’s settings', async () => {
+    const user = userEvent.setup()
+    const storage = seed({ settings: { holdSound: false } })
+    render(<App storage={storage} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed: ['push-wall'], settings: { holdSound: true } } })
+    await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
+    await user.click(await screen.findByRole('button', { name: 'Replace' }))
+    expect(screen.getByRole('switch', { name: 'Sound at Hold Goal' })).toHaveAttribute('aria-checked', 'false')
   })
 })

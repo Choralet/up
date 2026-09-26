@@ -15,7 +15,8 @@ export interface GithubConfig {
 
 export interface Services {
   fetch: typeof fetch
-  saveFile(name: string, text: string): Promise<void>
+  /** true when a file was handed to the phone (false if you closed the share sheet) */
+  saveFile(name: string, text: string): Promise<boolean>
   github: {
     load(): Promise<GithubConfig | null>
     save(cfg: GithubConfig | null): Promise<void>
@@ -31,9 +32,9 @@ export const realServices: Services = {
     if (navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: name })
-        return
+        return true
       } catch (e) {
-        if ((e as Error).name === 'AbortError') return // you closed the share sheet
+        if ((e as Error).name === 'AbortError') return false // you closed the share sheet
         // share refused for another reason: fall back to a normal download below
       }
     }
@@ -43,6 +44,7 @@ export const realServices: Services = {
     a.download = name
     a.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
+    return true
   },
   github: {
     load: async () => ((await get(GITHUB_KEY)) as GithubConfig | undefined) ?? null,
@@ -59,6 +61,7 @@ export function memoryServices(over: Partial<Services> = {}): Services & { saved
     fetch: () => Promise.reject(new Error('no network in tests')),
     saveFile: async (name, text) => {
       saved.push({ name, text })
+      return true
     },
     github: {
       load: async () => cfg,

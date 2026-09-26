@@ -83,6 +83,7 @@ describe('extra exercises', () => {
   it('push day: volume = the finished variation below the focus, plus a core finisher', () => {
     const w = buildWorkout(NODES, real({ completed: ['push-wall', 'push-incline', 'push-knee'] }), 'push', SKILLS)
     expect(w.extra.map((e) => [e.node.id, e.role])).toEqual([['push-knee', 'volume'], ['core-deadbug', 'core']])
+    expect(w.extra[0].of).toBe('push-standard')
   })
   it('no volume below a branch root; legs day has no core finisher (core is main)', () => {
     expect(buildWorkout(NODES, real({}), 'pull', SKILLS).extra.map((e) => e.node.id)).toEqual(['core-deadbug'])

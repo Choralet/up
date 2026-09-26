@@ -40,7 +40,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
       <button className="row" key={`${tag ?? 'main'}:${node.id}`} onClick={() => onOpen(node.id)}>
         <span className="dot" style={{ background: node.kind === 'skill' ? 'var(--skill)' : meta.color }}>{meta.short}</span>
         <span className="t">
-          {(tag || node.kind === 'skill') && <span className="tag">{tag ?? 'SKILL'}</span>}
+          {(tag || node.kind === 'skill') && <span className={`tag${tag ? ' extra' : ''}`}>{tag ?? 'Skill'}</span>}
           <b>{node.name}</b>
           <span>{status}</span>
         </span>

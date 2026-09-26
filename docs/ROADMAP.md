@@ -28,7 +28,7 @@
 | 1 | Hollow body hang | New | Dead hang | 1. Hollow body hang 3 × 20 s → 2. Hollow body hang 3 × 30 s | Pull |
 | 2 | Frog stand | New | Knee push-up | 1. Frog stand, toes touching 3 × 10 s → 2. Frog stand 3 × 30 s | Push |
 | 3 | Hollow body hold | Link: Hollow hold | (as in the tree: Plank) | Hollow hold 3 × 20 s | Legs + Core |
-| 4 | Pseudo planche lean | New | Push-up | 1. Planche lean 3 × 15 s → 2. Deep planche lean 3 × 30 s | Push |
+| 4 | Pseudo planche lean | New | Push-up | 1. Pseudo planche lean 3 × 15 s → 2. Deep pseudo planche lean 3 × 30 s | Push |
 | 5 | Pseudo planche push-up | Link: Pseudo planche push-up | Decline push-up (the lean before it is recommended, not a lock) | Pseudo planche push-up 3 × 8 | Push |
 | 6 | Tuck front lever | Link: Front lever skill, step Tuck front lever | Archer pull-up | Tuck front lever 3 × 10 s | Pull |
 | 7 | Elbow lever | New | Frog stand | 1. Elbow lever, one leg down 3 × 10 s → 2. Elbow lever 3 × 10 s | Push |

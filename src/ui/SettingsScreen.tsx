@@ -20,8 +20,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
 
   const exportFile = async () => {
     try {
-      await services.saveFile(`up-backup-${localDate()}.json`, exportBackup(progress))
-      setSettings({ lastExportAt: Date.now() })
+      if (await services.saveFile(`up-backup-${localDate()}.json`, exportBackup(progress))) setSettings({ lastExportAt: Date.now() })
       setMessage(null)
     } catch {
       setMessage("Couldn't save the file.")
@@ -93,7 +92,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <ConfirmSheet
           title="Replace your progress?"
           message={`This backup has ${plural(pending.progress.completed.length, 'finished exercise')} and ${plural(pending.progress.logs.length, 'logged set')}. It replaces everything on this phone.`}
-          actions={[{ label: 'Replace', tone: 'danger', onClick: () => { replaceProgress(pending.progress); pending.after?.(); setPending(null); setMessage('Backup restored.') } }]}
+          actions={[{ label: 'Replace', tone: 'danger', onClick: () => { replaceProgress({ ...pending.progress, settings: progress.settings, day: progress.day }); pending.after?.(); setPending(null); setMessage('Backup restored.') } }]}
           onCancel={() => setPending(null)}
         />
       )}

@@ -28,6 +28,8 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const [holdStart, setHoldStart] = useState<number | null>(null)
   const [askClose, setAskClose] = useState(false)
   const [timerKey, setTimerKey] = useState(0)
+  // during the countdown nothing is running yet: just leave
+  const leave = () => (holdStart !== null && Date.now() >= holdStart ? setAskClose(true) : onClose())
   const [, tick] = useReducer((n: number) => n + 1, 0)
   // keep the "A hold is running" sheet's time live
   useEffect(() => {
@@ -67,7 +69,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   return (
     <div className="log" style={{ '--accent': meta.color, '--accent-strong': node.kind === 'skill' ? SKILL_STRONG : meta.strong } as CSSProperties}>
       <div className="screen">
-        <button className="close" onClick={() => (holdStart !== null ? setAskClose(true) : onClose())}>Done</button>
+        <button className="close" onClick={leave}>Done</button>
         <div className="eyebrow" style={{ color: node.kind === 'skill' ? 'var(--skill)' : undefined }}>
           {meta.label}{node.kind === 'skill' ? ' · Skill' : ''}
         </div>
@@ -116,7 +118,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         )}
         <p className="cue sub" style={{ marginTop: 16 }}>{node.cue}</p>
         {/* a second, thumb-reachable way out */}
-        <button className="cta sec" style={{ marginTop: 24 }} onClick={() => (holdStart !== null ? setAskClose(true) : onClose())}>Back to Workout</button>
+        <button className="cta sec" style={{ marginTop: 24 }} onClick={leave}>Back to Workout</button>
       </div>
 
       {askClose && holdStart !== null && (

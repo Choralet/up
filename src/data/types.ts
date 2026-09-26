@@ -34,7 +34,7 @@ export interface SkillChain {
   name: string
   /** day type whose workout trains this skill */
   day: Exclude<DayType, 'rest'>
-  /** chain made only of Roadmap moves (hidden from the My Skills library) */
+  /** chain made only of Roadmap moves (listed via the Roadmap) */
   roadmapOnly?: boolean
 }
 

@@ -19,7 +19,7 @@
   {"id": "reverse-nordic", "name": "Reverse Nordic", "day": "legs", "roadmapOnly": true},
   {"id": "straddle-sit", "name": "Straddle sit", "day": "legs", "roadmapOnly": true},
   {"id": "shoulder-stand", "name": "Shoulder stand", "day": "legs", "roadmapOnly": true},
-  {"id": "one-arm-hang", "name": "Single-arm hang", "day": "pull", "roadmapOnly": true},
+  {"id": "one-arm-hang", "name": "One-arm hang", "day": "pull", "roadmapOnly": true},
   {"id": "v-sit", "name": "V-sit", "day": "legs", "roadmapOnly": true},
   {"id": "sissy-squat", "name": "Sissy squat", "day": "legs", "roadmapOnly": true},
   {"id": "swing", "name": "Gymnastics swing", "day": "pull", "roadmapOnly": true},

@@ -1,6 +1,6 @@
 # UX improvement plan
 
-**Status: built (Plan 5, 2026-09-27)**, plus the Skills tab change the user asked for: the My Skills library is removed; Skills = **Now** (Training + Ready to Start, Replace at the 2-skill limit) | **Roadmap** (the one catalog, Ready Now section, collapsible years). Deviation: Find your level can't "step down" (answers are a draft; Back undoes).
+**Status: built (Plan 5, 2026-09-27)**, plus the Skills tab change the user asked for: the My Skills library is removed; Skills = **Now** (Training + Ready to Start, Replace at the 2-skill limit) | **Roadmap** (the one catalog, Ready Now section, collapsible years). Deviations: Find your level can't "step down" (answers are a draft; Back undoes), and has no "pick a first skill" step (Skills → Now lists every skill ready to start).
 
 From a real-user walkthrough on 2026-09-27: an agent used the app at iPhone size (dark and light, 390 and 375 wide) through first launch, a week of workouts, skills, Roadmap and Settings. Screenshots were in the session scratchpad.
 

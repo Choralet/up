@@ -91,4 +91,11 @@ describe('HoldTimer', () => {
     expect(release).toHaveBeenCalled()
     Object.defineProperty(navigator, 'wakeLock', { configurable: true, value: undefined })
   })
+
+  it('prepares the sound on the Start tap (iOS only allows audio set up during a tap)', async () => {
+    const prime = vi.spyOn(holdTone, 'prime').mockImplementation(() => {})
+    render(<HoldTimer target={5} sound onStop={() => {}} />)
+    await start()
+    expect(prime).toHaveBeenCalledTimes(1)
+  })
 })

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { WEEKDAYS } from '../data/schedule'
+import { DAY_LABEL, WEEKDAYS } from '../data/schedule'
 import type { DayType, ExerciseNode } from '../data/types'
 import { BRANCHES } from '../engine/graph'
 import { levelUp, type Progress } from '../engine/progress'
@@ -10,6 +10,22 @@ import { BRANCH_META } from './branches'
 export const onboardingTuning = { answerLockMs: 350 }
 
 const ROTATION: DayType[] = ['push', 'pull', 'legs']
+
+/**
+ * Workout type per weekday for the ticked days. Days that already had a workout keep it (a custom schedule survives);
+ * newly ticked days get the type used least so far (ties: Push, Pull, Legs + Core).
+ */
+export function assignDays(schedule: DayType[], ticked: boolean[]): DayType[] {
+  const count: Record<string, number> = { push: 0, pull: 0, legs: 0 }
+  schedule.forEach((d, i) => { if (ticked[i] && d !== 'rest') count[d]++ })
+  return schedule.map((d, i) => {
+    if (!ticked[i]) return 'rest'
+    if (d !== 'rest') return d
+    const pick = [...ROTATION].sort((a, b) => count[a] - count[b])[0]
+    count[pick]++
+    return pick
+  })
+}
 
 function question(node: ExerciseNode): string {
   return node.goal.type === 'hold'
@@ -56,8 +72,7 @@ export function Onboarding() {
   const apply = () => {
     const known = new Set(progress.completed)
     completeSteps(draft.completed.filter((id) => !known.has(id)))
-    let i = 0
-    days.forEach((on, weekday) => setDayType(weekday, on ? ROTATION[i++ % ROTATION.length] : 'rest'))
+    assignDays(progress.schedule, days).forEach((type, weekday) => setDayType(weekday, type))
     finishOnboarding()
   }
 
@@ -86,6 +101,7 @@ export function Onboarding() {
     )
   } else {
     const picked = days.filter(Boolean).length
+    const plan = assignDays(progress.schedule, days)
     body = (
       <>
         <h1 className="large">You're set</h1>
@@ -100,18 +116,20 @@ export function Onboarding() {
           })}
         </div>
         <h2 className="hdr">Training days</h2>
-        <p className="sub" style={{ margin: '12px 4px 0' }}>Up rotates Push, Pull and Legs + Core over the days you pick. You can change each day later in Settings.</p>
+        <p className="sub" style={{ margin: '12px 4px 0' }}>Each day you pick gets a workout; days you already train keep theirs. Change any day later in Settings.</p>
         <div className="group">
           {WEEKDAYS.map((name, i) => (
             <button key={name} className="check" role="checkbox" aria-checked={days[i]} aria-label={name}
               onClick={() => setDays((d) => d.map((v, j) => (j === i ? !v : v)))}>
               <span className="box" aria-hidden="true">{days[i] ? '✓' : ''}</span>
               <span className="lbl">{name}</span>
+              {days[i] && <span className="amount">{DAY_LABEL[plan[i]].replace(' Day', '')}</span>}
             </button>
           ))}
         </div>
         <button className="cta" onClick={apply}>Start Training</button>
         {picked === 0 && <p className="sub">No days picked: every day will be a rest day until you set some in Settings.</p>}
+        {picked > 0 && picked < 3 && <p className="sub">With {picked === 1 ? 'one day' : 'two days'}, some muscle groups wait until you add more days.</p>}
       </>
     )
   }

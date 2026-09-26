@@ -48,7 +48,7 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
           </button>
         ))}
         {unlocks.roadmap.length > 0 && <p className="sub">Unlocks in Roadmap: {unlocks.roadmap.join(', ')}.</p>}
-        {unlocks.mine.length > 0 && <p className="sub">Unlocks in My Skills: {unlocks.mine.join(', ')}.</p>}
+        {unlocks.mine.length > 0 && <p className="sub">Unlocks in Skills: {unlocks.mine.join(', ')}.</p>}
         <button className="cta" style={{ background: 'var(--accent-strong, var(--accent))' }} onClick={() => onPick(choice)}>
           {hasChoices ? 'Level Up' : 'Complete'}
         </button>

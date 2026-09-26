@@ -21,7 +21,7 @@
   {"id": "y1-muscle-up", "year": 1, "name": "Muscle-up", "steps": ["pull-mu-neg", "pull-mu"], "t": 783, "video": "Muscles up"},
   {"id": "y1-handstand", "year": 1, "name": "Handstand", "steps": ["push-hs-chest", "push-hs-back", "push-hs-free"], "t": 846},
   {"id": "y1-wall-hspu", "year": 1, "name": "Handstand push-up", "steps": ["push-wall-hspu"], "t": 915},
-  {"id": "y2-one-arm-hang", "year": 2, "name": "Single-arm hang", "steps": ["rm-oah-1", "rm-oah-2"], "t": 8},
+  {"id": "y2-one-arm-hang", "year": 2, "name": "One-arm hang", "steps": ["rm-oah-1", "rm-oah-2"], "t": 8, "video": "Single arm hangs"},
   {"id": "y2-hanging-leg-raise", "year": 2, "name": "Hanging leg raise", "steps": ["core-leg-raise"], "t": 26, "video": "Hanging leg raises"},
   {"id": "y2-v-sit", "year": 2, "name": "V-sit", "steps": ["rm-vsit-1", "rm-vsit-2"], "t": 90},
   {"id": "y2-sissy-squat", "year": 2, "name": "Sissy squat", "steps": ["rm-sissy-1", "rm-sissy-2"], "t": 142},

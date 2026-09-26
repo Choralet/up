@@ -42,3 +42,11 @@ describe('progressHash', () => {
     expect(progressHash(logSet(a, 'push-wall', 10, '2026-09-21', 1))).not.toBe(progressHash(a))
   })
 })
+
+describe('backup leaves out today-only state', () => {
+  it('export has no day, and warm-up ticks do not change the hash', () => {
+    const p = { ...initialProgress(NODES), day: { date: '2026-09-21', pick: null, warm: ['push:Arm circles'] } }
+    expect(JSON.parse(exportBackup(p)).progress.day).toBeUndefined()
+    expect(progressHash(p)).toBe(progressHash({ ...p, day: null }))
+  })
+})

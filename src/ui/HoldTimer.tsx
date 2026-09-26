@@ -5,13 +5,25 @@ const R = 88
 const C = 2 * Math.PI * R
 const COUNTDOWN_MS = 3000
 
-/** The soft goal tone. Replaceable in tests. */
+let audio: AudioContext | null = null
+
+/** The soft goal tone. iOS only lets a page make sound from an audio context created or resumed during a tap,
+ *  so `prime()` runs on the Start tap and `play()` reuses that context later. Replaceable in tests. */
 export const holdTone = {
-  play() {
+  prime() {
     try {
       const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
       if (!Ctx) return
-      const ctx = new Ctx()
+      audio ??= new Ctx()
+      void audio.resume().catch(() => {})
+    } catch {
+      /* no audio: silently skip */
+    }
+  },
+  play() {
+    const ctx = audio
+    if (!ctx) return
+    try {
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.type = 'sine'
@@ -22,7 +34,6 @@ export const holdTone = {
       osc.connect(gain).connect(ctx.destination)
       osc.start()
       osc.stop(ctx.currentTime + 0.32)
-      osc.onended = () => void ctx.close()
     } catch {
       /* no audio: silently skip */
     }
@@ -73,7 +84,25 @@ export function HoldTimer({ target, onStop, onRunningChange, sound = false }: Pr
     lock.current = null
   }
 
+  // the screen lock is dropped when the app goes to the background; ask again when it comes back mid-hold
+  useEffect(() => {
+    if (startsAt === null) return
+    const again = async () => {
+      if (document.visibilityState !== 'visible' || !active.current) return
+      try {
+        const l = (await navigator.wakeLock?.request('screen')) ?? null
+        if (active.current) lock.current = l
+        else void l?.release().catch(() => {})
+      } catch {
+        /* ignore */
+      }
+    }
+    document.addEventListener('visibilitychange', again)
+    return () => document.removeEventListener('visibilitychange', again)
+  }, [startsAt])
+
   const start = async () => {
+    if (sound) holdTone.prime()
     const at = Date.now() + COUNTDOWN_MS
     active.current = true
     toned.current = false
@@ -141,7 +170,7 @@ export function HoldTimer({ target, onStop, onRunningChange, sound = false }: Pr
   return (
     <div>
       {ring}
-      {logged !== null && <div className="sub" style={{ marginTop: 8 }}>Logged {formatClock(logged)}</div>}
+      {logged !== null && <div className="sub" style={{ marginTop: 8 }}>{logged >= 1 ? `Logged ${formatClock(logged)}` : 'Too short to log'}</div>}
       <button className="cta" style={{ background: 'var(--accent-strong, var(--accent))', marginTop: 20 }} onClick={start}>Start</button>
     </div>
   )

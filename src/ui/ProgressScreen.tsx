@@ -22,11 +22,11 @@ export function ProgressScreen() {
     <div className="screen">
       <h1 className="large">Progress</h1>
       <div className="card" style={{ marginTop: 12 }}>
-        <b>{trainedDays} of {planned} days this week</b>
+        <b>{trainedDays > planned ? `${trainedDays} days this week · ${planned} planned` : `${trainedDays} of ${planned} days this week`}</b>
         <ul className="weekstrip" aria-label="This week">
           {strip.map((d) => (
             <li key={d.date} className={`${d.trained ? 'trained' : d.planned !== 'rest' ? 'planned' : 'rest'}${d.isToday ? ' today' : ''}`}
-              aria-label={`${new Date(`${d.date}T12:00:00`).toLocaleDateString(undefined, { weekday: 'long' })}: ${d.trained ? 'trained' : d.planned === 'rest' ? 'rest' : `${DAY_LABEL[d.planned]}, not yet`}`}>
+              aria-label={`${new Date(`${d.date}T12:00:00`).toLocaleDateString(undefined, { weekday: 'long' })}: ${d.trained ? 'trained' : d.planned === 'rest' ? 'rest' : d.date < today ? `${DAY_LABEL[d.planned]}, missed` : `${DAY_LABEL[d.planned]}, not yet`}`}>
               <span className="wsdot" aria-hidden="true" />
               <span className="wslabel" aria-hidden="true">{'MTWTFSS'[strip.indexOf(d)]}</span>
             </li>
@@ -71,7 +71,7 @@ export function ProgressScreen() {
             <span className="t"><b>{node.name}</b><span>Goal {goalText(node.goal)}</span></span>
             <span className="sub">
               {best}{node.goal.type === 'hold' ? ' s' : ' reps'}
-              {weeklyGain(progress.logs, node.id, today) !== null && <span className="gain"> · +{weeklyGain(progress.logs, node.id, today)} vs last week</span>}
+              {weeklyGain(progress.logs, node.id, today) !== null && <span className="gain"> · +{weeklyGain(progress.logs, node.id, today)}{node.goal.type === 'hold' ? ' s' : ''} vs last week</span>}
             </span>
           </div>
         ))}
