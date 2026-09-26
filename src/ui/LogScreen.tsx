@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react'
-import { goalMet, nodeState, suggestNext, todaysValues } from '../engine/progress'
+import { goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
@@ -101,6 +101,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         <LevelUpSheet
           node={node}
           suggestions={suggestNext(nodes, progress, nodeId)}
+          unlockedSkills={newlyUnlockedSkills(nodes, progress, nodeId)}
           onDismiss={() => setShowLevelUp(false)}
           onPick={(toId) => { levelUp(nodeId, toId); setShowLevelUp(false); onClose() }}
         />

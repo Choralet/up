@@ -280,3 +280,79 @@ describe('Skill Tree pop-ups', () => {
     expect(dialog.closest('.tree-screen')).toBeNull()
   })
 })
+
+describe('Skills tab', () => {
+  const pikeDone = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike']
+  const openSkills = async (extra: Record<string, unknown>) => {
+    const user = userEvent.setup()
+    render(<App storage={seed(extra)} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    return user
+  }
+
+  it('offers Start on an available skill and says what a locked skill needs', async () => {
+    await openSkills({ completed: pikeDone })
+    expect(screen.getByRole('button', { name: 'Start Handstand' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Start Planche' })).toBeDisabled()
+    expect(screen.getByText(/Needs: Pseudo planche push-up/)).toBeInTheDocument()
+  })
+
+  it("starting a skill makes it active and puts it in that day's workout", async () => {
+    const user = await openSkills({ completed: pikeDone })
+    await user.click(screen.getByRole('button', { name: 'Start Handstand' }))
+    expect(screen.getByRole('button', { name: 'Stop Handstand' })).toBeInTheDocument()
+    expect(screen.getByText(/Chest-to-wall handstand hold/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    expect(await screen.findByRole('button', { name: /Chest-to-wall handstand hold/ })).toBeInTheDocument()
+  })
+
+  it('a third skill is refused until one is stopped', async () => {
+    const user = await openSkills({ completed: [...pikeDone, 'push-diamond', 'push-archer', 'push-elevated-pike'] })
+    await user.click(screen.getByRole('button', { name: 'Start Handstand' }))
+    await user.click(screen.getByRole('button', { name: 'Start One-arm push-up' }))
+    expect(screen.getByRole('button', { name: 'Start Handstand push-up' })).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: 'Stop Handstand' }))
+    expect(screen.getByRole('button', { name: 'Start Handstand push-up' })).toBeEnabled()
+  })
+})
+
+describe('Node sheet and level-up for skills and goals', () => {
+  it('a skill step in the tree offers Train This Skill, which starts the chain', async () => {
+    const user = userEvent.setup()
+    const pikeDone = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike']
+    render(<App storage={seed({ completed: pikeDone })} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, available' }))
+    await user.click(screen.getByRole('button', { name: 'Train This Skill' }))
+    expect(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, focus' })).toBeInTheDocument()
+  })
+
+  it('lets you edit a goal, see it on Today, and reset it', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Wall push-up, focus' }))
+    await user.click(screen.getByRole('button', { name: 'Edit Goal' }))
+    await user.click(screen.getByRole('button', { name: 'Increase target' }))
+    await user.click(screen.getByRole('button', { name: 'Increase target' }))
+    await user.click(screen.getByRole('button', { name: 'Save Goal' }))
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    expect(await screen.findByRole('button', { name: /Wall push-up/ })).toHaveTextContent('3 × 12')
+    await user.click(screen.getByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Wall push-up, focus' }))
+    await user.click(screen.getByRole('button', { name: 'Edit Goal' }))
+    await user.click(screen.getByRole('button', { name: 'Reset to Default' }))
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    expect(await screen.findByRole('button', { name: /Wall push-up/ })).toHaveTextContent('3 × 10')
+  })
+
+  it('the level-up sheet points at skills a new exercise unlocks', async () => {
+    const user = userEvent.setup()
+    const done = ['push-wall', 'push-incline', 'push-knee', 'push-standard']
+    render(<App storage={seed({ completed: done, focus: { push: 'push-pike' } })} />)
+    await user.click(await screen.findByRole('button', { name: /Pike push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' }) // the stepper starts at the goal, 8 reps
+    await user.click(log); await user.click(log); await user.click(log)
+    expect(await screen.findByText(/Unlocks a skill: Chest-to-wall handstand hold/)).toBeInTheDocument()
+  })
+})

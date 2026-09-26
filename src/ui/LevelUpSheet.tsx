@@ -7,11 +7,12 @@ import { BRANCH_META } from './branches'
 interface Props {
   node: ExerciseNode
   suggestions: Suggestion[]
+  unlockedSkills?: ExerciseNode[]
   onPick: (toId: string | null) => void
   onDismiss: () => void
 }
 
-export function LevelUpSheet({ node, suggestions, onPick, onDismiss }: Props) {
+export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, onDismiss }: Props) {
   const [choice, setChoice] = useState<string | null>(suggestions[0]?.node.id ?? null)
   const hasChoices = suggestions.length > 0
 
@@ -31,6 +32,9 @@ export function LevelUpSheet({ node, suggestions, onPick, onDismiss }: Props) {
             {i === 0 && <em>Suggested</em>}
           </button>
         ))}
+        {unlockedSkills.length > 0 && (
+          <p className="sub">Unlocks a skill: {unlockedSkills.map((n) => n.name).join(', ')}. Start it in the Skills tab.</p>
+        )}
         <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => onPick(choice)}>
           {hasChoices ? 'Set Focus' : 'Complete'}
         </button>

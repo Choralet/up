@@ -1,16 +1,20 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import type { ExerciseNode } from '../data/types'
 import { nodeState } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
+import { GoalEditor } from './GoalEditor'
 
 const LABEL = { locked: 'Locked', available: 'Unlocked', focus: 'Focus', completed: 'Completed' } as const
 
 export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClose: () => void; onLog: (id: string) => void }) {
-  const { progress, byId, setFocus } = useProgress()
+  const { progress, byId, defaults, setFocus, activateSkill, setGoal } = useProgress()
+  const [editing, setEditing] = useState(false)
   const state = nodeState(node, progress)
   const meta = BRANCH_META[node.branch]
+  const chainActive = node.skill ? node.skill in progress.skillFocus : false
+  const slotsFull = Object.keys(progress.skillFocus).length >= 2
 
   return (
     <>
@@ -32,13 +36,34 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
           )
         })}
         <p className="cue">{node.cue}</p>
-        {state === 'available' && (
-          <button className="cta" onClick={() => { setFocus(node.id); onClose() }}>Make This My Focus</button>
+        {editing ? (
+          <GoalEditor
+            node={node}
+            def={defaults.get(node.id)!}
+            onSave={(g) => { setGoal(node.id, g); setEditing(false) }}
+            onReset={() => { setGoal(node.id, null); setEditing(false) }}
+            onCancel={() => setEditing(false)}
+          />
+        ) : (
+          <>
+            {state === 'available' && !node.skill && (
+              <button className="cta" onClick={() => { setFocus(node.id); onClose() }}>Make This My Focus</button>
+            )}
+            {state === 'available' && node.skill && !chainActive && (
+              <button className="cta" disabled={slotsFull} onClick={() => { activateSkill(node.skill!); onClose() }}>Train This Skill</button>
+            )}
+            {state === 'available' && node.skill && !chainActive && slotsFull && (
+              <p className="sub">Two skills are already active. Stop one in the Skills tab first.</p>
+            )}
+            {state === 'focus' && (
+              <button className="cta" onClick={() => { onLog(node.id); onClose() }}>Log This Exercise</button>
+            )}
+            {state !== 'completed' && (
+              <button className="cta sec" onClick={() => setEditing(true)}>Edit Goal</button>
+            )}
+            <button className="cta sec" onClick={onClose}>Close</button>
+          </>
         )}
-        {state === 'focus' && (
-          <button className="cta" onClick={() => { onLog(node.id); onClose() }}>Log This Exercise</button>
-        )}
-        <button className="cta sec" onClick={onClose}>Close</button>
       </div>
     </>
   )
