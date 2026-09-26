@@ -267,7 +267,7 @@ describe('skill state and level-up', () => {
     expect(p.completed).toContain('s1')
     expect(p.skillFocus.sk).toBe('s2')
     p = levelUp(g2, levelUp(g2, p, 's2', null), 's3', null)
-    expect(p.skillFocus.sk).toBeNull()
+    expect(p.skillFocus).not.toHaveProperty('sk') // a finished chain frees its slot
     expect(p.completed).toEqual(expect.arrayContaining(['s1', 's2', 's3']))
   })
   it('does nothing when the skill step is not the chain focus', () => {
@@ -356,5 +356,31 @@ describe('sanitizeProgress with Progress v2 fields', () => {
       goalOverrides: { a: { sets: 4, target: 12 }, b: { sets: 0, target: 5 }, ghost: { sets: 3, target: 10 }, s1: 'x' },
     })
     expect(p.goalOverrides).toEqual({ a: { sets: 4, target: 12 } })
+  })
+})
+
+describe('finished skills free their slot; the level-up hint ignores the chain you are on', () => {
+  it('a finished chain leaves the active list so another skill can start', () => {
+    let p = activateSkill(g2, afterA(), 'k2')
+    p = activateSkill(g2, p, 'sk')
+    expect(activateSkill(g2, p, 'k3')).toBe(p) // both slots used
+    p = levelUp(g2, p, 'k2', null) // k2 has a single step, so it is finished
+    expect(Object.keys(p.skillFocus)).toEqual(['sk'])
+    expect(Object.keys(activateSkill(g2, p, 'k3').skillFocus)).toEqual(['sk', 'k3'])
+  })
+  it('a chain whose next step is only blocked by a strength exercise stays active', () => {
+    const g3 = [N('a'), N('x', ['a']), S('c1', ['a'], 'ck'), S('c2', ['c1', 'x'], 'ck')]
+    const p: Progress = { ...initialProgress(g3), completed: ['a'], focus: { ...initialProgress(g3).focus, push: 'x' } }
+    const on = activateSkill(g3, p, 'ck')
+    const after = levelUp(g3, on, 'c1', null)
+    expect(after.skillFocus).toEqual({ ck: null })
+  })
+  it('newlyUnlockedSkills leaves out the next step of the chain being completed', () => {
+    const p: Progress = { ...afterA(), skillFocus: { sk: 's1' } }
+    expect(newlyUnlockedSkills(g2, p, 's1')).toEqual([])
+  })
+  it('sanitize drops an active chain whose steps are all done', () => {
+    const p = sanitizeProgress(g2, { completed: ['a', 's1', 's2', 's3'], skillFocus: { sk: 's3', k2: 'k2' } })
+    expect(p.skillFocus).toEqual({ k2: 'k2' })
   })
 })

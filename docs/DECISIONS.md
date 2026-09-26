@@ -63,3 +63,13 @@ Source of truth for choices made about the app. Update after each answer.
 Decisions taken while building, all reversible: skill steps keep the graph's hard requirements (a locked step cannot be trained); a week counts toward the streak with 2 logged days (or fewer if fewer are planned); Find your level only asks about strength exercises and never completes a skill step; existing users skip onboarding (migration marks a used app as onboarded); "Train anyway" on a rest day is available for Push, Pull or Legs + Core.
 
 Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for singular; a round-cap dot shows on the timer ring at 0:00.
+
+## Known minors deferred from the Plan 2 final review (fix in Plan 3)
+
+- A Plan 1 user who was training a skill as their branch focus loses it in migration (chain is not added to the active skills)
+- Today keeps "Train anyway" and warm-up ticks across midnight; reset them when the date changes
+- The streak explanation always says 2 days even when the rule is 1 day (0 or 1 planned days)
+- A quick double tap on Yes in Find your level answers two questions; add a short lockout or a Back step. There is no way to un-complete an exercise
+- The Skills Start button is disabled without explaining why when both slots are full
+- One empty frame in onboarding when a branch is already complete
+- "0 of 1 steps" wording, and the round-cap dot on the timer ring at 0:00

@@ -100,9 +100,10 @@ export function suggestNext(nodes: ExerciseNode[], progress: Progress, fromId: s
 
 /** Skill steps that completing `fromId` newly opens (so the app can point at the Skills tab). */
 export function newlyUnlockedSkills(nodes: ExerciseNode[], progress: Progress, fromId: string): ExerciseNode[] {
+  const own = indexNodes(nodes).get(fromId)?.skill // the next step of the chain you are already on is not "a new skill"
   const before = new Set(progress.completed)
   const after = new Set([...progress.completed, fromId])
-  return nodes.filter((n) => n.skill && !after.has(n.id) && isUnlocked(n, after) && !isUnlocked(n, before))
+  return nodes.filter((n) => n.skill && n.skill !== own && !after.has(n.id) && isUnlocked(n, after) && !isUnlocked(n, before))
 }
 
 /** First step of a chain that is not done and whose requirements are done, or null. */
@@ -122,6 +123,12 @@ function levelUpSkill(nodes: ExerciseNode[], progress: Progress, from: ExerciseN
   const done = new Set(completed)
   const to = toId ? indexNodes(nodes).get(toId) : undefined
   const valid = !!to && to.skill === chain && !done.has(to.id) && isUnlocked(to, done)
+  // a chain whose steps are all done leaves the active list, freeing its slot
+  if (nodes.filter((n) => n.skill === chain).every((n) => done.has(n.id))) {
+    const skillFocus = { ...progress.skillFocus }
+    delete skillFocus[chain]
+    return { ...progress, completed, skillFocus }
+  }
   return { ...progress, completed, skillFocus: { ...progress.skillFocus, [chain]: valid ? to!.id : firstStep(nodes, done, chain) } }
 }
 
@@ -233,6 +240,7 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
   for (const chain of Object.keys(rawSkill)) {
     if (Object.keys(skillFocus).length >= MAX_ACTIVE_SKILLS) break
     if (!nodes.some((n) => n.skill === chain)) continue
+    if (nodes.filter((n) => n.skill === chain).every((n) => done.has(n.id))) continue // finished chains are not active
     const stored = typeof rawSkill[chain] === 'string' ? byId.get(rawSkill[chain] as string) : undefined
     const ok = !!stored && stored.skill === chain && !done.has(stored.id) && isUnlocked(stored, done)
     skillFocus[chain] = ok ? stored!.id : firstStep(nodes, done, chain)
