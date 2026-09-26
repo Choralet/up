@@ -4,10 +4,11 @@ import { formatClock } from '../lib/time'
 const R = 88
 const C = 2 * Math.PI * R
 
-export function HoldTimer({ target, onStop }: { target: number; onStop: (seconds: number) => void }) {
+export function HoldTimer({ target, onStop, onRunningChange }: { target: number; onStop: (seconds: number) => void; onRunningChange?: (startedAt: number | null) => void }) {
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const lock = useRef<WakeLockSentinel | null>(null)
+  const running = useRef(false)
 
   useEffect(() => {
     if (startedAt === null) return
@@ -21,13 +22,19 @@ export function HoldTimer({ target, onStop }: { target: number; onStop: (seconds
     return () => cancelAnimationFrame(raf)
   }, [startedAt])
 
-  useEffect(() => () => { void lock.current?.release().catch(() => {}) }, [])
+  useEffect(() => () => { running.current = false; void lock.current?.release().catch(() => {}) }, [])
 
   const start = async () => {
+    const now = Date.now()
+    running.current = true
     setElapsed(0)
-    setStartedAt(Date.now())
+    setStartedAt(now)
+    onRunningChange?.(now)
     try {
-      lock.current = (await navigator.wakeLock?.request('screen')) ?? null
+      const l = (await navigator.wakeLock?.request('screen')) ?? null
+      // the hold may have stopped (or the screen closed) while the lock was being granted
+      if (running.current) lock.current = l
+      else void l?.release().catch(() => {})
     } catch {
       /* wake lock unsupported or denied: the timer still works */
     }
@@ -36,7 +43,9 @@ export function HoldTimer({ target, onStop }: { target: number; onStop: (seconds
   const stop = () => {
     if (startedAt === null) return
     const seconds = Math.floor((Date.now() - startedAt) / 1000)
+    running.current = false
     setStartedAt(null)
+    onRunningChange?.(null)
     void lock.current?.release().catch(() => {})
     lock.current = null
     onStop(seconds)
@@ -47,8 +56,10 @@ export function HoldTimer({ target, onStop }: { target: number; onStop: (seconds
     <div>
       <svg className="ring" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label={`${formatClock(elapsed)} of ${target} seconds`} style={{ margin: '14px auto 0', display: 'block' }}>
         <circle cx="100" cy="100" r={R} fill="none" stroke="var(--fill)" strokeWidth="14" />
-        <circle cx="100" cy="100" r={R} fill="none" stroke="var(--accent)" strokeWidth="14" strokeLinecap="round"
-          strokeDasharray={C} strokeDashoffset={C * (1 - progress)} transform="rotate(-90 100 100)" />
+        {progress > 0 && (
+          <circle cx="100" cy="100" r={R} fill="none" stroke="var(--accent)" strokeWidth="14" strokeLinecap="round"
+            strokeDasharray={C} strokeDashoffset={C * (1 - progress)} transform="rotate(-90 100 100)" />
+        )}
         <text x="100" y="112" textAnchor="middle" fontSize="52" fontWeight="700" fill="var(--label)" style={{ fontVariantNumeric: 'tabular-nums' }}>{formatClock(elapsed)}</text>
         <text x="100" y="138" textAnchor="middle" fontSize="13" fill="var(--label2)">of {target} s</text>
       </svg>

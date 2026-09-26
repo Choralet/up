@@ -666,3 +666,35 @@ describe('A new day while the app is open', () => {
     expect(screen.queryByRole('button', { name: /Back to/ })).not.toBeInTheDocument()
   })
 })
+
+describe('Done while a hold is running', () => {
+  const startHang = async () => {
+    vi.setSystemTime(WEDNESDAY)
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 31_000))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    return user
+  }
+
+  it('asks, and "Log It" saves the hold', async () => {
+    const user = await startHang()
+    expect(screen.getByRole('dialog', { name: 'A hold is running' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Log It' }))
+    expect(await screen.findByText(/1 of 3 sets today/)).toBeInTheDocument()
+  })
+
+  it('"Discard" closes without saving', async () => {
+    const user = await startHang()
+    await user.click(screen.getByRole('button', { name: 'Discard' }))
+    expect(await screen.findByText(/0 of 3 sets today/)).toBeInTheDocument()
+  })
+
+  it('"Cancel" keeps you in the hold', async () => {
+    const user = await startHang()
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.getByRole('button', { name: 'Stop and Log' })).toBeInTheDocument()
+  })
+})

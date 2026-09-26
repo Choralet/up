@@ -1,9 +1,10 @@
 import { useState, type CSSProperties } from 'react'
 import { goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
-import { localDate } from '../lib/time'
+import { formatClock, localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
+import { ConfirmSheet } from './ConfirmSheet'
 import { DemoButton } from './DemoButton'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
@@ -17,6 +18,8 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const [reps, setReps] = useState(last ?? node.goal.target)
   const [showLevelUp, setShowLevelUp] = useState(false)
   const [editing, setEditing] = useState<number | null>(null)
+  const [holdStart, setHoldStart] = useState<number | null>(null)
+  const [askClose, setAskClose] = useState(false)
 
   const today = localDate()
   const entries = progress.logs.flatMap((l, i) => (l.nodeId === nodeId && l.date === today ? [{ value: l.value, index: i }] : []))
@@ -40,7 +43,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   return (
     <div className="log" style={{ '--accent': meta.color } as CSSProperties}>
       <div className="screen">
-        <button className="close" onClick={onClose}>Done</button>
+        <button className="close" onClick={() => (holdStart !== null ? setAskClose(true) : onClose())}>Done</button>
         <div className="eyebrow" style={{ color: node.kind === 'skill' ? 'var(--skill)' : undefined }}>
           {meta.label}{node.kind === 'skill' ? ' · Skill' : ''}
         </div>
@@ -65,7 +68,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
             <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => record(reps)}>Log Set</button>
           </>
         ) : (
-          <HoldTimer target={node.goal.target} onStop={(s) => record(s)} />
+          <HoldTimer target={node.goal.target} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
         )}
 
         {ready && !showLevelUp && (
@@ -86,6 +89,18 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         )}
         <p className="cue sub" style={{ marginTop: 16 }}>{node.cue}</p>
       </div>
+
+      {askClose && holdStart !== null && (
+        <ConfirmSheet
+          title="A hold is running"
+          message={`${formatClock((Date.now() - holdStart) / 1000)} so far. Log it before you leave?`}
+          actions={[
+            { label: 'Log It', tone: 'primary', onClick: () => { const s = Math.floor((Date.now() - holdStart) / 1000); if (s >= 1) log(nodeId, s); onClose() } },
+            { label: 'Discard', tone: 'danger', onClick: onClose },
+          ]}
+          onCancel={() => setAskClose(false)}
+        />
+      )}
 
       {editN >= 0 && (
         <SetSheet
