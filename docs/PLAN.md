@@ -146,9 +146,9 @@ See [DEMOS.md](DEMOS.md). Short version: good GIF sources exist, but the ones wi
 | 3 | Data (node graph JSON) + level-up logic, tested | **Done** |
 | 4 | Today, Log (reps + hold timer), Skill Tree, Level-up screens | **Done** (Plan 1) |
 | 5 | Skills, Find-your-level onboarding, customizing days/skills/goals | **Done** (Plan 2) |
-| 6 | Backup: export/import, then GitHub backup | Data safe |
-| 7 | How-to demos (per your choice) | Optional button |
-| 8 | Polish (dark mode, accessibility, offline) | Apple-feeling |
+| 6 | Backup: export/import, then GitHub backup | **Done** (Plan 3) |
+| 7 | How-to demos (per your choice) | **Done** (Plan 3) |
+| 8 | Polish (dark mode, accessibility, offline) | **Done** (Plan 3) |
 
 Apple Health and widgets are dropped (web app). 
 

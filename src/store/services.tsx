@@ -27,10 +27,11 @@ export const realServices: Services = {
     if (navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: name })
+        return
       } catch (e) {
-        if ((e as Error).name !== 'AbortError') throw e
+        if ((e as Error).name === 'AbortError') return // you closed the share sheet
+        // share refused for another reason: fall back to a normal download below
       }
-      return
     }
     const url = URL.createObjectURL(file)
     const a = document.createElement('a')

@@ -73,3 +73,10 @@ Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for
 - The Skills Start button is disabled without explaining why when both slots are full
 - One empty frame in onboarding when a branch is already complete
 - "0 of 1 steps" wording, and the round-cap dot on the timer ring at 0:00
+
+## Plan 3 built (2026-09-26)
+
+- Backup: file export/import (import replaces everything after an in-app confirmation) and automatic GitHub backup to the private repo `Choralet/up-data` whenever the app goes to the background and progress changed; manual Back Up Now / Restore / Disconnect in Settings. The token is typed by the user, stored only on the phone (IndexedDB key `up.github`), sent only to api.github.com, never included in backups. Guide: `docs/BACKUP.md`.
+- Demos: 19 exercises have a How-to GIF, hotlinked from a pinned commit of the dataset via jsDelivr, cached by the service worker after first view, with the "© Gym visual — gymvisual.com" credit. Inexact matches (for example the full front lever for the tuck version) were left out on purpose.
+- Fixed from both review lists: fractional stored values, Plan 1 skill focus migration, midnight/stale day (incl. Train anyway and warm-up), wake-lock race, Done during a running hold asks, ring dot at 0:00, streak rule text, step/steps wording, Skills full-slot explanation, onboarding double tap and empty frame, tree state names, rep count announced, inert background behind overlays, readable status bar in light mode. Export falls back to a download when the share sheet is refused.
+- Still unverified without a device: behaviour inside the iOS home-screen app (IndexedDB persistence, wake lock, share sheet).

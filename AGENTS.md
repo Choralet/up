@@ -8,18 +8,18 @@ Instructions for any AI coding agent working in this repo. `CLAUDE.md` imports t
 
 ## Current status
 
-**Plans 1 and 2 are built and deployed** at https://choralet.github.io/up/ (public repo `Choralet/up`). It has: the 45-node exercise graph, pure rules engine, branching skill tree, per-day workouts (default Mon Push / Wed Pull / Fri Legs+Core, editable in Settings) with warm-up, skill block and strength, up to 2 active skills with the hold timer for hold steps, Find your level onboarding, goal editing, Progress tab (rings, weekly streak, bests), fix/remove a logged set, IndexedDB storage with save retry, PWA/offline. Saves from Plan 1 migrate automatically (`sanitizeProgress`).
+**Plans 1, 2 and 3 are built and deployed** at https://choralet.github.io/up/ (public repo `Choralet/up`). It has: the exercise graph and skill tree, per-day workouts (default Mon/Wed/Fri, editable), skills with the hold timer, Find your level, goal editing, Progress tab, fix/remove a set, backup file export/import, automatic backup to the private repo `Choralet/up-data` (setup in `docs/BACKUP.md`; the user makes the token, never the agent), How-to demos for 19 exercises (hotlinked GIFs, `src/data/demos.ts`), midnight handling, and accessibility polish.
 
-**Next: Plan 3** (backup export/import, GitHub backup, How-to demo button, accessibility polish, stale-day/midnight handling, and the deferred minors listed in `docs/DECISIONS.md`). Brainstorm open questions first, then write the plan with `superpowers:writing-plans`.
+**Next:** whatever the user reports from real iPhone use. Brainstorm before any new feature; fix bugs test-first.
 
 Read these first, in order:
 1. `docs/DECISIONS.md`: user's answers (source of truth; update it)
 2. `docs/PLAN.md`: product plan and milestones
-3. `docs/superpowers/plans/2026-09-26-up-plan-1-foundation-and-core-loop.md` and `...-plan-2-workouts-skills-placement.md`: what was built (file maps inside)
+3. `docs/superpowers/plans/` (Plans 1-3): what was built, with file maps
 4. `docs/SKILLS.md`, `docs/RESEARCH.md`, `docs/UI-REFERENCES.md`, `docs/DEMOS.md`
 5. `docs/mockups/index.html`: design mockups
 
-Code map: `src/data` (types, nodes.json graph, skills.json, schedule.ts), `src/engine` (progress, workout, skills, stats, layout, graph: all pure), `src/lib` (time, format), `src/store` (storage, context), `src/ui` (screens). Commands: `npm test`, `npm run build`, `npm run dev`. Deploys on push to `main` via GitHub Actions. Tests pin the clock to a Monday (see `src/App.test.tsx`).
+Code map: `src/data` (types, nodes.json graph, skills.json, schedule.ts), `src/engine` (progress, workout, skills, stats, layout, graph: all pure), `src/lib` (time, format), `src/store` (storage, context, services, github), `src/ui` (screens). Commands: `npm test`, `npm run build`, `npm run dev`. Deploys on push to `main` via GitHub Actions. Tests pin the clock to a Monday (see `src/App.test.tsx`).
 
 ## Reminders
 
