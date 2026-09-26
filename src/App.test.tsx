@@ -189,3 +189,15 @@ describe('Skill Tree layout', () => {
     expect(tree.closest('.tree-scroll')).not.toBeNull()
   })
 })
+
+describe('Skill Tree pop-ups', () => {
+  it('renders the node sheet outside the fixed tree container so the tab bar cannot cover it', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Wall push-up, focus' }))
+    const dialog = screen.getByRole('dialog', { name: 'Wall push-up' })
+    // a position:fixed ancestor traps the sheet's z-index below the tab bar
+    expect(dialog.closest('.tree-screen')).toBeNull()
+  })
+})

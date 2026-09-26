@@ -19,27 +19,30 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
   const node = selected ? byId.get(selected) : undefined
 
   return (
-    <div className="tree-screen">
-      <div className="tree-head">
-        <h1 className="navt">Skill Tree</h1>
-        <div className="seg" role="tablist" aria-label="Branch">
-          {BRANCHES.map((b) => (
-            <button
-              key={b}
-              role="tab"
-              aria-selected={b === branch}
-              className={b === branch ? 'on' : ''}
-              onClick={() => { setBranch(b); setSelected(null) }}
-            >
-              {BRANCH_META[b].label}
-            </button>
-          ))}
+    <>
+      <div className="tree-screen">
+        <div className="tree-head">
+          <h1 className="navt">Skill Tree</h1>
+          <div className="seg" role="tablist" aria-label="Branch">
+            {BRANCHES.map((b) => (
+              <button
+                key={b}
+                role="tab"
+                aria-selected={b === branch}
+                className={b === branch ? 'on' : ''}
+                onClick={() => { setBranch(b); setSelected(null) }}
+              >
+                {BRANCH_META[b].label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="tree-scroll" ref={scroller}>
+          <TreeView branch={branch} selectedId={selected} onSelect={setSelected} />
         </div>
       </div>
-      <div className="tree-scroll" ref={scroller}>
-        <TreeView branch={branch} selectedId={selected} onSelect={setSelected} />
-      </div>
+      {/* outside the fixed container, otherwise the tab bar paints over the sheet */}
       {node && <NodeSheet node={node} onClose={() => setSelected(null)} onLog={onLog} />}
-    </div>
+    </>
   )
 }
