@@ -13,6 +13,7 @@ import { useProgress } from '../store/ProgressContext'
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
   const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings } = useProgress()
   const services = useServices()
+  const [askRedo, setAskRedo] = useState(false)
   const [pending, setPending] = useState<{ progress: Progress; after?: () => void } | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -76,8 +77,16 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <p className="sub">Your progress lives on this phone. Export a file now and then, or connect GitHub below.</p>
         <GithubSection onRestore={(p, after) => setPending({ progress: p, after })} />
         <div className="hdr">Level</div>
-        <button className="cta sec" onClick={() => { restartOnboarding(); onClose() }}>Find your level again</button>
+        <button className="cta sec" onClick={() => setAskRedo(true)}>Find your level again</button>
       </div>
+      {askRedo && (
+        <ConfirmSheet
+          title="Find your level again?"
+          message="Your progress stays. The questions can only move you up, and nothing changes until you finish."
+          actions={[{ label: 'Start', tone: 'primary', onClick: () => { setAskRedo(false); restartOnboarding(); onClose() } }]}
+          onCancel={() => setAskRedo(false)}
+        />
+      )}
       {pending && (
         <ConfirmSheet
           title="Replace your progress?"

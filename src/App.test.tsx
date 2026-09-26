@@ -380,11 +380,13 @@ describe('Find your level', () => {
     render(<App storage={memoryStorage()} />)
     expect(await screen.findByRole('heading', { name: 'Find your level' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    expect(screen.getByText(/Can you do 3 × 10 clean/)).toHaveTextContent('Wall push-up')
+    expect(screen.getByRole('heading', { name: 'Wall push-up' })).toBeInTheDocument()
+    expect(screen.getByText('Can you do 3 sets of 10 clean reps?')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Yes' }))
-    expect(screen.getByText(/Can you do 3 × 10 clean/)).toHaveTextContent('Incline push-up')
+    expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Not yet' })) // push done
-    expect(screen.getByText(/Can you do 3 × 30 s clean/)).toHaveTextContent('Dead hang')
+    expect(screen.getByRole('heading', { name: 'Dead hang' })).toBeInTheDocument()
+    expect(screen.getByText('Can you hold it for 30 s, 3 times?')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Not yet' })) // pull done
     await user.click(screen.getByRole('button', { name: 'Not yet' })) // legs done
     await user.click(screen.getByRole('button', { name: 'Not yet' })) // core done
@@ -458,6 +460,7 @@ describe('Settings', () => {
   it('lets you redo Find your level', async () => {
     const user = await openSettings()
     await user.click(screen.getByRole('button', { name: 'Find your level again' }))
+    await user.click(within(screen.getByRole('dialog', { name: 'Find your level again?' })).getByRole('button', { name: 'Start' }))
     expect(await screen.findByRole('heading', { name: 'Find your level' })).toBeInTheDocument()
   })
 })
@@ -724,7 +727,7 @@ describe('Plan 3 accessibility and taps', () => {
     render(<App storage={memoryStorage()} />)
     await user.click(await screen.findByRole('button', { name: 'Start' }))
     await user.dblClick(screen.getByRole('button', { name: 'Yes' }))
-    expect(screen.getByText(/Can you do 3 × 10 clean/)).toHaveTextContent('Incline push-up')
+    expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
   })
 
   it('tree nodes say "unlocked" and mark skills', async () => {
@@ -1222,5 +1225,50 @@ describe('Plan 5 · Phase 4b Progress', () => {
     const sessions = screen.getByRole('list', { name: 'Recent sessions' })
     expect(within(sessions).getAllByRole('listitem')).toHaveLength(3)
     expect(screen.getByText(/\+2 vs last week/)).toBeInTheDocument()
+  })
+})
+
+describe('Plan 5 · Phase 4c Find your level', () => {
+  it('Back undoes the last answer', async () => {
+    const user = userEvent.setup()
+    const store = memoryStorage()
+    render(<App storage={store} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    await user.click(screen.getByRole('button', { name: 'Yes' }))
+    expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    expect(screen.getByRole('heading', { name: 'Wall push-up' })).toBeInTheDocument()
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not yet' }))
+    await user.click(screen.getByRole('button', { name: 'Start Training' }))
+    expect(((await store.load()) as { completed: string[] }).completed).toEqual([])
+  })
+
+  it('Close leaves a re-run without changing anything', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('button', { name: 'Find your level again' }))
+    await user.click(within(screen.getByRole('dialog', { name: 'Find your level again?' })).getByRole('button', { name: 'Start' }))
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    await user.click(screen.getByRole('button', { name: 'Yes' })) // Incline push-up
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Knee push-up/ })).not.toBeInTheDocument()
+  })
+
+  it('the last step picks training days and assigns Push, Pull, Legs + Core in order', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not yet' }))
+    expect(screen.getByRole('checkbox', { name: 'Monday' })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('checkbox', { name: 'Tuesday' })).toHaveAttribute('aria-checked', 'false')
+    await user.click(screen.getByRole('checkbox', { name: 'Tuesday' }))
+    await user.click(screen.getByRole('button', { name: 'Start Training' }))
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('push')
+    expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('pull')
+    expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('legs')
+    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('push')
   })
 })

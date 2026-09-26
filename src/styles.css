@@ -210,3 +210,5 @@ a.howto { text-decoration: none; }
 .weekstrip li.today .wslabel { color: var(--label); font-weight: 700; }
 .wslabel { font-size: 11px; color: var(--label2); }
 .gain { color: var(--legs); font-weight: 600; }
+.obnav { display: flex; justify-content: space-between; }
+.obnav .close { margin: 0 0 8px; }
