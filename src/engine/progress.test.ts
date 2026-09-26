@@ -3,7 +3,7 @@ import {
   activateSkill, applyOverrides, completeSteps, deactivateSkill, editSet, finishOnboarding, firstStep,
   goalMet, initialProgress, isUnlocked, levelUp, logSet, newlyUnlockedSkills, nodeState,
   removeSet, restartOnboarding, sanitizeProgress, setDayType, setFocus, setGoalOverride,
-  suggestNext, todaysValues,
+  suggestNext, todaysValues, setDayPick, toggleWarm, todayState,
   type Progress,
 } from './progress'
 import { DEFAULT_SCHEDULE } from '../data/schedule'
@@ -424,5 +424,32 @@ describe('completeSteps ("I can already do this")', () => {
   it('returns the same object when nothing changes', () => {
     const p = afterA()
     expect(completeSteps(g2, p, ['a'])).toBe(p)
+  })
+})
+
+describe('today state (warm-up ticks and Train Anyway)', () => {
+  it('stores a pick and ticks for a date and forgets them on another date', () => {
+    let p = setDayPick(initialProgress(g2), '2026-09-26', 'pull')
+    p = toggleWarm(p, '2026-09-26', 'pull:Arm circles')
+    expect(todayState(p, '2026-09-26')).toEqual({ pick: 'pull', warm: ['pull:Arm circles'] })
+    expect(todayState(p, '2026-09-27')).toEqual({ pick: null, warm: [] })
+    p = toggleWarm(p, '2026-09-26', 'pull:Arm circles')
+    expect(todayState(p, '2026-09-26').warm).toEqual([])
+  })
+  it('a new date starts fresh when written', () => {
+    const p = toggleWarm(setDayPick(initialProgress(g2), '2026-09-26', 'pull'), '2026-09-27', 'push:Wrist circles')
+    expect(todayState(p, '2026-09-27')).toEqual({ pick: null, warm: ['push:Wrist circles'] })
+  })
+  it('changing the schedule clears the pick', () => {
+    const p = setDayType(setDayPick(initialProgress(g2), '2026-09-26', 'pull'), 5, 'legs')
+    expect(todayState(p, '2026-09-26').pick).toBeNull()
+  })
+  it('sanitize keeps a well-formed day and settings, and defaults the rest', () => {
+    const ok = sanitizeProgress(g2, { day: { date: '2026-09-26', pick: 'push', warm: ['a'] }, settings: { holdSound: false, lastExportAt: 5 } })
+    expect(ok.day).toEqual({ date: '2026-09-26', pick: 'push', warm: ['a'] })
+    expect(ok.settings).toEqual({ holdSound: false, lastExportAt: 5 })
+    const bad = sanitizeProgress(g2, { day: { date: 3, pick: 'yoga' }, settings: 'x' })
+    expect(bad.day).toBeNull()
+    expect(bad.settings).toEqual({ holdSound: true })
   })
 })

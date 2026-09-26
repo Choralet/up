@@ -15,6 +15,19 @@ export interface SetLog {
 
 export const MAX_ACTIVE_SKILLS = 2
 
+/** Today's "Train Anyway" choice and warm-up ticks; only valid for `date`. */
+export interface DayState {
+  date: string
+  pick: DayType | null
+  warm: string[]
+}
+
+export interface Settings {
+  /** soft tone when a hold reaches its goal */
+  holdSound: boolean
+  lastExportAt?: number
+}
+
 export interface Progress {
   completed: string[]
   /** strength exercise being trained per branch (never a skill step) */
@@ -26,6 +39,8 @@ export interface Progress {
   schedule: DayType[]
   goalOverrides: Record<string, GoalOverride>
   onboarded: boolean
+  day: DayState | null
+  settings: Settings
 }
 
 export interface Suggestion {
@@ -36,7 +51,7 @@ export interface Suggestion {
 export function initialProgress(nodes: ExerciseNode[]): Progress {
   const focus = {} as Record<Branch, string | null>
   for (const b of BRANCHES) focus[b] = rootOf(nodes, b)?.id ?? null
-  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, onboarded: false }
+  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, onboarded: false, day: null, settings: { holdSound: true } }
 }
 
 export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean {
@@ -212,7 +227,29 @@ export function applyOverrides(nodes: ExerciseNode[], overrides: Record<string, 
 
 export function setDayType(progress: Progress, weekday: number, type: DayType): Progress {
   if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6 || !DAY_TYPES.includes(type)) return progress
-  return { ...progress, schedule: progress.schedule.map((d, i) => (i === weekday ? type : d)) }
+  // a "Train Anyway" pick made for the old schedule no longer makes sense
+  const day = progress.day ? { ...progress.day, pick: null } : null
+  return { ...progress, day, schedule: progress.schedule.map((d, i) => (i === weekday ? type : d)) }
+}
+
+export function todayState(progress: Progress, date: string): { pick: DayType | null; warm: string[] } {
+  return progress.day?.date === date ? { pick: progress.day.pick, warm: progress.day.warm } : { pick: null, warm: [] }
+}
+
+const dayFor = (progress: Progress, date: string): DayState => (progress.day?.date === date ? progress.day : { date, pick: null, warm: [] })
+
+export function setDayPick(progress: Progress, date: string, pick: DayType | null): Progress {
+  return { ...progress, day: { ...dayFor(progress, date), pick } }
+}
+
+export function toggleWarm(progress: Progress, date: string, key: string): Progress {
+  const d = dayFor(progress, date)
+  const warm = d.warm.includes(key) ? d.warm.filter((k) => k !== key) : [...d.warm, key]
+  return { ...progress, day: { ...d, warm } }
+}
+
+export function setSettings(progress: Progress, patch: Partial<Settings>): Progress {
+  return { ...progress, settings: { ...progress.settings, ...patch } }
 }
 
 export const finishOnboarding = (progress: Progress): Progress => ({ ...progress, onboarded: true })
@@ -283,5 +320,14 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
   }
 
   const onboarded = typeof r.onboarded === 'boolean' ? r.onboarded : completed.length > 0 || logs.length > 0
-  return { completed, focus, skillFocus, logs, schedule, goalOverrides, onboarded }
+  const rd = r.day as Partial<DayState> | undefined
+  const day: DayState | null =
+    rd && typeof rd === 'object' && typeof rd.date === 'string' && (rd.pick === null || DAY_TYPES.includes(rd.pick as DayType)) &&
+    Array.isArray(rd.warm) && rd.warm.every((w) => typeof w === 'string')
+      ? { date: rd.date, pick: rd.pick as DayType | null, warm: [...rd.warm] }
+      : null
+  const rs = r.settings as Partial<Settings> | undefined
+  const settings: Settings = { holdSound: rs && typeof rs === 'object' && typeof rs.holdSound === 'boolean' ? rs.holdSound : true }
+  if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
+  return { completed, focus, skillFocus, logs, schedule, goalOverrides, onboarded, day, settings }
 }

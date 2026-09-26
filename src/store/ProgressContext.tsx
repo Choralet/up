@@ -5,8 +5,8 @@ import {
   activateSkill as activateSkillRule, applyOverrides, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
   levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
-  sanitizeProgress, setDayType as setDayTypeRule, setFocus as setFocusRule, setGoalOverride,
-  type Progress,
+  sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
+  type Progress, type Settings,
 } from '../engine/progress'
 import { localDate } from '../lib/time'
 import type { ProgressStorage } from './storage'
@@ -34,6 +34,10 @@ export interface ProgressValue {
   replaceProgress(p: Progress): void
   /** "I can already do this" for these steps */
   completeSteps(ids: string[]): void
+  /** today's Train Anyway choice (null = the schedule) */
+  setDayPick(pick: DayType | null): void
+  toggleWarm(key: string): void
+  setSettings(patch: Partial<Settings>): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -85,6 +89,9 @@ export function ProgressProvider({
     restartOnboarding: () => update(restartOnboardingRule),
     replaceProgress: (p) => setProgress(p),
     completeSteps: (ids) => update((p) => completeStepsRule(nodes, p, ids)),
+    setDayPick: (pick) => update((p) => setDayPickRule(p, localDate(), pick)),
+    toggleWarm: (key) => update((p) => toggleWarmRule(p, localDate(), key)),
+    setSettings: (patch) => update((p) => setSettingsRule(p, patch)),
   }
   return (
     <Ctx.Provider value={value}>

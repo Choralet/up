@@ -17,6 +17,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
   const next = s.next
   const full = Object.keys(progress.skillFocus).length >= MAX_ACTIVE_SKILLS
   const completed = new Set(progress.completed)
+  const first = byId.get(item.steps[0])
 
   const train = () => {
     if (!next) return
@@ -31,19 +32,22 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
       <div className="sheet roadmap-sheet" role="dialog" aria-modal="true" aria-label={item.name}>
         <div className="eyebrow">Year {item.year} · {LABEL[s.status]}</div>
         <h2>{item.name}</h2>
-        {next && (
+        {first && (
           <>
             <div className="hdr" style={{ margin: '12px 0 4px' }}>Needs</div>
-            {next.requires.length === 0 && <div className="req">Nothing, start any time</div>}
-            {next.requires.map((id) => {
-              const ok = completed.has(id)
-              return (
-                <div className="req" key={id}>
-                  <span className={ok ? 'ok' : 'nx'} aria-hidden="true">{ok ? '✓' : '…'}</span>
-                  {byId.get(id)?.name ?? id}
-                </div>
-              )
-            })}
+            {/* the skill's real prerequisites (its first step's), never its own earlier steps */}
+            <ul className="needs" aria-label="Needs">
+              {first.requires.length === 0 && <li className="req">Nothing, start any time</li>}
+              {first.requires.map((id) => {
+                const ok = completed.has(id)
+                return (
+                  <li className="req" key={id}>
+                    <span className={ok ? 'ok' : 'nx'} aria-hidden="true">{ok ? '✓' : '…'}</span>
+                    {byId.get(id)?.name ?? id}
+                  </li>
+                )
+              })}
+            </ul>
           </>
         )}
         <div className="hdr" style={{ margin: '12px 0 4px' }}>Steps</div>

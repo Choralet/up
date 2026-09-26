@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useRef, useState, type CSSProperties } from 'react'
 import { goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { formatClock, localDate } from '../lib/time'
@@ -9,6 +9,9 @@ import { DemoButton } from './DemoButton'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
 import { SetSheet } from './SetSheet'
+
+/** Ignore a second Log Set this soon after the first (a double tap would log two sets). Tests set 0. */
+export const logTuning = { doubleTapMs: 600 }
 
 export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => void }) {
   const { nodes, byId, progress, log, levelUp, editSet, removeSet } = useProgress()
@@ -31,13 +34,22 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const isFocus = nodeState(node, progress) === 'focus'
   const ready = isFocus && goalMet(node.goal, values)
 
-  const record = (value: number) => {
-    if (value < 1) return
+  const lastTap = useRef(-Infinity)
+  const [fresh, setFresh] = useState<number | null>(null)
+
+  /** Log a set; returns true when it opened the level-up suggestion. */
+  const record = (value: number): boolean => {
+    if (value < 1) return false
+    const now = Date.now()
+    if (now - lastTap.current < logTuning.doubleTapMs) return false
+    lastTap.current = now
     // read "today" at tap time so a session left open past midnight counts the right day
     const before = todaysValues(progress, nodeId, localDate())
     log(nodeId, value)
-    const crossed = !goalMet(node.goal, before) && goalMet(node.goal, [...before, value])
-    if (isFocus && crossed) setShowLevelUp(true)
+    setFresh(progress.logs.length) // index the new set will have: highlight its chip
+    const crossed = isFocus && !goalMet(node.goal, before) && goalMet(node.goal, [...before, value])
+    if (crossed) setShowLevelUp(true)
+    return crossed
   }
 
   return (
@@ -79,7 +91,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           <>
             <div className="chips" aria-label="Sets logged today">
               {entries.map((e, n) => (
-                <button key={e.index} className="pill chip" aria-label={`Edit set ${n + 1}: ${e.value}${unit}`} onClick={() => setEditing(e.index)}>
+                <button key={e.index} className={`pill chip${e.index === fresh ? ' new' : ''}`} aria-label={`Edit set ${n + 1}: ${e.value}${unit}`} onClick={() => setEditing(e.index)}>
                   {e.value}{unit}
                 </button>
               ))}
@@ -95,7 +107,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           title="A hold is running"
           message={`${formatClock((Date.now() - holdStart) / 1000)} so far. Log it before you leave?`}
           actions={[
-            { label: 'Log It', tone: 'primary', onClick: () => { const s = Math.floor((Date.now() - holdStart) / 1000); if (s >= 1) log(nodeId, s); onClose() } },
+            { label: 'Log It', tone: 'primary', onClick: () => { setAskClose(false); lastTap.current = -Infinity; if (!record(Math.floor((Date.now() - holdStart) / 1000))) onClose() } },
             { label: 'Discard', tone: 'danger', onClick: onClose },
           ]}
           onCancel={() => setAskClose(false)}

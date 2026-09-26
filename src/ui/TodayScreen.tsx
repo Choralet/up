@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { DAY_LABEL, WARMUP, WEEKDAYS } from '../data/schedule'
 import { SKILLS } from '../data/skills'
 import type { DayType, ExerciseNode } from '../data/types'
-import { goalMet, todaysValues } from '../engine/progress'
+import { goalMet, todayState, todaysValues } from '../engine/progress'
 import { buildWorkout, nextTrainingDay, workoutDone } from '../engine/workout'
 import { goalText } from '../lib/format'
 import { localDate, weekdayIndex } from '../lib/time'
@@ -14,12 +14,11 @@ const TRAIN_ANYWAY: Exclude<DayType, 'rest'>[] = ['push', 'pull', 'legs']
 const ANYWAY_LABEL = { push: 'Push', pull: 'Pull', legs: 'Legs + Core' } as const
 
 export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOpen: (nodeId: string) => void; onSettings: () => void; settingsOpen?: boolean }) {
-  const { nodes, progress } = useProgress()
-  const [pick, setPick] = useState<DayType | null>(null)
-  const [warm, setWarm] = useState<Record<string, boolean>>({})
-
+  const { nodes, progress, setDayPick, toggleWarm } = useProgress()
   const now = new Date()
   const today = localDate(now)
+  // saved per date, so it survives tab switches and reloads, and a new day starts fresh
+  const { pick, warm } = todayState(progress, today)
   const weekday = weekdayIndex(now)
   const day = pick ?? progress.schedule[weekday]
   const workout = useMemo(() => buildWorkout(nodes, progress, day, SKILLS), [nodes, progress, day])
@@ -65,7 +64,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           <div className="hdr">Feeling fresh?</div>
           <div style={{ marginTop: 16 }}>
             {TRAIN_ANYWAY.map((d) => (
-              <button key={d} className="pillbtn" aria-label={`Train ${ANYWAY_LABEL[d]} anyway`} onClick={() => setPick(d)}>
+              <button key={d} className="pillbtn" aria-label={`Train ${ANYWAY_LABEL[d]} anyway`} onClick={() => setDayPick(d)}>
                 Train {ANYWAY_LABEL[d]} anyway
               </button>
             ))}
@@ -74,15 +73,15 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
       ) : (
         <>
           {pick && (
-            <button className="pillbtn" onClick={() => setPick(null)}>Back to {DAY_LABEL[progress.schedule[weekday]].toLowerCase()}</button>
+            <button className="pillbtn" onClick={() => setDayPick(null)}>Back to {DAY_LABEL[progress.schedule[weekday]].toLowerCase()}</button>
           )}
           <div className="hdr">Warm-up</div>
           <div className="group">
             {WARMUP[day].map((item) => {
               const key = `${day}:${item}`
-              const on = !!warm[key]
+              const on = warm.includes(key)
               return (
-                <button key={key} className="check" role="checkbox" aria-checked={on} aria-label={item} onClick={() => setWarm((w) => ({ ...w, [key]: !on }))}>
+                <button key={key} className="check" role="checkbox" aria-checked={on} aria-label={item} onClick={() => toggleWarm(key)}>
                   <span className="box" aria-hidden="true">{on ? '✓' : ''}</span>
                   <span className="lbl">{item}</span>
                 </button>

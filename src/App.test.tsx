@@ -5,6 +5,7 @@ import { NODES } from './data/nodes'
 import { memoryStorage } from './store/storage'
 import { memoryServices } from './store/services'
 import { onboardingTuning } from './ui/Onboarding'
+import { logTuning } from './ui/LogScreen'
 import { fakeGithub } from './test/fakeGithub'
 import { githubBackup } from './store/github'
 import { exportBackup, progressHash } from './engine/backup'
@@ -23,6 +24,7 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] })
   vi.setSystemTime(MONDAY)
   onboardingTuning.answerLockMs = 0
+  logTuning.doubleTapMs = 0
 })
 afterEach(() => vi.useRealTimers())
 
@@ -997,5 +999,66 @@ describe('Roadmap review fixes', () => {
     const dialog = await screen.findByRole('dialog', { name: 'Level up' })
     expect(dialog).toHaveTextContent('Unlocks in Roadmap: Frog stand.')
     expect(dialog).not.toHaveTextContent('toes touching')
+  })
+})
+
+describe('Plan 5 · Phase 1 slips', () => {
+  it('warm-up ticks and Train Anyway survive a tab switch and a reload', async () => {
+    vi.setSystemTime(SATURDAY)
+    const user = userEvent.setup()
+    const storage = seed()
+    const first = render(<App storage={storage} />)
+    await user.click(await screen.findByRole('button', { name: /Train Pull anyway/i }))
+    await user.click(screen.getByRole('checkbox', { name: /Arm circles/ }))
+    await user.click(screen.getByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    expect(screen.getByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /Arm circles/ })).toHaveAttribute('aria-checked', 'true')
+    first.unmount()
+    render(<App storage={storage} />)
+    expect(await screen.findByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
+  })
+
+  it('a quick double tap on Log Set logs one set', async () => {
+    logTuning.doubleTapMs = 600
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.dblClick(screen.getByRole('button', { name: 'Log Set' }))
+    expect(screen.getAllByRole('button', { name: /^Edit set/ })).toHaveLength(1)
+  })
+
+  it('Done → Log It during a hold still offers the level-up when it reaches the goal', async () => {
+    vi.setSystemTime(WEDNESDAY)
+    const user = userEvent.setup()
+    const logs = [1, 2].map((at) => ({ nodeId: 'pull-hang', value: 30, date: '2026-09-23', at }))
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    vi.setSystemTime(new Date(WEDNESDAY.getTime() + 40_000))
+    await user.click(screen.getAllByRole('button', { name: 'Done' })[0])
+    await user.click(screen.getByRole('button', { name: 'Log It' }))
+    expect(await screen.findByRole('dialog', { name: 'Level up' })).toBeInTheDocument()
+  })
+
+  it('Roadmap Needs lists real prerequisites, not the skill’s own earlier step', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee', 'rm-frog-1'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    await user.click(screen.getByRole('tab', { name: 'Roadmap' }))
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand/ }))
+    const needs = screen.getByRole('list', { name: 'Needs' })
+    expect(needs).toHaveTextContent('Knee push-up')
+    expect(needs).not.toHaveTextContent('toes touching')
+  })
+
+  it('importing a backup counts every finished exercise in the file', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    const completed = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike', 'pull-hang', 'pull-scap', 'legs-assisted', 'legs-squat', 'core-deadbug', 'core-plank', 'rm-frog-1']
+    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed, onboarded: true } })
+    await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
+    expect(await screen.findByRole('dialog', { name: 'Replace your progress?' })).toHaveTextContent('12 finished exercises')
   })
 })

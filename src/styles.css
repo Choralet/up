@@ -170,3 +170,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .steplist li { margin: 4px 0; }
 .steplist li.stepdone b { text-decoration: line-through; color: var(--label2); }
 .videolink { text-decoration: none; }
+
+.needs { list-style: none; padding: 0; margin: 0; }
+.pill.chip.new { animation: chipin 0.9s ease-out; }
+@keyframes chipin { from { background: var(--accent, var(--blue)); color: #fff; } }
+@media (prefers-reduced-motion: reduce) { .pill.chip.new { animation: none; } }
+.rmrow.done b { color: var(--label); }
+.rmrow.done .rmicon { color: var(--legs); }
