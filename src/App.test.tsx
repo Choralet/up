@@ -1205,3 +1205,22 @@ describe('Plan 5 · Phase 4a Skills, words, names, Roadmap', () => {
     expect(screen.getByRole('link', { name: 'Watch in Video' })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=J2JHDavNZB4&t=49s')
   })
 })
+
+describe('Plan 5 · Phase 4b Progress', () => {
+  it('shows this week, recent sessions and gains vs last week', async () => {
+    vi.setSystemTime(new Date(2026, 8, 24, 12)) // Thursday
+    const user = userEvent.setup()
+    const logs = [
+      { nodeId: 'push-wall', value: 8, date: '2026-09-15', at: 1 },
+      { nodeId: 'push-wall', value: 10, date: '2026-09-21', at: 2 },
+      { nodeId: 'pull-hang', value: 20, date: '2026-09-23', at: 3 },
+    ]
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.getByText('2 of 3 days this week')).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'This week' }).querySelectorAll('li')).toHaveLength(7)
+    const sessions = screen.getByRole('list', { name: 'Recent sessions' })
+    expect(within(sessions).getAllByRole('listitem')).toHaveLength(3)
+    expect(screen.getByText(/\+2 vs last week/)).toBeInTheDocument()
+  })
+})

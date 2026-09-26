@@ -54,3 +54,48 @@ export function branchProgress(nodes: ExerciseNode[], progress: Progress, branch
   const done = inBranch.filter((n) => progress.completed.includes(n.id)).length
   return { done, total: inBranch.length }
 }
+
+export interface StripDay {
+  date: string
+  planned: DayType
+  trained: boolean
+  isToday: boolean
+}
+
+/** Monday to Sunday of the week containing `today`: what was planned and which days you trained. */
+export function weekStrip(logs: SetLog[], schedule: DayType[], today: string): StripDay[] {
+  const monday = weekStart(today)
+  const trained = new Set(logs.map((l) => l.date))
+  return schedule.map((planned, i) => {
+    const date = addDays(monday, i)
+    return { date, planned, trained: trained.has(date), isToday: date === today }
+  })
+}
+
+/** Training dates, newest first, with how many exercises and sets. */
+export function recentSessions(logs: SetLog[], limit = 5): { date: string; exercises: number; sets: number }[] {
+  const byDate = new Map<string, { ids: Set<string>; sets: number }>()
+  for (const l of logs) {
+    const d = byDate.get(l.date) ?? { ids: new Set<string>(), sets: 0 }
+    d.ids.add(l.nodeId)
+    d.sets++
+    byDate.set(l.date, d)
+  }
+  return [...byDate.entries()]
+    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+    .slice(0, limit)
+    .map(([date, d]) => ({ date, exercises: d.ids.size, sets: d.sets }))
+}
+
+/** How much this week's best beats last week's for one exercise; null when not better or no data. */
+export function weeklyGain(logs: SetLog[], nodeId: string, today: string): number | null {
+  const thisWeek = weekStart(today)
+  const lastWeek = addDays(thisWeek, -7)
+  const best = (from: string, to: string) => {
+    const v = logs.filter((l) => l.nodeId === nodeId && l.date >= from && l.date < to).map((l) => l.value)
+    return v.length ? Math.max(...v) : null
+  }
+  const now = best(thisWeek, addDays(thisWeek, 7))
+  const before = best(lastWeek, thisWeek)
+  return now !== null && before !== null && now > before ? now - before : null
+}

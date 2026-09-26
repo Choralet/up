@@ -200,3 +200,13 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .rmicon.training { color: var(--skill); }
 .rmicon.ready { color: var(--blue); }
 a.howto { text-decoration: none; }
+
+.weekstrip { list-style: none; padding: 0; margin: 12px 0 0; display: flex; justify-content: space-between; }
+.weekstrip li { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 36px; }
+.wsdot { width: 22px; height: 22px; border-radius: 50%; }
+.weekstrip li.trained .wsdot { background: var(--legs); }
+.weekstrip li.planned .wsdot { border: 2px solid var(--label3); }
+.weekstrip li.rest .wsdot { width: 6px; height: 6px; margin: 8px; background: var(--label3); }
+.weekstrip li.today .wslabel { color: var(--label); font-weight: 700; }
+.wslabel { font-size: 11px; color: var(--label2); }
+.gain { color: var(--legs); font-weight: 600; }

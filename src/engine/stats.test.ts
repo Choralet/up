@@ -1,6 +1,6 @@
 import type { ExerciseNode } from '../data/types'
 import { initialProgress, type Progress, type SetLog } from './progress'
-import { branchProgress, personalBests, streakDaysNeeded, weeklyStreak } from './stats'
+import { branchProgress, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
 
 const L = (date: string, nodeId = 'a', value = 10, at = 0): SetLog => ({ nodeId, value, date, at })
 const three = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] as const
@@ -69,5 +69,29 @@ describe('streakDaysNeeded', () => {
     expect(streakDaysNeeded(['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'])).toBe(2)
     expect(streakDaysNeeded(['push', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'])).toBe(1)
     expect(streakDaysNeeded(['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'])).toBe(1)
+  })
+})
+
+describe('week strip, sessions, weekly gain', () => {
+  const sched = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] as const
+  it('marks this week’s days as trained, planned or rest', () => {
+    const strip = weekStrip([L('2026-09-21'), L('2026-09-23', 'b')], [...sched], '2026-09-24')
+    expect(strip.map((d) => [d.date, d.planned, d.trained, d.isToday])).toEqual([
+      ['2026-09-21', 'push', true, false], ['2026-09-22', 'rest', false, false], ['2026-09-23', 'pull', true, false],
+      ['2026-09-24', 'rest', false, true], ['2026-09-25', 'legs', false, false], ['2026-09-26', 'rest', false, false], ['2026-09-27', 'rest', false, false],
+    ])
+  })
+  it('lists recent sessions newest first with exercises and sets', () => {
+    const logs = [L('2026-09-21', 'a', 5, 1), L('2026-09-21', 'a', 6, 2), L('2026-09-21', 'b', 3, 3), L('2026-09-23', 'a', 7, 4)]
+    expect(recentSessions(logs, 5)).toEqual([
+      { date: '2026-09-23', exercises: 1, sets: 1 },
+      { date: '2026-09-21', exercises: 2, sets: 3 },
+    ])
+  })
+  it('weekly gain: this week’s best minus last week’s, only when it went up', () => {
+    const logs = [L('2026-09-15', 'a', 8), L('2026-09-22', 'a', 10), L('2026-09-15', 'b', 9), L('2026-09-22', 'b', 7)]
+    expect(weeklyGain(logs, 'a', '2026-09-24')).toBe(2)
+    expect(weeklyGain(logs, 'b', '2026-09-24')).toBeNull()
+    expect(weeklyGain(logs, 'c', '2026-09-24')).toBeNull()
   })
 })
