@@ -145,7 +145,7 @@ See [DEMOS.md](DEMOS.md). Short version: good GIF sources exist, but the ones wi
 | 2 | Project setup: Vite/React/TS, GitHub repo, auto-deploy to Pages | **Done** |
 | 3 | Data (node graph JSON) + level-up logic, tested | **Done** |
 | 4 | Today, Log (reps + hold timer), Skill Tree, Level-up screens | **Done** (Plan 1) |
-| 5 | Skills, Find-your-level onboarding, customizing days/skills/goals | Full v1 |
+| 5 | Skills, Find-your-level onboarding, customizing days/skills/goals | **Done** (Plan 2) |
 | 6 | Backup: export/import, then GitHub backup | Data safe |
 | 7 | How-to demos (per your choice) | Optional button |
 | 8 | Polish (dark mode, accessibility, offline) | Apple-feeling |
