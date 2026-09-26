@@ -17,6 +17,8 @@ export interface ExerciseNode {
   kind: 'strength' | 'skill'
   /** skill chain this step belongs to; only skill steps have one */
   skill?: string
+  /** new move from the Roadmap: not drawn in the tree, may require any branch */
+  roadmapOnly?: boolean
   /** ids of nodes that must be completed first (all of them) */
   requires: string[]
   /** column 0..3 in the tree drawing */
@@ -32,6 +34,8 @@ export interface SkillChain {
   name: string
   /** day type whose workout trains this skill */
   day: Exclude<DayType, 'rest'>
+  /** chain made only of Roadmap moves (hidden from the My Skills library) */
+  roadmapOnly?: boolean
 }
 
 export interface GoalOverride {

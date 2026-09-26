@@ -50,7 +50,7 @@ export function personalBests(logs: SetLog[], byId: Map<string, ExerciseNode>, l
 }
 
 export function branchProgress(nodes: ExerciseNode[], progress: Progress, branch: Branch): { done: number; total: number } {
-  const inBranch = nodes.filter((n) => n.branch === branch)
+  const inBranch = nodes.filter((n) => n.branch === branch && !n.roadmapOnly)
   const done = inBranch.filter((n) => progress.completed.includes(n.id)).length
   return { done, total: inBranch.length }
 }

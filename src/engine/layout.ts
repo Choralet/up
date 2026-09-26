@@ -42,7 +42,7 @@ export function computeDepths(nodes: ExerciseNode[]): Map<string, number> {
 
 export function layoutBranch(nodes: ExerciseNode[], branch: Branch): TreeLayout {
   const depths = computeDepths(nodes)
-  const inBranch = nodes.filter((n) => n.branch === branch)
+  const inBranch = nodes.filter((n) => n.branch === branch && !n.roadmapOnly)
   const maxDepth = Math.max(0, ...inBranch.map((n) => depths.get(n.id)!))
   const placed = inBranch.map((node) => {
     const depth = depths.get(node.id)!

@@ -28,7 +28,7 @@ describe('layoutBranch', () => {
     expect(push.placed.every((p) => p.node.branch === 'push')).toBe(true)
     expect(push.edges).toContainEqual({ from: 'push-standard', to: 'push-diamond' })
     expect(push.edges).not.toContainEqual({ from: 'push-diamond', to: 'push-standard' })
-    const expected = NODES.filter((n) => n.branch === 'push').reduce((sum, n) => sum + n.requires.length, 0)
+    const expected = NODES.filter((n) => n.branch === 'push' && !n.roadmapOnly).reduce((sum, n) => sum + n.requires.length, 0)
     expect(push.edges).toHaveLength(expected)
   })
 
@@ -38,6 +38,11 @@ describe('layoutBranch', () => {
       expect(l.width).toBeGreaterThan(0)
       expect(l.height).toBeGreaterThan(0)
       expect(l.placed.length).toBeGreaterThan(0)
+    }
+  })
+  it('never draws roadmap-only nodes', () => {
+    for (const b of ['push', 'pull', 'legs', 'core'] as const) {
+      expect(layoutBranch(NODES, b).placed.some((p) => p.node.roadmapOnly)).toBe(false)
     }
   })
 })
