@@ -444,3 +444,30 @@ describe('Settings', () => {
     expect(await screen.findByRole('heading', { name: 'Find your level' })).toBeInTheDocument()
   })
 })
+
+describe('Progress tab', () => {
+  const log = (date: string, nodeId: string, value: number, at: number) => ({ nodeId, value, date, at })
+
+  it('shows a ring per branch, the weekly streak and personal bests', async () => {
+    const user = userEvent.setup()
+    const logs = [
+      log('2026-09-14', 'push-wall', 10, 1), log('2026-09-16', 'push-wall', 12, 2),
+      log('2026-09-07', 'push-wall', 9, 0), log('2026-09-09', 'push-wall', 8, 0),
+    ]
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline'], logs })} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.getByText('2 week streak')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Push: 2 of 18 steps' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Pull: 0 of 12 steps' })).toBeInTheDocument()
+    expect(screen.getByText('Wall push-up')).toBeInTheDocument()
+    expect(screen.getByText('12 reps')).toBeInTheDocument()
+  })
+
+  it('shows a friendly empty state with no history', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.getByText('No streak yet')).toBeInTheDocument()
+    expect(screen.getByText('Log a set to see your bests here.')).toBeInTheDocument()
+  })
+})
