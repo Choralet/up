@@ -6,6 +6,8 @@ import { wrapLabel } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 
+const WORD = { locked: 'locked', available: 'unlocked', focus: 'focus', completed: 'completed' } as const
+
 interface Props {
   branch: Branch
   selectedId: string | null
@@ -55,7 +57,7 @@ export function TreeView({ branch, selectedId, onSelect }: Props) {
             transform={`translate(${x} ${y})`}
             role="button"
             tabIndex={0}
-            aria-label={`${node.name}, ${state}`}
+            aria-label={`${node.name}, ${WORD[state]}${isSkill ? ', skill' : ''}`}
             onClick={() => onSelect(node.id)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {

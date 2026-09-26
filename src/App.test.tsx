@@ -4,6 +4,7 @@ import App from './App'
 import { NODES } from './data/nodes'
 import { memoryStorage } from './store/storage'
 import { memoryServices } from './store/services'
+import { onboardingTuning } from './ui/Onboarding'
 import { fakeGithub } from './test/fakeGithub'
 
 /** A save that has finished onboarding, so tests start on the Today screen. */
@@ -18,6 +19,7 @@ const SATURDAY = new Date(2026, 8, 26, 12)
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] })
   vi.setSystemTime(MONDAY)
+  onboardingTuning.answerLockMs = 0
 })
 afterEach(() => vi.useRealTimers())
 
@@ -126,10 +128,10 @@ describe('Skill Tree screen', () => {
     const done = ['push-wall', 'push-incline', 'push-knee', 'push-standard']
     render(<App storage={seed({ completed: done })} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
-    await user.click(screen.getByRole('button', { name: 'Decline push-up, available' }))
+    await user.click(screen.getByRole('button', { name: 'Decline push-up, unlocked' }))
     await user.click(screen.getByRole('button', { name: 'Make This My Focus' }))
     expect(screen.getByRole('button', { name: 'Decline push-up, focus' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Diamond push-up, available' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Diamond push-up, unlocked' })).toBeInTheDocument()
   })
 
   it('switches branches', async () => {
@@ -324,9 +326,9 @@ describe('Node sheet and level-up for skills and goals', () => {
     const pikeDone = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike']
     render(<App storage={seed({ completed: pikeDone })} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
-    await user.click(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, available' }))
+    await user.click(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, unlocked, skill' }))
     await user.click(screen.getByRole('button', { name: 'Train This Skill' }))
-    expect(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, focus' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, focus, skill' })).toBeInTheDocument()
   })
 
   it('lets you edit a goal, see it on Today, and reset it', async () => {
@@ -696,5 +698,34 @@ describe('Done while a hold is running', () => {
     const user = await startHang()
     await user.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(screen.getByRole('button', { name: 'Stop and Log' })).toBeInTheDocument()
+  })
+})
+
+describe('Plan 3 accessibility and taps', () => {
+  it('a double tap on Yes answers only one question', async () => {
+    onboardingTuning.answerLockMs = 350
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    await user.dblClick(screen.getByRole('button', { name: 'Yes' }))
+    expect(screen.getByText(/Can you do 3 × 10 clean/)).toHaveTextContent('Incline push-up')
+  })
+
+  it('tree nodes say "unlocked" and mark skills', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    expect(screen.getByRole('button', { name: 'Decline push-up, unlocked' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Chest-to-wall handstand hold, unlocked, skill' })).toBeInTheDocument()
+  })
+
+  it('the rep count is announced and the screens behind an overlay are inert', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    expect(screen.getByTestId('rep-value')).toHaveAttribute('aria-live', 'polite')
+    expect(container.querySelector('nav')!.closest('[inert]')).not.toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(container.querySelector('nav')!.closest('[inert]')).toBeNull()
   })
 })

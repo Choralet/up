@@ -59,7 +59,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
 
         {node.goal.type === 'reps' ? (
           <>
-            <div className="big" data-testid="rep-value">{reps}</div>
+            <div className="big" data-testid="rep-value" aria-live="polite">{reps}</div>
             <div className="sub">reps{last ? ` · last time ${last}` : ''}</div>
             <div className="steps">
               <button aria-label="Decrease reps" onClick={() => setReps((r) => Math.max(1, r - 1))}>−</button>

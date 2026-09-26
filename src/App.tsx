@@ -20,13 +20,17 @@ function Shell() {
   const [tab, setTab] = useState<Tab>('today')
   const [logId, setLogId] = useState<string | null>(null)
   const [settings, setSettings] = useState(false)
+  // screens behind a full-screen overlay are inert, so VoiceOver cannot wander into them
+  const overlay = !!logId || settings || !progress.onboarded
   return (
     <div className="app">
-      {tab === 'today' && <TodayScreen key={today} onOpen={setLogId} onSettings={() => setSettings(true)} />}
-      {tab === 'tree' && <TreeScreen onLog={setLogId} />}
-      {tab === 'skills' && <SkillsScreen onLog={setLogId} />}
-      {tab === 'progress' && <ProgressScreen />}
-      <TabBar tab={tab} onChange={setTab} />
+      <div inert={overlay}>
+        {tab === 'today' && <TodayScreen key={today} onOpen={setLogId} onSettings={() => setSettings(true)} />}
+        {tab === 'tree' && <TreeScreen onLog={setLogId} />}
+        {tab === 'skills' && <SkillsScreen onLog={setLogId} />}
+        {tab === 'progress' && <ProgressScreen />}
+        <TabBar tab={tab} onChange={setTab} />
+      </div>
       {logId && <LogScreen key={`${logId}:${today}`} nodeId={logId} onClose={() => setLogId(null)} />}
       {settings && <SettingsScreen onClose={() => setSettings(false)} />}
       {!progress.onboarded && <Onboarding />}
