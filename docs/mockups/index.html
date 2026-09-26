@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Up Mockups</title>
+<style>
+:root {
+  --bg: #F2F2F7; --card: #FFFFFF; --label: #000; --label2: #6C6C70; --label3: #AEAEB2;
+  --sep: rgba(60,60,67,.14); --fill: rgba(120,120,128,.12);
+  --push: #FF9500; --pull: #0A84FF; --legs: #30B455; --core: #AF52DE; --skill: #FF2D55;
+  --page: #E5E5EA; --frame: #1C1C1E;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000; --card: #1C1C1E; --label: #fff; --label2: #98989F; --label3: #48484A;
+    --sep: rgba(84,84,88,.55); --fill: rgba(120,120,128,.24);
+    --push: #FF9F0A; --pull: #0A84FF; --legs: #30D158; --core: #BF5AF2; --skill: #FF375F;
+    --page: #111; --frame: #3A3A3C;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #000; --card: #1C1C1E; --label: #fff; --label2: #98989F; --label3: #48484A;
+  --sep: rgba(84,84,88,.55); --fill: rgba(120,120,128,.24);
+  --push: #FF9F0A; --pull: #0A84FF; --legs: #30D158; --core: #BF5AF2; --skill: #FF375F;
+  --page: #111; --frame: #3A3A3C;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--page); color: var(--label); font: 15px/1.35 -apple-system, "SF Pro Text", system-ui, sans-serif; padding: 24px 16px 60px; }
+.top { max-width: 1400px; margin: 0 auto 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; justify-content: space-between; }
+h1 { font-size: 28px; letter-spacing: -.02em; }
+.top p { color: var(--label2); max-width: 620px; margin-top: 6px; }
+button.theme { border: 0; background: var(--card); color: var(--label); padding: 10px 16px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; }
+.names { max-width: 1400px; margin: 0 auto 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.name { background: var(--card); border-radius: 16px; padding: 16px; }
+.name b { font-size: 20px; letter-spacing: -.01em; }
+.name.rec { outline: 2px solid var(--pull); }
+.name small { display: block; color: var(--label2); margin-top: 4px; }
+.grid { max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; }
+figure { width: 300px; }
+figcaption { text-align: center; color: var(--label2); font-size: 13px; margin-top: 10px; font-weight: 600; }
+.phone { width: 300px; height: 660px; border-radius: 44px; border: 8px solid var(--frame); background: var(--bg); overflow: hidden; position: relative; display: flex; flex-direction: column; }
+.island { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 84px; height: 24px; border-radius: 14px; background: #000; z-index: 5; }
+.status { height: 40px; flex: none; padding: 12px 24px 0; display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; }
+.scroll { flex: 1; overflow: hidden; padding: 0 14px; }
+.tabbar { flex: none; height: 64px; border-top: .5px solid var(--sep); background: var(--card); display: flex; justify-content: space-around; padding-top: 8px; font-size: 10px; color: var(--label2); }
+.tabbar div { text-align: center; }
+.tabbar .on { color: var(--pull); font-weight: 600; }
+.tabbar i { display: block; width: 22px; height: 22px; margin: 0 auto 2px; border-radius: 7px; background: currentColor; opacity: .85; }
+.large { font-size: 28px; font-weight: 700; letter-spacing: -.02em; margin: 4px 0 2px; }
+.sub { color: var(--label2); font-size: 13px; }
+.week { display: flex; justify-content: space-between; margin: 12px 0; }
+.week div { width: 34px; text-align: center; font-size: 10px; color: var(--label2); font-weight: 600; }
+.week span { display: grid; place-items: center; width: 30px; height: 30px; margin: 4px auto 0; border-radius: 50%; font-size: 13px; color: var(--label); background: var(--fill); }
+.week .done span { background: var(--legs); color: #fff; }
+.week .today span { background: var(--push); color: #fff; }
+.group { background: var(--card); border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
+.row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+.row + .row { border-top: .5px solid var(--sep); }
+.dot { width: 34px; height: 34px; border-radius: 10px; flex: none; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+.row .t { flex: 1; min-width: 0; }
+.row .t b { display: block; font-size: 14px; font-weight: 600; }
+.row .t span { font-size: 12px; color: var(--label2); }
+.tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; color: var(--skill); }
+.chk { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--label3); flex: none; }
+.chk.on { background: var(--legs); border-color: var(--legs); position: relative; }
+.chk.on::after { content: ""; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.hdr { font-size: 11px; font-weight: 700; letter-spacing: .05em; color: var(--label2); margin: 12px 4px 6px; text-transform: uppercase; }
+.cta { display: block; width: 100%; padding: 14px; border: 0; border-radius: 14px; background: var(--pull); color: #fff; font-weight: 600; font-size: 16px; text-align: center; margin-top: 8px; }
+.cta.sec { background: var(--fill); color: var(--pull); }
+.bigwrap { text-align: center; padding-top: 6px; }
+.big { font-size: 84px; font-weight: 700; letter-spacing: -.04em; font-variant-numeric: tabular-nums; line-height: 1; margin: 12px 0 2px; }
+.steps { display: flex; justify-content: center; gap: 22px; margin: 18px 0; }
+.steps span { width: 64px; height: 64px; border-radius: 50%; background: var(--fill); display: grid; place-items: center; font-size: 32px; font-weight: 300; }
+.pill { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--fill); font-size: 12px; font-weight: 600; color: var(--label2); }
+.sets { display: flex; gap: 6px; justify-content: center; margin: 8px 0; }
+.sets i { width: 34px; height: 6px; border-radius: 3px; background: var(--fill); }
+.sets i.on { background: var(--push); }
+.tree { position: relative; padding: 8px 0 0 6px; }
+.tree::before { content: ""; position: absolute; left: 28px; top: 20px; bottom: 30px; width: 3px; background: var(--fill); border-radius: 2px; }
+.node { position: relative; display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
+.node .c { width: 46px; height: 46px; border-radius: 50%; flex: none; display: grid; place-items: center; background: var(--card); border: 3px solid var(--fill); color: var(--label3); font-weight: 700; z-index: 1; }
+.node.done .c { background: var(--push); border-color: var(--push); color: #fff; }
+.node.cur .c { border-color: var(--push); color: var(--push); box-shadow: 0 0 0 5px color-mix(in srgb, var(--push) 22%, transparent); }
+.node b { display: block; font-size: 14px; }
+.node span { font-size: 12px; color: var(--label2); }
+.node.lock b { color: var(--label3); }
+.seg { display: flex; background: var(--fill); border-radius: 9px; padding: 2px; margin: 10px 0; }
+.seg div { flex: 1; text-align: center; font-size: 12px; padding: 5px 0; border-radius: 7px; font-weight: 600; color: var(--label2); }
+.seg .on { background: var(--card); color: var(--label); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.35); z-index: 3; }
+.sheet { position: absolute; left: 6px; right: 6px; bottom: 6px; background: var(--card); border-radius: 30px; padding: 22px 18px 18px; z-index: 4; text-align: center; }
+.medal { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; color: #fff; font-size: 32px; background: linear-gradient(160deg, color-mix(in srgb, var(--push) 70%, #fff), var(--push)); }
+.sheet h3 { font-size: 20px; letter-spacing: -.01em; }
+.sheet p { color: var(--label2); font-size: 13px; margin: 6px 0 4px; }
+.flow { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 6px; font-size: 13px; font-weight: 600; }
+.flow em { font-style: normal; padding: 6px 10px; border-radius: 10px; background: var(--fill); }
+.flow em.n { background: color-mix(in srgb, var(--push) 20%, transparent); color: var(--push); }
+.rings { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.ring { background: var(--card); border-radius: 16px; padding: 12px; text-align: center; }
+.ring svg { width: 70px; height: 70px; }
+.ring b { display: block; margin-top: 4px; }
+.ring span { font-size: 11px; color: var(--label2); }
+.bar { height: 6px; background: var(--fill); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 3px; }
+.note { max-width: 1400px; margin: 40px auto 0; color: var(--label2); font-size: 13px; }
+
+.navt{text-align:center;font-weight:600;font-size:15px;margin:2px 0}
+.tsvg{display:block;width:100%;height:465px}
+.tsvg .e{fill:none;stroke-width:3;stroke-linecap:round}
+.tsvg .e.done{stroke:var(--push)}
+.tsvg .e.avail{stroke:var(--push);opacity:.55;stroke-dasharray:2 6}
+.tsvg .e.lock{stroke:var(--label3);opacity:.6;stroke-dasharray:2 6}
+.tsvg .n .sh{fill:var(--card);stroke-width:3}
+.tsvg .n.st.done .sh{fill:var(--push);stroke:var(--push)}
+.tsvg .n.st.focus .sh,.tsvg .n.st.avail .sh{stroke:var(--push)}
+.tsvg .n.sk .sh{stroke:var(--skill)}
+.tsvg .n.lock .sh{stroke:var(--label3);fill:var(--card)}
+.tsvg .n.lock.sk .sh{stroke:var(--label3)}
+.tsvg .glow{fill:var(--push);opacity:.22}
+.tsvg .sel{fill:none;stroke:var(--label);stroke-width:2;stroke-dasharray:4 4}
+.tsvg .ic{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.tsvg .dotc{fill:var(--push)}
+.tsvg .lk rect{fill:var(--label3)}
+.tsvg .lk path{fill:none;stroke:var(--label3);stroke-width:2}
+.tsvg .lb{font-size:9px;font-weight:600;text-anchor:middle;fill:var(--label2);paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.tsvg .n.lock .lb{fill:var(--label3)}
+.req{font-size:13px;margin-top:8px;color:var(--label2)}
+.req span{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;margin-right:6px;font-size:11px;font-weight:700;color:#fff}
+.req .ok{background:var(--legs)}.req .nx{background:var(--push)}
+.choice{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:10px 12px;border-radius:14px;background:var(--fill);margin:8px 0;border:2px solid transparent}
+.choice.pick{border-color:var(--push);background:color-mix(in srgb,var(--push) 12%,transparent)}
+.choice b{display:block;font-size:14px}.choice span{font-size:12px;color:var(--label2)}
+.choice em{font-style:normal;font-size:10px;font-weight:700;color:#fff;background:var(--push);padding:3px 8px;border-radius:999px}
+
+.howto{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:4px 10px;border-radius:999px;background:var(--fill);color:var(--pull);font-size:12px;font-weight:600}
+.howto::before{content:"";width:0;height:0;border-left:7px solid var(--pull);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+.demo{margin:10px 0;border-radius:16px;background:var(--fill);height:210px;display:grid;place-items:center;color:var(--label2);font-size:12px;text-align:center;line-height:1.5}
+.demo b{display:block;color:var(--label);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>Up: design mockups</h1>
+    <p>Static mockups for approval (v2: the skill tree is now a real branching tree). Apple-like: system font, SF-style rounded cards, big numbers, one accent per branch, quiet celebrations. Switch light and dark below. Built as a web app with our own Apple-style CSS.</p>
+  </div>
+  <button class="theme" id="t">Toggle light / dark</button>
+</div>
+
+<p class="sub" style="max-width:1400px;margin:0 auto 24px">App name: <b>Up</b> (chosen). Runs as a web app on the iPhone home screen. New: a small <b>How-to</b> button (screens 2, 3, 5) opens a form demo (screen 9), shown only when a demo exists.</p>
+
+<div class="grid">
+
+<!-- 1 TODAY -->
+<figure>
+<div class="phone"><div class="island"></div>
+  <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="scroll">
+    <div class="sub" style="font-weight:600">Wednesday, Sep 30</div>
+    <div class="large">Push Day</div>
+    <div class="week">
+      <div class="done">M<span>28</span></div><div>T<span>29</span></div><div class="today">W<span>30</span></div>
+      <div>T<span>1</span></div><div>F<span>2</span></div><div>S<span>3</span></div><div>S<span>4</span></div>
+    </div>
+    <div class="hdr">Skill</div>
+    <div class="group"><div class="row">
+      <div class="dot" style="background:var(--skill)">HS</div>
+      <div class="t"><span class="tag">SKILL · HANDSTAND</span><b>Chest-to-wall hold</b><span>4 × 20 s · best 18 s</span></div>
+      <div class="chk"></div></div></div>
+    <div class="hdr">Strength</div>
+    <div class="group">
+      <div class="row"><div class="dot" style="background:var(--push)">Pu</div><div class="t"><b>Diamond push-up</b><span>3 × 10 · best 8</span></div><div class="chk"></div></div>
+      <div class="row"><div class="dot" style="background:var(--push)">Di</div><div class="t"><b>Negative dip</b><span>3 × 8 · best 6</span></div><div class="chk"></div></div>
+      <div class="row"><div class="dot" style="background:var(--core)">Co</div><div class="t"><b>Plank</b><span>3 × 30 s · best 30 s</span></div><div class="chk on"></div></div>
+    </div>
+    <div class="cta">Start Workout</div>
+  </div>
+  <div class="tabbar"><div class="on"><i></i>Today</div><div><i></i>Tree</div><div><i></i>Skills</div><div><i></i>Progress</div></div>
+</div>
+<figcaption>1 · Today: plan with skill first</figcaption>
+</figure>
+
+<!-- 2 LOG REPS -->
+<figure>
+<div class="phone"><div class="island"></div>
+  <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="scroll bigwrap">
+    <div class="sub" style="font-weight:600;margin-top:6px">PUSH · CURRENT</div>
+    <div class="large" style="font-size:24px">Diamond push-up</div>
+    <span class="pill">Goal 3 × 10</span><br><span class="howto">How-to</span>
+    <div class="sets"><i class="on"></i><i class="on"></i><i></i></div>
+    <div class="sub">Set 3 of 3</div>
+    <div class="big">9</div>
+    <div class="sub">reps · last time 8</div>
+    <div class="steps"><span>−</span><span>+</span></div>
+    <div class="cta" style="background:var(--push)">Log Set</div>
+    <div class="cta sec">Skip exercise</div>
+  </div>
+</div>
+<figcaption>2 · Log reps: one big number + small How-to</figcaption>
+</figure>
+
+<!-- 3 HOLD TIMER -->
+<figure>
+<div class="phone"><div class="island"></div>
+  <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="scroll bigwrap">
+    <div class="sub" style="font-weight:600;margin-top:6px;color:var(--skill)">SKILL · HANDSTAND</div>
+    <div class="large" style="font-size:24px">Chest-to-wall hold</div>
+    <span class="pill">Goal 4 × 20 s</span><br><span class="howto">How-to</span>
+    <div class="sets"><i class="on" style="background:var(--skill)"></i><i style="background:var(--skill);opacity:.6"></i><i></i><i></i></div>
+    <div class="sub">Set 2 of 4</div>
+    <svg viewBox="0 0 200 200" width="190" height="190" style="margin:14px auto 0;display:block">
+      <circle cx="100" cy="100" r="88" fill="none" stroke="var(--fill)" stroke-width="14"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="var(--skill)" stroke-width="14" stroke-linecap="round" stroke-dasharray="497" stroke-dashoffset="50" transform="rotate(-90 100 100)"/>
+      <text x="100" y="112" text-anchor="middle" font-size="52" font-weight="700" fill="var(--label)" font-family="-apple-system, system-ui" style="font-variant-numeric:tabular-nums">0:18</text>
+      <text x="100" y="138" text-anchor="middle" font-size="13" fill="var(--label2)" font-family="-apple-system, system-ui">of 20 s</text>
+    </svg>
+    <div class="cta" style="background:var(--skill);margin-top:20px">Stop and Log</div>
+  </div>
+</div>
+<figcaption>3 · Hold timer for hangs and skills</figcaption>
+</figure>
+
+<!-- 4 SKILL TREE -->
+<figure><div class="phone"><div class="island"></div><div class="status"><span>9:41</span><span>●●● 100%</span></div><div class="scroll" style="padding:0 10px"><div class="navt">Skill Tree</div><div class="seg" style="margin:6px 0 4px"><div class="on">Push</div><div>Pull</div><div>Legs</div><div>Core</div></div><svg class="tsvg" viewBox="0 0 280 490" preserveAspectRatio="xMidYMax meet"><path class="e done" d="M140 433 C140 422.0,140 422.0,140 411"/><path class="e done" d="M140 377 C140 366.0,140 366.0,140 355"/><path class="e done" d="M140 321 C140 310.0,140 310.0,140 299"/><path class="e done" d="M140 265 C140 249.0,56 249.0,56 233"/><path class="e avail" d="M140 265 C140 249.0,140 249.0,140 233"/><path class="e avail" d="M140 265 C140 249.0,224 249.0,224 233"/><path class="e lock" d="M56 199 C56 184.0,56 184.0,56 169"/><path class="e lock" d="M140 199 C140 184.0,140 184.0,140 169"/><path class="e lock" d="M224 199 C224 184.0,224 184.0,224 169"/><path class="e lock" d="M56 135 C56 120.0,56 120.0,56 105"/><path class="e lock" d="M140 135 C140 120.0,140 120.0,140 105"/><path class="e lock" d="M224 135 C224 120.0,224 120.0,224 105"/><path class="e lock" d="M140 71 C140 56.0,140 56.0,140 41"/><path class="e lock" d="M224 71 C224 56.0,224 56.0,224 41"/><g class="n done st" transform="translate(140 450)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Wall</text></g><g class="n done st" transform="translate(140 394)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Incline</text></g><g class="n done st" transform="translate(140 338)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Knee</text></g><g class="n done st" transform="translate(140 282)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Standard</text></g><g class="n focus st" transform="translate(56 216)"><circle class="glow" r="26"/><circle class="sh" r="17"/><circle class="dotc" r="4.5"/><text class="lb" y="29">Diamond</text></g><g class="n avail st" transform="translate(140 216)"><circle class="sh" r="17"/><text class="lb" y="29">Decline</text></g><g class="n avail st" transform="translate(224 216)"><circle class="sh" r="17"/><text class="lb" y="29">Pike</text></g><g class="n lock st" transform="translate(56 152)"><circle class="sh" r="17"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Archer</text></g><g class="n lock st" transform="translate(140 152)"><circle class="sh" r="17"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Pseudo planche</text></g><g class="n lock st" transform="translate(224 152)"><circle class="sh" r="17"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Elevated pike</text></g><g class="n lock sk" transform="translate(56 88)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">One-arm</text></g><g class="n lock sk" transform="translate(140 88)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Tuck planche</text></g><g class="n lock sk" transform="translate(224 88)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Wall HSPU</text></g><g class="n lock sk" transform="translate(140 24)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Adv. tuck</text></g><g class="n lock sk" transform="translate(224 24)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">HSPU</text></g></svg></div><div class="tabbar"><div class=""><i></i>Today</div><div class="on"><i></i>Tree</div><div class=""><i></i>Skills</div><div class=""><i></i>Progress</div></div></div>
+<figcaption>4 · Skill tree: branches, choices, skills at the top</figcaption></figure>
+
+<!-- 5 NODE DETAIL -->
+<figure><div class="phone"><div class="island"></div><div class="status"><span>9:41</span><span>●●● 100%</span></div><div class="scroll" style="padding:0 10px"><div class="navt">Skill Tree</div><div class="seg" style="margin:6px 0 4px"><div class="on">Push</div><div>Pull</div><div>Legs</div><div>Core</div></div><svg class="tsvg" viewBox="0 0 280 490" preserveAspectRatio="xMidYMax meet"><path class="e done" d="M140 433 C140 422.0,140 422.0,140 411"/><path class="e done" d="M140 377 C140 366.0,140 366.0,140 355"/><path class="e done" d="M140 321 C140 310.0,140 310.0,140 299"/><path class="e done" d="M140 265 C140 249.0,56 249.0,56 233"/><path class="e avail" d="M140 265 C140 249.0,140 249.0,140 233"/><path class="e avail" d="M140 265 C140 249.0,224 249.0,224 233"/><path class="e lock" d="M56 199 C56 184.0,56 184.0,56 169"/><path class="e lock" d="M140 199 C140 184.0,140 184.0,140 169"/><path class="e lock" d="M224 199 C224 184.0,224 184.0,224 169"/><path class="e lock" d="M56 135 C56 120.0,56 120.0,56 105"/><path class="e lock" d="M140 135 C140 120.0,140 120.0,140 105"/><path class="e lock" d="M224 135 C224 120.0,224 120.0,224 105"/><path class="e lock" d="M140 71 C140 56.0,140 56.0,140 41"/><path class="e lock" d="M224 71 C224 56.0,224 56.0,224 41"/><g class="n done st" transform="translate(140 450)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Wall</text></g><g class="n done st" transform="translate(140 394)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Incline</text></g><g class="n done st" transform="translate(140 338)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Knee</text></g><g class="n done st" transform="translate(140 282)"><circle class="sh" r="17"/><path class="ic" d="M-5 0 L-1.5 3.5 L5 -4"/><text class="lb" y="29">Standard</text></g><g class="n focus st" transform="translate(56 216)"><circle class="glow" r="26"/><circle class="sh" r="17"/><circle class="dotc" r="4.5"/><text class="lb" y="29">Diamond</text></g><g class="n avail st" transform="translate(140 216)"><circle class="sel" r="25"/><circle class="sh" r="17"/><text class="lb" y="29">Decline</text></g><g class="n avail st" transform="translate(224 216)"><circle class="sh" r="17"/><text class="lb" y="29">Pike</text></g><g class="n lock st" transform="translate(56 152)"><circle class="sh" r="17"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Archer</text></g><g class="n lock st" transform="translate(140 152)"><circle class="sh" r="17"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Pseudo planche</text></g><g class="n lock st" transform="translate(224 152)"><circle class="sh" r="17"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Elevated pike</text></g><g class="n lock sk" transform="translate(56 88)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">One-arm</text></g><g class="n lock sk" transform="translate(140 88)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Tuck planche</text></g><g class="n lock sk" transform="translate(224 88)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Wall HSPU</text></g><g class="n lock sk" transform="translate(140 24)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">Adv. tuck</text></g><g class="n lock sk" transform="translate(224 24)"><rect class="sh" x="-15" y="-15" width="30" height="30" rx="6" transform="rotate(45)"/><g class="lk"><rect x="-5" y="-1" width="10" height="8" rx="2"/><path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5"/></g><text class="lb" y="29">HSPU</text></g></svg></div><div class="scrim"></div><div class="sheet" style="text-align:left">
+<div class="sub" style="font-weight:700;letter-spacing:.05em;font-size:11px">PUSH · UNLOCKED</div>
+<h3 style="margin:2px 0 8px">Decline push-up</h3>
+<span class="pill">Goal 3 × 10</span> <span class="pill">Not started</span> <span class="howto" style="margin:0">How-to</span>
+<div class="req"><span class="ok">✓</span> Requires Standard push-up</div>
+<div class="req"><span class="nx">→</span> Leads to Pseudo planche push-up</div>
+<p style="margin:8px 0 10px">Feet on a bench, hands shoulder-width, body straight. Lower until your chest is near the floor.</p>
+<div class="cta" style="background:var(--push);margin-top:0">Make This My Focus</div></div><div class="tabbar"><div class=""><i></i>Today</div><div class="on"><i></i>Tree</div><div class=""><i></i>Skills</div><div class=""><i></i>Progress</div></div></div>
+<figcaption>5 · Tap a node: what it needs, what it unlocks</figcaption></figure>
+
+<!-- 6 LEVEL UP -->
+<figure><div class="phone"><div class="island"></div><div class="status"><span>9:41</span><span>●●● 100%</span></div><div class="scroll bigwrap"><div class="sub" style="font-weight:600;margin-top:6px">PUSH · FOCUS</div><div class="large" style="font-size:24px">Diamond push-up</div><div class="sets"><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="big" style="opacity:.25">10</div></div><div class="scrim"></div><div class="sheet"><div class="medal">✓</div>
+<h3>You hit 3 × 10</h3><p>Diamond push-up complete. Choose your next focus.</p>
+<div class="choice pick"><div><b>Archer push-up</b><span>New · leads to One-arm push-up</span></div><em>Suggested</em></div>
+<div class="choice"><div><b>Decline push-up</b><span>Unlocked · leads to Planche</span></div></div>
+<div class="cta" style="background:var(--push)">Set Focus</div><div class="cta sec">Not yet</div></div><div class="tabbar"><div class=""><i></i>Today</div><div class=""><i></i>Tree</div><div class=""><i></i>Skills</div><div class=""><i></i>Progress</div></div></div>
+<figcaption>6 · Level-up suggestion: you choose the next step</figcaption></figure>
+
+<!-- 7 SKILLS -->
+<figure>
+<div class="phone"><div class="island"></div>
+  <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="scroll">
+    <div class="large">Skills</div>
+    <div class="sub">Active skills train inside your daily plan.</div>
+    <div class="hdr">Active · 2 of 2</div>
+    <div class="group">
+      <div class="row" style="align-items:flex-start"><div class="dot" style="background:var(--skill)">HS</div><div class="t"><b>Handstand</b><span>Push day · Step 1 of 5</span><div class="bar"><i style="width:22%;background:var(--skill)"></i></div></div></div>
+      <div class="row" style="align-items:flex-start"><div class="dot" style="background:var(--skill)">MU</div><div class="t"><b>Muscle-up</b><span>Pull day · Step 2 of 6</span><div class="bar"><i style="width:36%;background:var(--skill)"></i></div></div></div>
+    </div>
+    <div class="hdr">Library</div>
+    <div class="group">
+      <div class="row"><div class="dot" style="background:var(--label3)">Pl</div><div class="t"><b>Planche</b><span>Advanced · 1–4 years</span></div></div>
+      <div class="row"><div class="dot" style="background:var(--label3)">FL</div><div class="t"><b>Front lever</b><span>Intermediate · 6–18 months</span></div></div>
+      <div class="row"><div class="dot" style="background:var(--label3)">LS</div><div class="t"><b>L-sit</b><span>Foundational · 3–6 months</span></div></div>
+    </div>
+  </div>
+  <div class="tabbar"><div><i></i>Today</div><div><i></i>Tree</div><div class="on"><i></i>Skills</div><div><i></i>Progress</div></div>
+</div>
+<figcaption>7 · Skills: pick up to two active</figcaption>
+</figure>
+
+<!-- 8 PROGRESS -->
+<figure>
+<div class="phone"><div class="island"></div>
+  <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="scroll">
+    <div class="large">Progress</div>
+    <div class="sub">Week 6 · 3 of 3 workouts this week</div>
+    <div class="rings">
+      <div class="ring"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="var(--fill)" stroke-width="10"/><circle cx="40" cy="40" r="32" fill="none" stroke="var(--push)" stroke-width="10" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="90" transform="rotate(-90 40 40)"/></svg><b>Push</b><span>Diamond · step 5</span></div>
+      <div class="ring"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="var(--fill)" stroke-width="10"/><circle cx="40" cy="40" r="32" fill="none" stroke="var(--pull)" stroke-width="10" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="130" transform="rotate(-90 40 40)"/></svg><b>Pull</b><span>Negative pull-up · 4</span></div>
+      <div class="ring"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="var(--fill)" stroke-width="10"/><circle cx="40" cy="40" r="32" fill="none" stroke="var(--legs)" stroke-width="10" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="120" transform="rotate(-90 40 40)"/></svg><b>Legs</b><span>Split squat · step 3</span></div>
+      <div class="ring"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="var(--fill)" stroke-width="10"/><circle cx="40" cy="40" r="32" fill="none" stroke="var(--core)" stroke-width="10" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="100" transform="rotate(-90 40 40)"/></svg><b>Core</b><span>Hollow hold · step 3</span></div>
+    </div>
+    <div class="hdr">Personal bests</div>
+    <div class="group">
+      <div class="row"><div class="t"><b>Diamond push-up</b></div><span class="sub">9 reps</span></div>
+      <div class="row"><div class="t"><b>Dead hang</b></div><span class="sub">42 s</span></div>
+    </div>
+  </div>
+  <div class="tabbar"><div><i></i>Today</div><div><i></i>Tree</div><div><i></i>Skills</div><div class="on"><i></i>Progress</div></div>
+</div>
+<figcaption>8 · Progress: our own quiet rings per branch</figcaption>
+</figure>
+
+<!-- 9 DEMO -->
+<figure>
+<div class="phone"><div class="island"></div>
+  <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="scroll bigwrap"><div class="sub" style="font-weight:600;margin-top:6px">PUSH · CURRENT</div><div class="large" style="font-size:24px">Diamond push-up</div><div class="sets"><i class="on"></i><i class="on"></i><i></i></div><div class="big" style="opacity:.25">9</div></div>
+  <div class="scrim"></div>
+  <div class="sheet" style="text-align:left">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h3>How to do it</h3><span class="pill">Done</span></div>
+    <div class="demo"><span><b>Short looping demo plays here</b>GIF or 2-photo loop from a licensed source<br>(placeholder)</span></div>
+    <div class="req" style="margin-top:0">Hands together under chest, elbows tucked, body in one straight line.</div>
+    <div class="sub" style="font-size:11px;margin-top:10px">Credit shown here, e.g. "© source name"</div>
+  </div>
+  <div class="tabbar"><div class="on"><i></i>Today</div><div><i></i>Tree</div><div><i></i>Skills</div><div><i></i>Progress</div></div>
+</div>
+<figcaption>9 · How-to sheet (only opens on tap)</figcaption>
+</figure>
+
+</div>
+
+<p class="note">Notes: the rings are our own style, not Apple's official Activity rings (Apple's guidelines say not to recolor those). Branch colors: Push orange, Pull blue, Legs green, Core purple, Skills pink. Exercise names and numbers are sample data.</p>
+
+<script>
+document.getElementById('t').onclick = function () {
+  var r = document.documentElement;
+  var dark = r.getAttribute('data-theme') === 'dark' || (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+  r.setAttribute('data-theme', dark ? 'light' : 'dark');
+};
+</script>
+</body>
+</html>
