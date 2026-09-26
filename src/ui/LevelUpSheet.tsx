@@ -42,7 +42,7 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
           <button key={s.node.id} className="choice" aria-pressed={choice === s.node.id} onClick={() => setChoice(s.node.id)}>
             <span>
               <b>{s.node.name}</b>
-              <span>{s.isNew ? 'New' : 'Unlocked'} · {s.node.kind === 'skill' ? 'Skill · ' : ''}{goalText(s.node.goal)}</span>
+              <span>{s.isNew ? 'New' : 'Ready'} · {s.node.kind === 'skill' ? 'Skill · ' : ''}{goalText(s.node.goal)}</span>
             </span>
             {i === 0 && <em>Suggested</em>}
           </button>

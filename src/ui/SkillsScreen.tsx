@@ -1,84 +1,108 @@
+import { useState } from 'react'
+import { skillName } from '../data/names'
+import { ROADMAP } from '../data/roadmap'
 import { DAY_LABEL } from '../data/schedule'
 import { SKILLS } from '../data/skills'
-import { MAX_ACTIVE_SKILLS } from '../engine/progress'
+import { firstStep, MAX_ACTIVE_SKILLS } from '../engine/progress'
 import { skillStatus } from '../engine/skills'
 import { goalText, plural } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
+import { ConfirmSheet } from './ConfirmSheet'
 import { RoadmapView } from './RoadmapView'
 
-export type SkillsView = 'mine' | 'roadmap'
+export type SkillsView = 'now' | 'roadmap'
+
+const roadmapOrder = (stepId: string) => {
+  const i = ROADMAP.findIndex((r) => r.steps.includes(stepId))
+  return i < 0 ? ROADMAP.length : i
+}
 
 export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) => void; view: SkillsView; onView: (v: SkillsView) => void }) {
   const { nodes, byId, progress, activateSkill, deactivateSkill } = useProgress()
-  const activeCount = Object.keys(progress.skillFocus).length
-  const rows = SKILLS.map((chain) => ({ chain, s: skillStatus(nodes, progress, chain.id) }))
-  const active = rows.filter((r) => r.s.status === 'active')
-  const library = rows.filter((r) => r.s.status !== 'active' && !r.chain.roadmapOnly)
+  const [replacing, setReplacing] = useState<{ chain: string; name: string } | null>(null)
+  const activeIds = Object.keys(progress.skillFocus)
+  const full = activeIds.length >= MAX_ACTIVE_SKILLS
+  const done = new Set(progress.completed)
+
+  const ready = SKILLS.filter((c) => skillStatus(nodes, progress, c.id).status === 'available')
+    .map((chain) => {
+      const step = byId.get(firstStep(nodes, done, chain.id)!)!
+      return { chain, step, name: skillName(chain.id, step.id), steps: nodes.filter((n) => n.skill === chain.id).length }
+    })
+    .sort((a, b) => roadmapOrder(a.step.id) - roadmapOrder(b.step.id))
 
   return (
     <div className="screen">
       <h1 className="large">Skills</h1>
       <div className="seg" role="tablist" aria-label="Skills view">
-        <button role="tab" aria-selected={view === 'mine'} className={view === 'mine' ? 'on' : ''} onClick={() => onView('mine')}>My Skills</button>
+        <button role="tab" aria-selected={view === 'now'} className={view === 'now' ? 'on' : ''} onClick={() => onView('now')}>Now</button>
         <button role="tab" aria-selected={view === 'roadmap'} className={view === 'roadmap' ? 'on' : ''} onClick={() => onView('roadmap')}>Roadmap</button>
       </div>
       {view === 'roadmap' ? (
         <RoadmapView onLog={onLog} />
       ) : (
         <>
-        <div className="sub">Active skills train inside your daily plan. Up to {MAX_ACTIVE_SKILLS} at a time.</div>
+          <div className="sub">Train up to {MAX_ACTIVE_SKILLS} skills alongside your workouts. They show up on their day.</div>
 
-        <div className="hdr">Active · {activeCount} of {MAX_ACTIVE_SKILLS}</div>
-        <ul className="group list">
-          {active.length === 0 && <li className="row"><span className="t"><span>No active skill yet. Start one below.</span></span></li>}
-          {active.map(({ chain, s }) => {
-            const step = s.currentId ? byId.get(s.currentId) : undefined
-            return (
+          <div className="hdr">Training · {activeIds.length} of {MAX_ACTIVE_SKILLS}</div>
+          <ul className="group list">
+            {activeIds.length === 0 && <li className="row"><span className="t"><span>No skill yet. Start one below.</span></span></li>}
+            {SKILLS.filter((c) => c.id in progress.skillFocus).map((chain) => {
+              const s = skillStatus(nodes, progress, chain.id)
+              const step = s.currentId ? byId.get(s.currentId) : undefined
+              const name = skillName(chain.id, s.currentId)
+              return (
+                <li className="row skillrow" key={chain.id}>
+                  <span className="t">
+                    <b>{name}</b>
+                    <span>{DAY_LABEL[chain.day]} · step {Math.min(s.done + 1, s.total)} of {s.total}</span>
+                    {step ? (
+                      <button className="linkbtn" onClick={() => onLog(step.id)}>{step.name} · {goalText(step.goal)}</button>
+                    ) : (
+                      <span>Waiting for a main exercise to unlock the next step</span>
+                    )}
+                  </span>
+                  <button className="pillbtn" aria-label={`Stop ${name}`} onClick={() => deactivateSkill(chain.id)}>Stop</button>
+                </li>
+              )
+            })}
+          </ul>
+
+          <div className="hdr">Ready to Start</div>
+          {full && ready.length > 0 && <p className="sub" style={{ margin: '12px 4px 0' }}>Both skill slots are in use. Replace one to start another.</p>}
+          <ul className="group list">
+            {ready.length === 0 && (
+              <li className="row"><span className="t"><span>Nothing ready yet. Keep training your main exercises to unlock skills.</span></span></li>
+            )}
+            {ready.map(({ chain, step, name, steps }) => (
               <li className="row skillrow" key={chain.id}>
                 <span className="t">
-                  <b>{chain.name}</b>
-                  <span>{DAY_LABEL[chain.day]} · step {Math.min(s.done + 1, s.total)} of {s.total}</span>
-                  {step ? (
-                    <button className="linkbtn" onClick={() => onLog(step.id)}>
-                      {step.name} · {goalText(step.goal)}
-                    </button>
-                  ) : (
-                    <span>No trainable step right now</span>
-                  )}
+                  <b>{name}</b>
+                  <span>{DAY_LABEL[chain.day]} · {plural(steps, 'step')} · first: {step.name}, {goalText(step.goal)}</span>
                 </span>
-                <button className="pillbtn" aria-label={`Stop ${chain.name}`} onClick={() => deactivateSkill(chain.id)}>Stop</button>
+                {full ? (
+                  <button className="pillbtn" aria-label={`Replace for ${name}`} onClick={() => setReplacing({ chain: chain.id, name })}>Replace</button>
+                ) : (
+                  <button className="pillbtn" aria-label={`Start ${name}`} onClick={() => activateSkill(chain.id)}>Start</button>
+                )}
               </li>
-            )
-          })}
-        </ul>
-
-        <div className="hdr">Library</div>
-        {activeCount >= MAX_ACTIVE_SKILLS && <p className="sub" style={{ margin: '12px 4px 0' }}>Stop an active skill to start another.</p>}
-        <ul className="group list">
-          {library.map(({ chain, s }) => (
-            <li className="row skillrow" key={chain.id}>
-              <span className="t">
-                <b>{chain.name}</b>
-                <span>
-                  {DAY_LABEL[chain.day]} · {s.done} of {plural(s.total, 'step')}
-                  {s.status === 'finished' && ' · Complete'}
-                  {s.status === 'locked' && ` · Needs: ${s.needs.join(', ')}`}
-                </span>
-              </span>
-              {s.status !== 'finished' && (
-                <button
-                  className="pillbtn"
-                  aria-label={`Start ${chain.name}`}
-                  disabled={s.status === 'locked' || activeCount >= MAX_ACTIVE_SKILLS}
-                  onClick={() => activateSkill(chain.id)}
-                >
-                  Start
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+          <p className="sub" style={{ margin: '12px 4px' }}>
+            Locked skills are in the Roadmap, with what each one needs.{' '}
+            <button className="linkbtn inline" onClick={() => onView('roadmap')}>Open Roadmap</button>
+          </p>
         </>
+      )}
+      {replacing && (
+        <ConfirmSheet
+          title={`Start ${replacing.name} instead of…`}
+          actions={activeIds.map((id) => {
+            const name = skillName(id, progress.skillFocus[id])
+            return { label: `Replace ${name}`, onClick: () => { deactivateSkill(id); activateSkill(replacing.chain); setReplacing(null) } }
+          })}
+          onCancel={() => setReplacing(null)}
+        />
       )}
     </div>
   )

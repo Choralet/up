@@ -6,7 +6,8 @@ import { wrapLabel } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 
-const WORD = { locked: 'locked', available: 'unlocked', focus: 'focus', completed: 'completed' } as const
+// the same words as everywhere else in the app (Locked / Ready / Training / Done)
+const WORD = { locked: 'locked', available: 'ready', focus: 'training', completed: 'done' } as const
 
 interface Props {
   branch: Branch

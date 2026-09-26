@@ -7,6 +7,8 @@ import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 import { ConfirmSheet } from './ConfirmSheet'
 import { DemoButton } from './DemoButton'
+import { demoUrl } from '../data/demos'
+import { roadmapItemFor, videoUrl } from '../data/roadmap'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
 import { SetSheet } from './SetSheet'
@@ -73,6 +75,9 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         <div className="pills" style={{ justifyContent: 'center' }}>
           <span className="pill">Goal {goalText(node.goal)}</span>
           <DemoButton node={node} />
+          {!demoUrl(node.id) && roadmapItemFor(node.id) && (
+            <a className="howto" href={videoUrl(roadmapItemFor(node.id)!)} target="_blank" rel="noopener noreferrer">Watch in Video</a>
+          )}
         </div>
         <div className="bars" aria-hidden="true">
           {Array.from({ length: node.goal.sets }, (_, i) => <i key={i} className={i < atGoal ? 'on' : ''} />)}

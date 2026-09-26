@@ -23,6 +23,7 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
       <div className="tree-screen">
         <div className="tree-head">
           <h1 className="navt">Skill Tree</h1>
+          <p className="sub center" style={{ margin: '0 0 6px' }}>Your main exercises. Tap one to see what it needs and unlocks.</p>
           <div className="seg" role="tablist" aria-label="Branch">
             {BRANCHES.map((b) => (
               <button

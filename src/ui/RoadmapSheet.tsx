@@ -6,11 +6,12 @@ import { goalText } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { ConfirmSheet } from './ConfirmSheet'
 import { GoalEditor } from './GoalEditor'
+import { skillName } from '../data/names'
 
 const LABEL = { done: 'Done', training: 'Training', ready: 'Ready', locked: 'Locked' } as const
 
 export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onClose: () => void; onLog: (id: string) => void }) {
-  const { byId, defaults, progress, activateSkill, setFocus, completeSteps, setGoal } = useProgress()
+  const { byId, defaults, progress, activateSkill, deactivateSkill, setFocus, completeSteps, setGoal } = useProgress()
   const [confirm, setConfirm] = useState(false)
   const [editing, setEditing] = useState(false)
   const s = roadmapStatus(byId, progress, item)
@@ -32,6 +33,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
       <div className="sheet roadmap-sheet" role="dialog" aria-modal="true" aria-label={item.name}>
         <div className="eyebrow">Year {item.year} · {LABEL[s.status]}</div>
         <h2>{item.name}</h2>
+        {item.video && <div className="sub">In the video: {item.video}</div>}
         {first && (
           <>
             <div className="hdr" style={{ margin: '12px 0 4px' }}>Needs</div>
@@ -77,8 +79,18 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
           )}
           {s.status === 'ready' && (
             <>
-              <button className="cta" disabled={!!next?.skill && full} onClick={train}>{next?.skill ? 'Train This' : 'Make This My Focus'}</button>
-              {next?.skill && full && <p className="sub">Two skills are already active. Stop one in My Skills first.</p>}
+              {next?.skill && full ? (
+                <>
+                  <p className="sub">Two skills are active. Replace one to train this:</p>
+                  {Object.keys(progress.skillFocus).map((id) => (
+                    <button key={id} className="cta sec" onClick={() => { deactivateSkill(id); activateSkill(next.skill!); onClose() }}>
+                      Replace {skillName(id, progress.skillFocus[id])}
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <button className="cta" onClick={train}>{next?.skill ? 'Train This' : 'Make This My Focus'}</button>
+              )}
               <button className="cta sec" onClick={() => setConfirm(true)}>I Can Already Do This</button>
             </>
           )}

@@ -20,7 +20,7 @@ function Shell() {
   const [tab, setTab] = useState<Tab>('today')
   const [logId, setLogId] = useState<string | null>(null)
   const [settings, setSettings] = useState(false)
-  const [skillsView, setSkillsView] = useState<SkillsView>('mine')
+  const [skillsView, setSkillsView] = useState<SkillsView>('now')
   // screens behind a full-screen overlay are inert, so VoiceOver cannot wander into them
   const overlay = !!logId || settings || !progress.onboarded
   return (

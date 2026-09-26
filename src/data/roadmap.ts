@@ -8,6 +8,8 @@ export interface RoadmapItem {
   steps: string[]
   /** seconds into that year's video where this skill's chapter starts */
   t: number
+  /** the video's own chapter name, when the app uses a different name */
+  video?: string
 }
 
 export const ROADMAP = raw as unknown as RoadmapItem[]
@@ -21,3 +23,6 @@ export const VIDEOS: Record<1 | 2 | 3, { id: string; title: string }> = {
 export const videoUrl = (item: RoadmapItem) => `https://www.youtube.com/watch?v=${VIDEOS[item.year].id}&t=${item.t}s`
 
 export const formatStamp = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+
+/** The Roadmap item a step belongs to, if any. */
+export const roadmapItemFor = (nodeId: string): RoadmapItem | undefined => ROADMAP.find((r) => r.steps.includes(nodeId))

@@ -7,7 +7,7 @@ import { BRANCH_META } from './branches'
 import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
 
-const LABEL = { locked: 'Locked', available: 'Unlocked', focus: 'Focus', completed: 'Completed' } as const
+const LABEL = { locked: 'Locked', available: 'Ready', focus: 'Training', completed: 'Done' } as const
 
 export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClose: () => void; onLog: (id: string) => void }) {
   const { progress, byId, defaults, setFocus, activateSkill, setGoal } = useProgress()
