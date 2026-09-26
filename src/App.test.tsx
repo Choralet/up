@@ -4,34 +4,112 @@ import App from './App'
 import { NODES } from './data/nodes'
 import { memoryStorage } from './store/storage'
 
-describe('Today screen', () => {
-  it('lists the focus exercise of each branch with its goal', async () => {
-    render(<App storage={memoryStorage()} />)
-    expect(await screen.findByRole('button', { name: /Wall push-up/ })).toHaveTextContent('3 × 10')
+/** A save that has finished onboarding, so tests start on the Today screen. */
+const seed = (extra: Record<string, unknown> = {}) => memoryStorage({ onboarded: true, ...extra })
+
+/** Pin the clock. Month is 0-based. 2026-09-21 is a Monday. */
+const MONDAY = new Date(2026, 8, 21, 12)
+const WEDNESDAY = new Date(2026, 8, 23, 12)
+const FRIDAY = new Date(2026, 8, 25, 12)
+const SATURDAY = new Date(2026, 8, 26, 12)
+
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(MONDAY)
+})
+afterEach(() => vi.useRealTimers())
+
+describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)', () => {
+  it('Monday is Push Day with the push focus exercise', async () => {
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('heading', { name: 'Push Day' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Wall push-up/ })).toHaveTextContent('3 × 10')
+    expect(screen.queryByRole('button', { name: /Dead hang/ })).not.toBeInTheDocument()
+  })
+
+  it('Wednesday is Pull Day', async () => {
+    vi.setSystemTime(WEDNESDAY)
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Dead hang/ })).toHaveTextContent('3 × 30 s')
+  })
+
+  it('Friday is Legs + Core Day with both exercises', async () => {
+    vi.setSystemTime(FRIDAY)
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('heading', { name: 'Legs + Core Day' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Assisted squat/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Dead bug/ })).toBeInTheDocument()
   })
 
-  it('gives each branch a distinct badge', async () => {
-    render(<App storage={memoryStorage()} />)
-    await screen.findByRole('button', { name: /Wall push-up/ })
-    const badges = ['Pu', 'Pl', 'Le', 'Co']
-    for (const b of badges) expect(screen.getAllByText(b)).toHaveLength(1)
+  it('shows the warm-up for the day', async () => {
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('checkbox', { name: 'Wrist circles' })).toBeInTheDocument()
+  })
+
+  it('ticks off a warm-up item', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    const box = await screen.findByRole('checkbox', { name: 'Wrist circles' })
+    expect(box).toHaveAttribute('aria-checked', 'false')
+    await user.click(box)
+    expect(box).toHaveAttribute('aria-checked', 'true')
+  })
+
+  it('Saturday is a Rest Day that points at the next training day and lets you train anyway', async () => {
+    vi.setSystemTime(SATURDAY)
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('heading', { name: 'Rest Day' })).toBeInTheDocument()
+    expect(screen.getByText(/Next: Monday · Push Day/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Train Pull anyway' }))
+    expect(screen.getByRole('heading', { name: 'Pull Day' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Dead hang/ })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Back to rest day' }))
+    expect(screen.getByRole('heading', { name: 'Rest Day' })).toBeInTheDocument()
+  })
+
+  it('a schedule with no training days is just a Rest Day', async () => {
+    const rest = ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest']
+    render(<App storage={seed({ schedule: rest })} />)
+    expect(await screen.findByRole('heading', { name: 'Rest Day' })).toBeInTheDocument()
+    expect(screen.queryByText(/Next:/)).not.toBeInTheDocument()
   })
 
   it('shows "Branch complete" when every push exercise is done', async () => {
     const allPush = NODES.filter((n) => n.branch === 'push').map((n) => n.id)
-    render(<App storage={memoryStorage({ completed: allPush })} />)
+    render(<App storage={seed({ completed: allPush })} />)
     expect(await screen.findByText('Branch complete')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument()
+  })
+
+  it('shows an active skill first and opens its hold timer', async () => {
+    const user = userEvent.setup()
+    const done = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike']
+    render(<App storage={seed({ completed: done, skillFocus: { handstand: 'push-hs-chest' } })} />)
+    const skill = await screen.findByRole('button', { name: /Chest-to-wall handstand hold/ })
+    expect(skill).toHaveTextContent('SKILL')
+    expect(skill).toHaveTextContent('4 × 20 s')
+    await user.click(skill)
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
+  })
+
+  it('says the workout is done once every goal is met', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByText('Workout complete')).toBeInTheDocument()
   })
 })
 
 describe('Skill Tree screen', () => {
   it('shows nodes with their state and lets you open one', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     expect(screen.getByRole('button', { name: 'Wall push-up, focus' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Incline push-up, locked' })).toBeInTheDocument()
@@ -44,7 +122,7 @@ describe('Skill Tree screen', () => {
   it('lets you make an available exercise your focus', async () => {
     const user = userEvent.setup()
     const done = ['push-wall', 'push-incline', 'push-knee', 'push-standard']
-    render(<App storage={memoryStorage({ completed: done })} />)
+    render(<App storage={seed({ completed: done })} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('button', { name: 'Decline push-up, available' }))
     await user.click(screen.getByRole('button', { name: 'Make This My Focus' }))
@@ -54,7 +132,7 @@ describe('Skill Tree screen', () => {
 
   it('switches branches', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('tab', { name: 'Pull' }))
     expect(screen.getByRole('button', { name: 'Dead hang, focus' })).toBeInTheDocument()
@@ -65,7 +143,7 @@ describe('Skill Tree screen', () => {
 describe('Logging and level-up', () => {
   it('three sets at the goal offer a level-up, and confirming moves your focus', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log)
@@ -81,7 +159,7 @@ describe('Logging and level-up', () => {
 
   it('"Not yet" keeps the same focus, and a 4th set does not re-open the sheet', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
@@ -94,7 +172,7 @@ describe('Logging and level-up', () => {
 
   it('offers a Level Up button to come back to the sheet after "Not yet"', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     expect(screen.queryByRole('button', { name: 'Level Up' })).not.toBeInTheDocument()
@@ -106,7 +184,7 @@ describe('Logging and level-up', () => {
 
   it('steps the rep count and never goes below 1', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const value = screen.getByTestId('rep-value')
     expect(value).toHaveTextContent('10')
@@ -118,7 +196,7 @@ describe('Logging and level-up', () => {
 
   it('a set below the goal counts as logged but does not fill the goal bars', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     await user.click(screen.getByRole('button', { name: 'Decrease reps' }))
     await user.click(screen.getByRole('button', { name: 'Log Set' }))
@@ -128,7 +206,7 @@ describe('Logging and level-up', () => {
 
   it('remembers logged sets after the app is reopened', async () => {
     const user = userEvent.setup()
-    const storage = memoryStorage()
+    const storage = seed()
     const first = render(<App storage={storage} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     await user.click(screen.getByRole('button', { name: 'Log Set' }))
@@ -140,8 +218,9 @@ describe('Logging and level-up', () => {
   })
 
   it('uses a hold timer for hold goals', async () => {
+    vi.setSystemTime(WEDNESDAY)
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
     expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Log Set' })).not.toBeInTheDocument()
@@ -149,7 +228,7 @@ describe('Logging and level-up', () => {
 
   it('lets you correct or remove a mis-tapped set', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     await user.click(screen.getByRole('button', { name: 'Log Set' }))
     expect(screen.getByLabelText('Sets logged today')).toHaveTextContent('10')
@@ -165,7 +244,7 @@ describe('Logging and level-up', () => {
 
   it('removing the set that reached the goal takes the Level Up button away', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
@@ -181,7 +260,7 @@ describe('Logging and level-up', () => {
 describe('Skill Tree layout', () => {
   it('keeps the branch tabs outside the scrolling tree area', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     const tabs = screen.getByRole('tablist', { name: 'Branch' })
     const tree = screen.getByRole('group', { name: 'Push skill tree' })
@@ -193,7 +272,7 @@ describe('Skill Tree layout', () => {
 describe('Skill Tree pop-ups', () => {
   it('renders the node sheet outside the fixed tree container so the tab bar cannot cover it', async () => {
     const user = userEvent.setup()
-    render(<App storage={memoryStorage()} />)
+    render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('button', { name: 'Wall push-up, focus' }))
     const dialog = screen.getByRole('dialog', { name: 'Wall push-up' })

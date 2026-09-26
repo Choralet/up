@@ -26,7 +26,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .navt { text-align: center; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center; gap: 32px;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center; gap: 12px;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); background: var(--card); border-top: 0.5px solid var(--sep);
 }
 .tabbar button { min-width: 72px; min-height: 44px; font-size: 11px; color: var(--label2); }
@@ -118,3 +118,16 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* hide scrollbars everywhere; scrolling still works */
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }
+
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.gear { min-width: 44px; min-height: 44px; border-radius: 50%; background: var(--fill); font-size: 20px; }
+.card { background: var(--card); border-radius: 14px; padding: 14px; margin: 16px 0; }
+.check { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; text-align: left; min-height: 48px; }
+.check + .check { border-top: 0.5px solid var(--sep); }
+.check .box { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--label3); flex: none; display: grid; place-items: center; font-size: 13px; color: #fff; }
+.check[aria-checked='true'] .box { background: var(--legs); border-color: var(--legs); }
+.check[aria-checked='true'] .lbl { color: var(--label2); text-decoration: line-through; }
+.hdr { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label2); margin: 16px 4px -8px; }
+.pillbtn { display: inline-block; padding: 8px 14px; border-radius: 999px; background: var(--fill); color: var(--blue); font-weight: 600; font-size: 14px; margin: 4px 6px 0 0; min-height: 36px; }
+.done-banner { text-align: center; color: var(--legs); font-weight: 700; margin: 8px 0; }
+.row .tick { color: var(--legs); font-weight: 700; }

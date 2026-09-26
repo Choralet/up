@@ -1,8 +1,10 @@
-export type Tab = 'today' | 'tree'
+export type Tab = 'today' | 'tree' | 'skills' | 'progress'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'today', label: 'Today' },
   { id: 'tree', label: 'Tree' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'progress', label: 'Progress' },
 ]
 
 export function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
