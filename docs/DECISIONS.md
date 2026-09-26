@@ -21,6 +21,8 @@ Source of truth for choices made about the app. Update after each answer.
 - Skill tree must be a **real, game-like branching tree**, not a list (mockups 4–6 approved direction; everything else in mockups is fine)
 - Workout days, active skills, focus nodes and goals are **all customizable in the app** (no fixed schedule chosen)
 - **After trying Plan 1 (round 5):** hold-timer ring must glide smoothly (done: per-frame updates); logged sets can be corrected (done: tap a set chip to change its value or remove it; interpreted from "relog the set for miss click"); on the Tree tab the Push/Pull/Legs/Core bar is fixed and only the tree scrolls (done, tree starts scrolled to the bottom where beginner exercises are)
+- **Schedule (round 6):** default is **Monday / Wednesday / Friday** as Push / Pull / Legs+Core. It must be **customizable in the app** (Plan 2 Settings), noted as the default only.
+- **Skills get a timer (round 6):** skill steps whose goal is a hold (handstand, planche, lever, L-sit) use the hold timer, opened straight from the workout. Rep-based skill steps (one-arm push-up, muscle-up, HSPU, pistol, dragon flag) keep the rep stepper.
 
 ## Proposed by the agent, awaiting approval
 
@@ -42,7 +44,6 @@ Source of truth for choices made about the app. Update after each answer.
 
 ## Open questions
 
-- Plan 2 scope questions (to brainstorm before writing Plan 2): default weekday schedule, how many days per week, warm-up content, whether skills also get a per-set timer
 - User feedback after trying Plan 1 on the iPhone
 
 ## Known minors deferred from the Plan 1 final review (fix in Plan 2 or 3)
