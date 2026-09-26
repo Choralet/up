@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { ExerciseNode } from '../data/types'
 import { indexNodes } from '../engine/graph'
 import {
-  initialProgress, levelUp as levelUpRule, logSet, sanitizeProgress, setFocus as setFocusRule,
+  editSet as editSetRule, initialProgress, levelUp as levelUpRule, logSet, removeSet as removeSetRule,
+  sanitizeProgress, setFocus as setFocusRule,
   type Progress,
 } from '../engine/progress'
 import { localDate } from '../lib/time'
@@ -15,6 +16,9 @@ export interface ProgressValue {
   log(nodeId: string, value: number): void
   levelUp(fromId: string, toId: string | null): void
   setFocus(nodeId: string): void
+  /** `index` is the position in `progress.logs` */
+  removeSet(index: number): void
+  editSet(index: number, value: number): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -51,6 +55,8 @@ export function ProgressProvider({
     log: (nodeId, v) => setProgress((p) => (p ? logSet(p, nodeId, v, localDate(), Date.now()) : p)),
     levelUp: (fromId, toId) => setProgress((p) => (p ? levelUpRule(nodes, p, fromId, toId) : p)),
     setFocus: (nodeId) => setProgress((p) => (p ? setFocusRule(nodes, p, nodeId) : p)),
+    removeSet: (index) => setProgress((p) => (p ? removeSetRule(p, index) : p)),
+    editSet: (index, v) => setProgress((p) => (p ? editSetRule(p, index, v) : p)),
   }
   return (
     <Ctx.Provider value={value}>

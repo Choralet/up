@@ -1,7 +1,7 @@
 import type { ExerciseNode } from '../data/types'
 import {
   goalMet, initialProgress, isUnlocked, levelUp, logSet, nodeState,
-  sanitizeProgress, setFocus, suggestNext, todaysValues,
+  removeSet, editSet, sanitizeProgress, setFocus, suggestNext, todaysValues,
   type Progress,
 } from './progress'
 
@@ -157,5 +157,30 @@ describe('sanitizeProgress', () => {
   it('gives a fully completed branch null focus', () => {
     const p = sanitizeProgress(graph, { completed: ['a', 'b', 'c', 'd'] })
     expect(p.focus.push).toBeNull()
+  })
+})
+
+describe('removeSet / editSet (fixing a mis-tap)', () => {
+  const logged = () => logSet(logSet(fresh(), 'a', 10, '2026-09-26', 1), 'a', 9, '2026-09-26', 2)
+
+  it('removes only the set at that index', () => {
+    expect(removeSet(logged(), 0).logs.map((l) => l.value)).toEqual([9])
+    expect(removeSet(logged(), 1).logs.map((l) => l.value)).toEqual([10])
+  })
+  it('ignores an index that does not exist', () => {
+    const p = logged()
+    expect(removeSet(p, 5)).toBe(p)
+    expect(removeSet(p, -1)).toBe(p)
+    expect(removeSet(p, 0.5)).toBe(p)
+  })
+  it('edits a value with the same rules as logSet', () => {
+    expect(editSet(logged(), 1, 12).logs[1].value).toBe(12)
+    expect(editSet(logged(), 1, 12.8).logs[1].value).toBe(12)
+    expect(editSet(logged(), 0, 12).logs[1].value).toBe(9)
+  })
+  it('ignores bad values and missing indexes when editing', () => {
+    const p = logged()
+    for (const bad of [0, -2, NaN, Infinity]) expect(editSet(p, 1, bad)).toBe(p)
+    expect(editSet(p, 9, 5)).toBe(p)
   })
 })

@@ -53,6 +53,22 @@ export function logSet(progress: Progress, nodeId: string, value: number, date: 
   return { ...progress, logs: [...progress.logs, { nodeId, value: v, date, at }] }
 }
 
+const validIndex = (progress: Progress, index: number) =>
+  Number.isInteger(index) && index >= 0 && index < progress.logs.length
+
+/** Delete one logged set (for a mis-tap). Ignores an index that does not exist. */
+export function removeSet(progress: Progress, index: number): Progress {
+  if (!validIndex(progress, index)) return progress
+  return { ...progress, logs: progress.logs.filter((_, i) => i !== index) }
+}
+
+/** Change the value of one logged set, with the same rules as `logSet`. */
+export function editSet(progress: Progress, index: number, value: number): Progress {
+  const v = Math.floor(value)
+  if (!validIndex(progress, index) || !Number.isFinite(v) || v < 1) return progress
+  return { ...progress, logs: progress.logs.map((l, i) => (i === index ? { ...l, value: v } : l)) }
+}
+
 /** Strength before skill; the sort is stable so JSON order breaks ties. */
 const kindRank = (n: ExerciseNode) => (n.kind === 'skill' ? 1 : 0)
 

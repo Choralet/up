@@ -20,6 +20,7 @@ Source of truth for choices made about the app. Update after each answer.
 - How-to: only a **small button**, only where a demo exists; **no custom stick figures**; if no legit source, leave it out (see DEMOS.md)
 - Skill tree must be a **real, game-like branching tree**, not a list (mockups 4–6 approved direction; everything else in mockups is fine)
 - Workout days, active skills, focus nodes and goals are **all customizable in the app** (no fixed schedule chosen)
+- **After trying Plan 1 (round 5):** hold-timer ring must glide smoothly (done: per-frame updates); logged sets can be corrected (done: tap a set chip to change its value or remove it; interpreted from "relog the set for miss click"); on the Tree tab the Push/Pull/Legs/Core bar is fixed and only the tree scrolls (done, tree starts scrolled to the bottom where beginner exercises are)
 
 ## Proposed by the agent, awaiting approval
 

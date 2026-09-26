@@ -11,8 +11,14 @@ export function HoldTimer({ target, onStop }: { target: number; onStop: (seconds
 
   useEffect(() => {
     if (startedAt === null) return
-    const id = setInterval(() => setElapsed((Date.now() - startedAt) / 1000), 200)
-    return () => clearInterval(id)
+    // one update per animation frame so the ring glides instead of stepping
+    let raf = 0
+    const tick = () => {
+      setElapsed((Date.now() - startedAt) / 1000)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
   }, [startedAt])
 
   useEffect(() => () => { void lock.current?.release().catch(() => {}) }, [])

@@ -6,17 +6,22 @@ import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
+import { SetSheet } from './SetSheet'
 
 export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => void }) {
-  const { nodes, byId, progress, log, levelUp } = useProgress()
+  const { nodes, byId, progress, log, levelUp, editSet, removeSet } = useProgress()
   const node = byId.get(nodeId)!
   const meta = BRANCH_META[node.branch]
   const last = [...progress.logs].reverse().find((l) => l.nodeId === nodeId)?.value
   const [reps, setReps] = useState(last ?? node.goal.target)
   const [showLevelUp, setShowLevelUp] = useState(false)
+  const [editing, setEditing] = useState<number | null>(null)
 
   const today = localDate()
-  const values = todaysValues(progress, nodeId, today)
+  const entries = progress.logs.flatMap((l, i) => (l.nodeId === nodeId && l.date === today ? [{ value: l.value, index: i }] : []))
+  const values = entries.map((e) => e.value)
+  const unit = node.goal.type === 'hold' ? ' s' : ''
+  const editN = entries.findIndex((e) => e.index === editing)
   const atGoal = values.filter((v) => v >= node.goal.target).length
 
   const isFocus = nodeState(node, progress) === 'focus'
@@ -65,13 +70,32 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           <button className="cta sec" onClick={() => setShowLevelUp(true)}>Level Up</button>
         )}
 
-        {values.length > 0 && (
-          <div className="chips" aria-label="Sets logged today">
-            {values.map((v, i) => <span className="pill" key={i}>{v}{node.goal.type === 'hold' ? ' s' : ''}</span>)}
-          </div>
+        {entries.length > 0 && (
+          <>
+            <div className="chips" aria-label="Sets logged today">
+              {entries.map((e, n) => (
+                <button key={e.index} className="pill chip" aria-label={`Edit set ${n + 1}: ${e.value}${unit}`} onClick={() => setEditing(e.index)}>
+                  {e.value}{unit}
+                </button>
+              ))}
+            </div>
+            <div className="sub" style={{ marginTop: 6, fontSize: 12 }}>Tap a set to fix it</div>
+          </>
         )}
         <p className="cue sub" style={{ marginTop: 16 }}>{node.cue}</p>
       </div>
+
+      {editN >= 0 && (
+        <SetSheet
+          number={editN + 1}
+          unit={unit}
+          initial={entries[editN].value}
+          color={meta.color}
+          onSave={(v) => { editSet(entries[editN].index, v); setEditing(null) }}
+          onRemove={() => { removeSet(entries[editN].index); setEditing(null) }}
+          onClose={() => setEditing(null)}
+        />
+      )}
 
       {showLevelUp && (
         <LevelUpSheet
