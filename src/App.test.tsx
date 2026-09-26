@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import App from './App'
 import { NODES } from './data/nodes'
 import { memoryStorage } from './store/storage'
+import { memoryServices } from './store/services'
 
 /** A save that has finished onboarding, so tests start on the Today screen. */
 const seed = (extra: Record<string, unknown> = {}) => memoryStorage({ onboarded: true, ...extra })
@@ -489,5 +490,51 @@ describe('Plan 3 wording fixes', () => {
     render(<App storage={seed({ schedule: ['push', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'] })} />)
     await user.click(await screen.findByRole('button', { name: 'Progress' }))
     expect(screen.getByText(/Train on 1 day in a week/)).toBeInTheDocument()
+  })
+})
+
+describe('Backup file', () => {
+  it('exports a backup file from Settings', async () => {
+    const user = userEvent.setup()
+    const services = memoryServices()
+    render(<App storage={seed({ completed: ['push-wall'] })} services={services} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('button', { name: 'Export Backup File' }))
+    expect(services.saved).toHaveLength(1)
+    expect(services.saved[0].name).toBe('up-backup-2026-09-21.json')
+    expect(JSON.parse(services.saved[0].text).progress.completed).toEqual(['push-wall'])
+  })
+
+  it('imports a backup after confirmation and replaces progress', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed: ['push-wall'], onboarded: true } })
+    await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Replace your progress?' })
+    expect(dialog).toHaveTextContent('1 finished exercise')
+    await user.click(screen.getByRole('button', { name: 'Replace' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
+  })
+
+  it('shows an error for a file that is not a backup and changes nothing', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.upload(screen.getByLabelText('Import backup file'), new File(['hello'], 'x.json', { type: 'application/json' }))
+    expect(await screen.findByText("This file isn't an Up backup.")).toBeInTheDocument()
+    expect(screen.queryByRole('dialog', { name: 'Replace your progress?' })).not.toBeInTheDocument()
+  })
+
+  it('cancelling the import changes nothing', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed: ['push-wall'] } })
+    await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
+    await user.click(await screen.findByRole('button', { name: 'Cancel' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('button', { name: /Wall push-up/ })).toBeInTheDocument()
   })
 })

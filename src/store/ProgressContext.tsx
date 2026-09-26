@@ -30,6 +30,8 @@ export interface ProgressValue {
   setGoal(nodeId: string, goal: GoalOverride | null): void
   finishOnboarding(): void
   restartOnboarding(): void
+  /** swap in progress from a backup; the caller has already cleaned it */
+  replaceProgress(p: Progress): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -79,6 +81,7 @@ export function ProgressProvider({
     setGoal: (nodeId, goal) => update((p) => setGoalOverride(p, nodeId, goal, nodes)),
     finishOnboarding: () => update(finishOnboardingRule),
     restartOnboarding: () => update(restartOnboardingRule),
+    replaceProgress: (p) => setProgress(p),
   }
   return (
     <Ctx.Provider value={value}>

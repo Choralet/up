@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NODES } from './data/nodes'
 import { ProgressProvider, useProgress } from './store/ProgressContext'
+import { ServicesProvider, realServices, type Services } from './store/services'
 import { idbStorage, type ProgressStorage } from './store/storage'
 import { LogScreen } from './ui/LogScreen'
 import { Onboarding } from './ui/Onboarding'
@@ -30,10 +31,12 @@ function Shell() {
   )
 }
 
-export default function App({ storage = idbStorage }: { storage?: ProgressStorage }) {
+export default function App({ storage = idbStorage, services = realServices }: { storage?: ProgressStorage; services?: Services }) {
   return (
-    <ProgressProvider storage={storage} nodes={NODES}>
-      <Shell />
-    </ProgressProvider>
+    <ServicesProvider value={services}>
+      <ProgressProvider storage={storage} nodes={NODES}>
+        <Shell />
+      </ProgressProvider>
+    </ServicesProvider>
   )
 }
