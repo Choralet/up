@@ -1,6 +1,7 @@
 import { useRef, useState, type CSSProperties } from 'react'
 import { goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
+import { stepperStart } from '../engine/workout'
 import { formatClock, localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
@@ -17,8 +18,9 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const { nodes, byId, progress, log, levelUp, editSet, removeSet } = useProgress()
   const node = byId.get(nodeId)!
   const meta = BRANCH_META[node.branch]
-  const last = [...progress.logs].reverse().find((l) => l.nodeId === nodeId)?.value
-  const [reps, setReps] = useState(last ?? node.goal.target)
+  // start from what you did last session, not from the goal (3 quick taps must not fake a level-up)
+  const [start] = useState(() => stepperStart(progress, nodeId, localDate(), node.goal.target))
+  const [reps, setReps] = useState(start.value)
   const [showLevelUp, setShowLevelUp] = useState(false)
   const [editing, setEditing] = useState<number | null>(null)
   const [holdStart, setHoldStart] = useState<number | null>(null)
@@ -72,7 +74,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         {node.goal.type === 'reps' ? (
           <>
             <div className="big" data-testid="rep-value" aria-live="polite">{reps}</div>
-            <div className="sub">reps{last ? ` · last time ${last}` : ''}</div>
+            <div className="sub">reps{start.lastSession !== null ? ` · last session ${start.lastSession}` : ''}</div>
             <div className="steps">
               <button aria-label="Decrease reps" onClick={() => setReps((r) => Math.max(1, r - 1))}>−</button>
               <button aria-label="Increase reps" onClick={() => setReps((r) => r + 1)}>+</button>

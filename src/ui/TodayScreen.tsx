@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { DAY_LABEL, WARMUP, WEEKDAYS } from '../data/schedule'
 import { SKILLS } from '../data/skills'
 import type { DayType, ExerciseNode } from '../data/types'
 import { goalMet, todayState, todaysValues } from '../engine/progress'
 import { buildWorkout, nextTrainingDay, workoutDone } from '../engine/workout'
+import { FinishSheet } from './FinishSheet'
 import { goalText } from '../lib/format'
 import { localDate, weekdayIndex } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
@@ -25,22 +26,31 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
   const next = nextTrainingDay(progress.schedule, weekday)
   const heading = now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })
 
-  const row = (node: ExerciseNode) => {
+  const [finishing, setFinishing] = useState(false)
+  const unit = (node: ExerciseNode) => (node.goal.type === 'hold' ? ' s' : '')
+
+  const row = (node: ExerciseNode, tag?: string) => {
     const values = todaysValues(progress, node.id, today)
-    const atGoal = values.filter((v) => v >= node.goal.target).length
     const meta = BRANCH_META[node.branch]
+    const logged = values.length
+    const status = logged === 0
+      ? goalText(node.goal)
+      : `${goalText(node.goal)} · ${Math.min(logged, node.goal.sets)} of ${node.goal.sets} sets · best ${Math.max(...values)}${unit(node)}`
     return (
-      <button className="row" key={node.id} onClick={() => onOpen(node.id)}>
+      <button className="row" key={`${tag ?? 'main'}:${node.id}`} onClick={() => onOpen(node.id)}>
         <span className="dot" style={{ background: node.kind === 'skill' ? 'var(--skill)' : meta.color }}>{meta.short}</span>
         <span className="t">
-          {node.kind === 'skill' && <span className="tag">SKILL</span>}
+          {(tag || node.kind === 'skill') && <span className="tag">{tag ?? 'SKILL'}</span>}
           <b>{node.name}</b>
-          <span>{goalText(node.goal)} · {atGoal} of {node.goal.sets} sets today</span>
+          <span>{status}</span>
         </span>
-        {goalMet(node.goal, values) ? <span className="tick" aria-label="Goal reached">✓</span> : <span className="chev" aria-hidden="true">›</span>}
+        {goalMet(node.goal, values) ? <span className="tick" aria-label="Goal reached">✓</span>
+          : logged >= node.goal.sets ? <span className="tick done" aria-label="Sets done">✓</span>
+          : <span className="chev" aria-hidden="true">›</span>}
       </button>
     )
   }
+  const anyLogged = progress.logs.some((l) => l.date === today)
 
   return (
     <div className="screen">
@@ -92,7 +102,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           {workout.skill.length > 0 && (
             <>
               <div className="hdr">Skill</div>
-              <div className="group">{workout.skill.map(row)}</div>
+              <div className="group">{workout.skill.map((n) => row(n))}</div>
             </>
           )}
 
@@ -107,9 +117,17 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
               ),
             )}
           </div>
+          {workout.extra.length > 0 && (
+            <>
+              <h2 className="hdr">Also Today</h2>
+              <div className="group">{workout.extra.map((e) => row(e.node, e.role === 'volume' ? 'Volume' : 'Core finisher'))}</div>
+            </>
+          )}
           {workoutDone(workout, progress, today) && <div className="done-banner">Workout complete</div>}
+          {anyLogged && <button className="cta" onClick={() => setFinishing(true)}>Finish Workout</button>}
         </>
       )}
+      {finishing && <FinishSheet today={today} onClose={() => setFinishing(false)} />}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import type { Branch, DayType, ExerciseNode, SkillChain } from '../data/types'
 import { DAY_BRANCHES } from '../data/schedule'
 import { indexNodes } from './graph'
-import { goalMet, todaysValues, type Progress } from './progress'
+import { todaysValues, type Progress } from './progress'
 
 export interface Workout {
   day: DayType
@@ -9,6 +9,8 @@ export interface Workout {
   skill: ExerciseNode[]
   /** focus exercise of each branch trained on this day type; null = branch finished */
   main: { branch: Branch; node: ExerciseNode | null }[]
+  /** "Also today": the finished variation for volume, and a core finisher on Push and Pull days */
+  extra: { node: ExerciseNode; role: 'volume' | 'core' }[]
 }
 
 export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: DayType, chains: SkillChain[]): Workout {
@@ -21,7 +23,16 @@ export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: Day
     const id = progress.focus[branch]
     return { branch, node: id ? byId.get(id) ?? null : null }
   })
-  return { day, skill, main }
+  const done = new Set(progress.completed)
+  const extra: Workout['extra'] = []
+  for (const { node } of main) {
+    // the variation you just finished, for easy extra volume (none below a branch root)
+    const parent = node?.requires.map((r) => byId.get(r)).find((p) => p && !p.skill && p.branch === node.branch && done.has(p.id))
+    if (parent) extra.push({ node: parent, role: 'volume' })
+  }
+  const core = progress.focus.core ? byId.get(progress.focus.core) : undefined
+  if ((day === 'push' || day === 'pull') && core) extra.push({ node: core, role: 'core' })
+  return { day, skill, main, extra }
 }
 
 /** The next non-rest day after today (weekday 0 = Monday), wrapping into next week. `daysAhead` is 1 to 7. */
@@ -33,8 +44,43 @@ export function nextTrainingDay(schedule: DayType[], weekday: number): { daysAhe
   return null
 }
 
-/** True when the workout has exercises and every one of them met its goal on `date`. */
+/** Every exercise of the workout, in the order shown. */
+export const workoutItems = (w: Workout): ExerciseNode[] => [...w.skill, ...w.main.flatMap((m) => (m.node ? [m.node] : [])), ...w.extra.map((e) => e.node)]
+
+/** True when the workout has exercises and each has its number of sets logged on `date` (at any level). */
 export function workoutDone(workout: Workout, progress: Progress, date: string): boolean {
-  const items = [...workout.skill, ...workout.main.flatMap((m) => (m.node ? [m.node] : []))]
-  return items.length > 0 && items.every((n) => goalMet(n.goal, todaysValues(progress, n.id, date)))
+  const items = workoutItems(workout)
+  return items.length > 0 && items.every((n) => todaysValues(progress, n.id, date).length >= n.goal.sets)
+}
+
+export interface SummaryLine {
+  node: ExerciseNode
+  sets: number
+  best: number
+  /** today's best beats every earlier day (only when there was an earlier day) */
+  newBest: boolean
+}
+
+/** What you did on `date`, in the order you first logged each exercise. */
+export function sessionSummary(byId: Map<string, ExerciseNode>, progress: Progress, date: string): SummaryLine[] {
+  const order: string[] = []
+  for (const l of progress.logs) if (l.date === date && !order.includes(l.nodeId) && byId.has(l.nodeId)) order.push(l.nodeId)
+  return order.map((id) => {
+    const today = todaysValues(progress, id, date)
+    const earlier = progress.logs.filter((l) => l.nodeId === id && l.date < date).map((l) => l.value)
+    const best = Math.max(...today)
+    return { node: byId.get(id)!, sets: today.length, best, newBest: earlier.length > 0 && best > Math.max(...earlier) }
+  })
+}
+
+/** Where the rep stepper starts: last session's first set, else today's last set, else the goal. */
+export function stepperStart(progress: Progress, nodeId: string, today: string, goalTarget: number): { value: number; lastSession: number | null } {
+  const mine = progress.logs.filter((l) => l.nodeId === nodeId)
+  const prevDate = mine.filter((l) => l.date < today).map((l) => l.date).sort().pop()
+  if (prevDate) {
+    const first = mine.find((l) => l.date === prevDate)!.value
+    return { value: first, lastSession: first }
+  }
+  const todays = mine.filter((l) => l.date === today)
+  return { value: todays.length ? todays[todays.length - 1].value : goalTarget, lastSession: null }
 }

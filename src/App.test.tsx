@@ -111,6 +111,12 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     await user.click(log); await user.click(log); await user.click(log)
     await user.click(await screen.findByRole('button', { name: 'Not yet' }))
     await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(screen.queryByText('Workout complete')).not.toBeInTheDocument() // the core finisher is still to do
+    await user.click(await screen.findByRole('button', { name: /Dead bug/ }))
+    const log2 = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log2); await user.click(log2); await user.click(log2)
+    await user.click(await screen.findByRole('button', { name: 'Not yet' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
     expect(await screen.findByText('Workout complete')).toBeInTheDocument()
   })
 })
@@ -163,7 +169,7 @@ describe('Logging and level-up', () => {
     await user.click(screen.getByRole('button', { name: /Incline push-up/ }))
     await user.click(screen.getByRole('button', { name: 'Set Focus' }))
     expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Wall push-up/ })).toHaveTextContent('Volume') // the finished variation stays as extra volume
   })
 
   it('"Not yet" keeps the same focus, and a 4th set does not re-open the sheet', async () => {
@@ -220,10 +226,10 @@ describe('Logging and level-up', () => {
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     await user.click(screen.getByRole('button', { name: 'Log Set' }))
     await user.click(screen.getByRole('button', { name: 'Done' }))
-    expect(await screen.findByText(/1 of 3 sets today/)).toBeInTheDocument()
+    expect(await screen.findByText(/1 of 3 sets · best 10/)).toBeInTheDocument()
     first.unmount()
     render(<App storage={storage} />)
-    expect(await screen.findByText(/1 of 3 sets today/)).toBeInTheDocument()
+    expect(await screen.findByText(/1 of 3 sets · best 10/)).toBeInTheDocument()
   })
 
   it('uses a hold timer for hold goals', async () => {
@@ -692,13 +698,13 @@ describe('Done while a hold is running', () => {
     const user = await startHang()
     expect(screen.getByRole('dialog', { name: 'A hold is running' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Log It' }))
-    expect(await screen.findByText(/1 of 3 sets today/)).toBeInTheDocument()
+    expect(await screen.findByText(/1 of 3 sets · best 31 s/)).toBeInTheDocument()
   })
 
   it('"Discard" closes without saving', async () => {
     const user = await startHang()
     await user.click(screen.getByRole('button', { name: 'Discard' }))
-    expect(await screen.findByText(/0 of 3 sets today/)).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Dead hang/ })).not.toHaveTextContent('sets ·')
   })
 
   it('"Cancel" keeps you in the hold', async () => {
@@ -1060,5 +1066,54 @@ describe('Plan 5 · Phase 1 slips', () => {
     const text = JSON.stringify({ app: 'up', version: 1, progress: { completed, onboarded: true } })
     await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
     expect(await screen.findByRole('dialog', { name: 'Replace your progress?' })).toHaveTextContent('12 finished exercises')
+  })
+})
+
+describe('Plan 5 · Phase 2 complete workout', () => {
+  it('Today counts every logged set, with the best, and ticks the exercise when its sets are logged', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const dec = screen.getByRole('button', { name: 'Decrease reps' })
+    for (let i = 0; i < 5; i++) await user.click(dec)
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    await user.click(screen.getAllByRole('button', { name: 'Done' })[0])
+    const row = await screen.findByRole('button', { name: /Wall push-up/ })
+    expect(row).toHaveTextContent('3 of 3 sets · best 5')
+    expect(within(row).getByLabelText('Sets done')).toBeInTheDocument()
+  })
+
+  it('adds a core finisher on Push day and the finished variation for volume', async () => {
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee'] })} />)
+    expect(await screen.findByRole('heading', { name: 'Also Today' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Knee push-up/ })).toHaveTextContent('Volume')
+    expect(screen.getByRole('button', { name: /Dead bug/ })).toHaveTextContent('Core finisher')
+  })
+
+  it('Finish Workout shows a summary with new bests and the next workout', async () => {
+    const user = userEvent.setup()
+    const logs = [{ nodeId: 'push-wall', value: 8, date: '2026-09-18', at: 1 }]
+    render(<App storage={seed({ logs })} />)
+    expect(screen.queryByRole('button', { name: 'Finish Workout' })).not.toBeInTheDocument()
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'Increase reps' }))
+    await user.click(screen.getByRole('button', { name: 'Log Set' }))
+    await user.click(screen.getAllByRole('button', { name: 'Done' })[0])
+    await user.click(await screen.findByRole('button', { name: 'Finish Workout' }))
+    const sheet = screen.getByRole('dialog', { name: 'Workout summary' })
+    expect(sheet).toHaveTextContent('Wall push-up')
+    expect(sheet).toHaveTextContent('1 set · best 9')
+    expect(sheet).toHaveTextContent('New best')
+    expect(sheet).toHaveTextContent('Next: Wednesday · Pull Day')
+  })
+
+  it('the rep stepper starts from last session’s first set', async () => {
+    const user = userEvent.setup()
+    const logs = [6, 5].map((value, i) => ({ nodeId: 'push-wall', value, date: '2026-09-18', at: i }))
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    expect(screen.getByTestId('rep-value')).toHaveTextContent('6')
+    expect(screen.getByText(/last session 6/)).toBeInTheDocument()
   })
 })
