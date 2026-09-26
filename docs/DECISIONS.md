@@ -57,3 +57,9 @@ Source of truth for choices made about the app. Update after each answer.
 - Accessibility: rep count not announced, overlays not modal/inert, tree state words differ from the sheet ("available"/"focus" vs "Unlocked"/"Focus"), skill nodes don't say "skill"
 - `.cta:disabled` is unused
 - Unverified without a device: offline and IndexedDB behaviour inside the iOS home-screen app; wake lock before iOS 18.4
+
+## Plan 2 built (2026-09-26)
+
+Decisions taken while building, all reversible: skill steps keep the graph's hard requirements (a locked step cannot be trained); a week counts toward the streak with 2 logged days (or fewer if fewer are planned); Find your level only asks about strength exercises and never completes a skill step; existing users skip onboarding (migration marks a used app as onboarded); "Train anyway" on a rest day is available for Push, Pull or Legs + Core.
+
+Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for singular; a round-cap dot shows on the timer ring at 0:00.
