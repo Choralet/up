@@ -3,6 +3,7 @@ import { BRANCHES, indexNodes } from '../engine/graph'
 import { computeDepths } from '../engine/layout'
 import { wrapLabel } from '../lib/format'
 import { SKILLS } from './skills'
+import { DEMO_IDS, demoUrl } from './demos'
 import { DAY_BRANCHES } from './schedule'
 
 describe('exercise graph', () => {
@@ -81,5 +82,13 @@ describe('exercise graph', () => {
         }
       }
     }
+  })
+  it('every demo belongs to a known exercise and points at the pinned CDN', () => {
+    const ids = new Set(NODES.map((n) => n.id))
+    for (const id of DEMO_IDS) {
+      expect(ids.has(id), id).toBe(true)
+      expect(demoUrl(id)).toMatch(/^https:\/\/cdn\.jsdelivr\.net\/gh\/hasaneyldrm\/exercises-dataset@7455efa[0-9a-f]+\/videos\/\d{4}-\w+\.gif$/)
+    }
+    expect(demoUrl('push-wall')).toBeNull()
   })
 })

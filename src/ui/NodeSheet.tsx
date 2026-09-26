@@ -4,6 +4,7 @@ import { nodeState } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
+import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
 
 const LABEL = { locked: 'Locked', available: 'Unlocked', focus: 'Focus', completed: 'Completed' } as const
@@ -25,6 +26,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
         <div className="pills">
           <span className="pill">Goal {goalText(node.goal)}</span>
           {node.kind === 'skill' && <span className="pill skill">Skill</span>}
+          <DemoButton node={node} />
         </div>
         {node.requires.map((id) => {
           const ok = progress.completed.includes(id)

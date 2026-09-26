@@ -4,6 +4,7 @@ import { goalText } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
+import { DemoButton } from './DemoButton'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
 import { SetSheet } from './SetSheet'
@@ -46,6 +47,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         <h1 className="large" style={{ fontSize: 26 }}>{node.name}</h1>
         <div className="pills" style={{ justifyContent: 'center' }}>
           <span className="pill">Goal {goalText(node.goal)}</span>
+          <DemoButton node={node} />
         </div>
         <div className="bars" aria-hidden="true">
           {Array.from({ length: node.goal.sets }, (_, i) => <i key={i} className={i < atGoal ? 'on' : ''} />)}

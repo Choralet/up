@@ -24,7 +24,16 @@ export default defineConfig({
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,json}'] },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,json}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/gh\/hasaneyldrm\//,
+            handler: 'CacheFirst',
+            options: { cacheName: 'demos', expiration: { maxEntries: 60, maxAgeSeconds: 31536000 }, cacheableResponse: { statuses: [0, 200] } },
+          },
+        ],
+      },
     }),
   ],
   test: { environment: 'jsdom', setupFiles: './src/test-setup.ts', globals: true },

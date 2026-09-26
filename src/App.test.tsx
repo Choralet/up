@@ -622,3 +622,32 @@ describe('GitHub backup', () => {
     expect(screen.getByLabelText('Token')).toBeInTheDocument()
   })
 })
+
+describe('How-to demos', () => {
+  it('shows a How-to button only for exercises that have a demo', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    expect(screen.queryByRole('button', { name: 'How-to' })).not.toBeInTheDocument()
+  })
+
+  it('opens the demo with its credit', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], focus: { push: 'push-incline' } })} />)
+    await user.click(await screen.findByRole('button', { name: /Incline push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'How-to' }))
+    const dialog = screen.getByRole('dialog', { name: 'How to do Incline push-up' })
+    expect(dialog.querySelector('img')!.getAttribute('src')).toContain('0493-B1EVP9F.gif')
+    expect(dialog).toHaveTextContent('© Gym visual — gymvisual.com')
+    await user.click(screen.getByRole('button', { name: 'Close demo' }))
+    expect(screen.queryByRole('dialog', { name: 'How to do Incline push-up' })).not.toBeInTheDocument()
+  })
+
+  it('is also in the tree node sheet', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: /^Incline push-up/ }))
+    expect(screen.getByRole('button', { name: 'How-to' })).toBeInTheDocument()
+  })
+})
