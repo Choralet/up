@@ -1,4 +1,4 @@
-import { localDate, formatClock } from './time'
+import { addDays, formatClock, localDate, weekdayIndex, weekStart } from './time'
 import { goalText, wrapLabel } from './format'
 
 describe('time helpers', () => {
@@ -30,5 +30,23 @@ describe('wrapLabel', () => {
   })
   it('never returns an empty list', () => {
     expect(wrapLabel('')).toEqual([''])
+  })
+})
+
+describe('week helpers (Monday is day 0)', () => {
+  it('numbers weekdays from Monday', () => {
+    expect(weekdayIndex(new Date(2026, 8, 21))).toBe(0) // Monday
+    expect(weekdayIndex(new Date(2026, 8, 26))).toBe(5) // Saturday
+    expect(weekdayIndex(new Date(2026, 8, 27))).toBe(6) // Sunday
+  })
+  it('adds days across month ends', () => {
+    expect(addDays('2026-09-28', 3)).toBe('2026-10-01')
+    expect(addDays('2026-03-01', -1)).toBe('2026-02-28')
+  })
+  it('finds the Monday of the week, including for a Sunday', () => {
+    expect(weekStart('2026-09-21')).toBe('2026-09-21')
+    expect(weekStart('2026-09-23')).toBe('2026-09-21')
+    expect(weekStart('2026-09-27')).toBe('2026-09-21')
+    expect(weekStart('2026-09-28')).toBe('2026-09-28')
   })
 })
