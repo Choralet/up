@@ -45,3 +45,75 @@ describe('ProgressProvider', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent("Couldn't save")
   })
 })
+
+function Actions() {
+  const { nodes, defaults, progress, setGoal, setDayType, activateSkill, deactivateSkill, finishOnboarding, restartOnboarding } = useProgress()
+  const wall = nodes.find((n) => n.id === 'push-wall')!
+  return (
+    <div>
+      <div data-testid="goal">{`${wall.goal.sets}x${wall.goal.target} default:${defaults.get('push-wall')!.goal.target}`}</div>
+      <div data-testid="monday">{progress.schedule[0]}</div>
+      <div data-testid="skills">{Object.keys(progress.skillFocus).join(',')}</div>
+      <div data-testid="onboarded">{String(progress.onboarded)}</div>
+      <button onClick={() => setGoal('push-wall', { sets: 4, target: 12 })}>goal</button>
+      <button onClick={() => setGoal('push-wall', null)}>reset</button>
+      <button onClick={() => setDayType(0, 'pull')}>monday-pull</button>
+      <button onClick={() => activateSkill('handstand')}>start</button>
+      <button onClick={() => deactivateSkill('handstand')}>stop</button>
+      <button onClick={finishOnboarding}>finish</button>
+      <button onClick={restartOnboarding}>restart</button>
+    </div>
+  )
+}
+
+describe('ProgressProvider actions (Plan 2)', () => {
+  const mount = (raw?: unknown) =>
+    render(<ProgressProvider storage={memoryStorage(raw)} nodes={NODES}><Actions /></ProgressProvider>)
+
+  it('applies goal overrides to nodes and keeps the defaults', async () => {
+    const user = userEvent.setup()
+    mount()
+    expect(await screen.findByTestId('goal')).toHaveTextContent('3x10 default:10')
+    await user.click(screen.getByText('goal'))
+    expect(screen.getByTestId('goal')).toHaveTextContent('4x12 default:10')
+    await user.click(screen.getByText('reset'))
+    expect(screen.getByTestId('goal')).toHaveTextContent('3x10 default:10')
+  })
+
+  it('changes the schedule', async () => {
+    const user = userEvent.setup()
+    mount()
+    expect(await screen.findByTestId('monday')).toHaveTextContent('push')
+    await user.click(screen.getByText('monday-pull'))
+    expect(screen.getByTestId('monday')).toHaveTextContent('pull')
+  })
+
+  it('activates and deactivates a skill once its requirement is done', async () => {
+    const user = userEvent.setup()
+    mount({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike'] })
+    await screen.findByTestId('skills')
+    expect(screen.getByTestId('skills')).toBeEmptyDOMElement()
+    await user.click(screen.getByText('start'))
+    expect(screen.getByTestId('skills')).toHaveTextContent('handstand')
+    await user.click(screen.getByText('stop'))
+    expect(screen.getByTestId('skills')).toBeEmptyDOMElement()
+  })
+
+  it('refuses to start a skill whose requirement is not done', async () => {
+    const user = userEvent.setup()
+    mount()
+    await screen.findByTestId('skills')
+    await user.click(screen.getByText('start'))
+    expect(screen.getByTestId('skills')).toBeEmptyDOMElement()
+  })
+
+  it('finishes and restarts onboarding', async () => {
+    const user = userEvent.setup()
+    mount()
+    expect(await screen.findByTestId('onboarded')).toHaveTextContent('false')
+    await user.click(screen.getByText('finish'))
+    expect(screen.getByTestId('onboarded')).toHaveTextContent('true')
+    await user.click(screen.getByText('restart'))
+    expect(screen.getByTestId('onboarded')).toHaveTextContent('false')
+  })
+})

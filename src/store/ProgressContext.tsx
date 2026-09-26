@@ -1,16 +1,21 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { ExerciseNode } from '../data/types'
+import type { DayType, ExerciseNode, GoalOverride } from '../data/types'
 import { indexNodes } from '../engine/graph'
 import {
-  editSet as editSetRule, initialProgress, levelUp as levelUpRule, logSet, removeSet as removeSetRule,
-  sanitizeProgress, setFocus as setFocusRule,
+  activateSkill as activateSkillRule, applyOverrides, deactivateSkill as deactivateSkillRule,
+  editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
+  levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
+  sanitizeProgress, setDayType as setDayTypeRule, setFocus as setFocusRule, setGoalOverride,
   type Progress,
 } from '../engine/progress'
 import { localDate } from '../lib/time'
 import type { ProgressStorage } from './storage'
 
 export interface ProgressValue {
+  /** nodes with the user's personal goals applied */
   nodes: ExerciseNode[]
+  /** the original nodes, for default goals */
+  defaults: Map<string, ExerciseNode>
   byId: Map<string, ExerciseNode>
   progress: Progress
   log(nodeId: string, value: number): void
@@ -19,6 +24,12 @@ export interface ProgressValue {
   /** `index` is the position in `progress.logs` */
   removeSet(index: number): void
   editSet(index: number, value: number): void
+  activateSkill(chainId: string): void
+  deactivateSkill(chainId: string): void
+  setDayType(weekday: number, type: DayType): void
+  setGoal(nodeId: string, goal: GoalOverride | null): void
+  finishOnboarding(): void
+  restartOnboarding(): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -28,7 +39,10 @@ export function ProgressProvider({
 }: { storage: ProgressStorage; nodes: ExerciseNode[]; children: ReactNode }) {
   const [progress, setProgress] = useState<Progress | null>(null)
   const [saveFailed, setSaveFailed] = useState(false)
-  const byId = useMemo(() => indexNodes(nodes), [nodes])
+  const defaults = useMemo(() => indexNodes(nodes), [nodes])
+  const overrides = progress?.goalOverrides
+  const effective = useMemo(() => (overrides ? applyOverrides(nodes, overrides) : nodes), [nodes, overrides])
+  const byId = useMemo(() => indexNodes(effective), [effective])
 
   useEffect(() => {
     let alive = true
@@ -48,15 +62,23 @@ export function ProgressProvider({
 
   if (!progress) return null
 
+  const update = (fn: (p: Progress) => Progress) => setProgress((p) => (p ? fn(p) : p))
   const value: ProgressValue = {
-    nodes,
+    nodes: effective,
+    defaults,
     byId,
     progress,
-    log: (nodeId, v) => setProgress((p) => (p ? logSet(p, nodeId, v, localDate(), Date.now()) : p)),
-    levelUp: (fromId, toId) => setProgress((p) => (p ? levelUpRule(nodes, p, fromId, toId) : p)),
-    setFocus: (nodeId) => setProgress((p) => (p ? setFocusRule(nodes, p, nodeId) : p)),
-    removeSet: (index) => setProgress((p) => (p ? removeSetRule(p, index) : p)),
-    editSet: (index, v) => setProgress((p) => (p ? editSetRule(p, index, v) : p)),
+    log: (nodeId, v) => update((p) => logSet(p, nodeId, v, localDate(), Date.now())),
+    levelUp: (fromId, toId) => update((p) => levelUpRule(nodes, p, fromId, toId)),
+    setFocus: (nodeId) => update((p) => setFocusRule(nodes, p, nodeId)),
+    removeSet: (index) => update((p) => removeSetRule(p, index)),
+    editSet: (index, v) => update((p) => editSetRule(p, index, v)),
+    activateSkill: (chainId) => update((p) => activateSkillRule(nodes, p, chainId)),
+    deactivateSkill: (chainId) => update((p) => deactivateSkillRule(p, chainId)),
+    setDayType: (weekday, type) => update((p) => setDayTypeRule(p, weekday, type)),
+    setGoal: (nodeId, goal) => update((p) => setGoalOverride(p, nodeId, goal, nodes)),
+    finishOnboarding: () => update(finishOnboardingRule),
+    restartOnboarding: () => update(restartOnboardingRule),
   }
   return (
     <Ctx.Provider value={value}>
