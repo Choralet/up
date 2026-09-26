@@ -43,3 +43,15 @@ Source of truth for choices made about the app. Update after each answer.
 
 - Plan 2 scope questions (to brainstorm before writing Plan 2): default weekday schedule, how many days per week, warm-up content, whether skills also get a per-set timer
 - User feedback after trying Plan 1 on the iPhone
+
+## Known minors deferred from the Plan 1 final review (fix in Plan 2 or 3)
+
+- Today/Log screens can show a stale day if the app stays open past midnight (re-render on visibilitychange)
+- `sanitizeProgress` keeps fractional stored set values (floor them)
+- Logs dropped by sanitising are overwritten by the post-load save; add an id migration before node ids change
+- Wake lock can stay held if Stop is tapped before it is granted, and is not re-acquired when the page returns to the foreground
+- Tapping Done during a running hold discards it silently
+- Status bar is unreadable in light mode (`black-translucent`); use `default` or keep the top area dark
+- Accessibility: rep count not announced, overlays not modal/inert, tree state words differ from the sheet ("available"/"focus" vs "Unlocked"/"Focus"), skill nodes don't say "skill"
+- `.cta:disabled` is unused
+- Unverified without a device: offline and IndexedDB behaviour inside the iOS home-screen app; wake lock before iOS 18.4
