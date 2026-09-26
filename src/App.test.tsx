@@ -651,3 +651,18 @@ describe('How-to demos', () => {
     expect(screen.getByRole('button', { name: 'How-to' })).toBeInTheDocument()
   })
 })
+
+describe('A new day while the app is open', () => {
+  it('moves Today to the new day and forgets "Train anyway" and warm-up ticks', async () => {
+    vi.setSystemTime(new Date(2026, 8, 27, 23, 50)) // Sunday night, rest day
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Train Pull anyway' }))
+    await user.click(screen.getByRole('checkbox', { name: 'Arm circles' }))
+    vi.setSystemTime(new Date(2026, 8, 28, 7, 0)) // Monday morning
+    document.dispatchEvent(new Event('visibilitychange'))
+    expect(await screen.findByRole('heading', { name: 'Push Day' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Wrist circles' })).toHaveAttribute('aria-checked', 'false')
+    expect(screen.queryByRole('button', { name: /Back to/ })).not.toBeInTheDocument()
+  })
+})

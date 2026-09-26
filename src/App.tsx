@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NODES } from './data/nodes'
+import { useToday } from './lib/useToday'
 import { ProgressProvider, useProgress } from './store/ProgressContext'
 import { ServicesProvider, realServices, type Services } from './store/services'
 import { idbStorage, type ProgressStorage } from './store/storage'
@@ -15,17 +16,18 @@ import { TreeScreen } from './ui/TreeScreen'
 
 function Shell() {
   const { progress } = useProgress()
+  const today = useToday()
   const [tab, setTab] = useState<Tab>('today')
   const [logId, setLogId] = useState<string | null>(null)
   const [settings, setSettings] = useState(false)
   return (
     <div className="app">
-      {tab === 'today' && <TodayScreen onOpen={setLogId} onSettings={() => setSettings(true)} />}
+      {tab === 'today' && <TodayScreen key={today} onOpen={setLogId} onSettings={() => setSettings(true)} />}
       {tab === 'tree' && <TreeScreen onLog={setLogId} />}
       {tab === 'skills' && <SkillsScreen onLog={setLogId} />}
       {tab === 'progress' && <ProgressScreen />}
       <TabBar tab={tab} onChange={setTab} />
-      {logId && <LogScreen nodeId={logId} onClose={() => setLogId(null)} />}
+      {logId && <LogScreen key={`${logId}:${today}`} nodeId={logId} onClose={() => setLogId(null)} />}
       {settings && <SettingsScreen onClose={() => setSettings(false)} />}
       {!progress.onboarded && <Onboarding />}
       <AutoBackup />
