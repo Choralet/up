@@ -28,11 +28,11 @@
 | 1 | Hollow body hang | New | Dead hang | 1. Hollow body hang 3 × 20 s → 2. Hollow body hang 3 × 30 s | Pull |
 | 2 | Frog stand | New | Knee push-up | 1. Frog stand, toes touching 3 × 10 s → 2. Frog stand 3 × 30 s | Push |
 | 3 | Hollow body hold | Link: Hollow hold | (as in the tree: Plank) | Hollow hold 3 × 20 s | Legs + Core |
-| 4 | Pseudo planche lean | New | Push-up | 1. Planche lean 3 × 15 s → 2. Planche lean, shoulders past hands 3 × 30 s | Push |
+| 4 | Pseudo planche lean | New | Push-up | 1. Planche lean 3 × 15 s → 2. Deep planche lean 3 × 30 s | Push |
 | 5 | Pseudo planche push-up | Link: Pseudo planche push-up | Decline push-up (the lean before it is recommended, not a lock) | Pseudo planche push-up 3 × 8 | Push |
 | 6 | Tuck front lever | Link: Front lever skill, step Tuck front lever | Archer pull-up | Tuck front lever 3 × 10 s | Pull |
 | 7 | Elbow lever | New | Frog stand | 1. Elbow lever, one leg down 3 × 10 s → 2. Elbow lever 3 × 10 s | Push |
-| 8 | German hang | New | Dead hang | 1. Skin the cat to German hang and back 3 × 3 → 2. German hang 3 × 15 s | Pull |
+| 8 | German hang | New | Dead hang | 1. Skin the cat 3 × 3 → 2. German hang 3 × 15 s | Pull |
 | 9 | Butcher's block | New (mobility) | none | Butcher's block stretch 3 × 45 s | Push |
 | 10 | Pistol squat | Link: Pistol squat skill | Assisted pistol squat | Pistol squat 3 × 5 /side | Legs + Core |
 | 11 | Tuck back lever | New skill "Back lever", step 1 | German hang | Tuck back lever 3 × 10 s | Pull |
@@ -63,7 +63,7 @@
 | 9 | Advanced tuck front lever | Link: Front lever skill, step Advanced tuck | Tuck front lever | Advanced tuck front lever 3 × 8 s | Pull |
 | 10 | Half dragon squat | New skill "Dragon squat", step 1 | Pistol squat | Half dragon squat (hand-assisted) 3 × 5 /side | Legs + Core |
 | 11 | Advanced tuck planche | Link: Planche skill, step Advanced tuck | Tuck planche | Advanced tuck planche 3 × 10 s | Push |
-| 12 | Back bridge | New (mobility) | none | 1. Table-top bridge 3 × 20 s → 2. Full back bridge 3 × 20 s | Legs + Core |
+| 12 | Back bridge | New (mobility) | none | 1. Table-top bridge 3 × 20 s → 2. Back bridge 3 × 20 s | Legs + Core |
 | 13 | Bulgarian dip | New | Push-up | 1. Parallel bar dip 3 × 10 → 2. Bulgarian dip (rings turned out) 3 × 6 | Push |
 | 14 | L-sit pull-up | New | Pull-up, L-sit | L-sit pull-up 3 × 5 | Pull |
 | 15 | Wrist pull-ups (?) | New "False-grip pull-up" | Pull-up | 1. False-grip hang 3 × 20 s → 2. False-grip pull-up 3 × 5 | Pull |
@@ -94,6 +94,8 @@
 - About 55 new steps. Three of them extend existing skills and appear in the tree: Dragon flag (full), Straddle front lever, One-leg planche. Nothing else in the tree changes.
 - Linked skills keep the requirements they already have in the tree (new Roadmap-only moves never lock an existing tree exercise).
 - New skills: Hollow body hang, Frog stand, Pseudo planche lean, Elbow lever, German hang, Butcher's block, Back lever, Compact leg lifts, Reverse Nordic, Straddle sit, Shoulder stand, Single-arm hang, V-sit, Sissy squat, Gymnastics swing, Single-leg Romanian deadlift, Kip-up, Dragon squat, Back bridge, Bulgarian dip, L-sit pull-up, False-grip pull-up, L-sit to handstand, 90-degree hold, Straddle press, Pelican push-up, Ring muscle-up, Straddle planche, Handstand to kip-up.
+
+Step names above match the app (short forms). Goals marked /side count each side; the app shows that in the step's cue.
 
 ## Decisions (user: "do what you think is best")
 

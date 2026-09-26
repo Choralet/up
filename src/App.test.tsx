@@ -360,7 +360,7 @@ describe('Node sheet and level-up for skills and goals', () => {
     await user.click(await screen.findByRole('button', { name: /Pike push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' }) // the stepper starts at the goal, 8 reps
     await user.click(log); await user.click(log); await user.click(log)
-    expect(await screen.findByText(/Unlocks .*Chest-to-wall handstand hold/)).toBeInTheDocument()
+    expect(await screen.findByText(/Unlocks in Roadmap: Handstand/)).toBeInTheDocument()
   })
 })
 
@@ -947,5 +947,55 @@ describe('Roadmap', () => {
     expect(screen.queryByRole('button', { name: 'Start Frog stand' })).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Tree' }))
     expect(screen.queryByRole('button', { name: /Frog stand/ })).not.toBeInTheDocument()
+  })
+})
+
+describe('Roadmap review fixes', () => {
+  const openRoadmap = async (extra: Record<string, unknown> = {}) => {
+    const user = userEvent.setup()
+    render(<App storage={seed(extra)} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    await user.click(screen.getByRole('tab', { name: 'Roadmap' }))
+    return user
+  }
+  const kneeDone = ['push-wall', 'push-incline', 'push-knee']
+
+  it('"Mark done" says honestly that it cannot be undone', async () => {
+    const user = await openRoadmap({ completed: kneeDone })
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand, ready/ }))
+    await user.click(screen.getByRole('button', { name: 'I Can Already Do This' }))
+    expect(screen.getByRole('dialog', { name: 'Mark Frog stand as done?' })).toHaveTextContent("can't be undone")
+  })
+
+  it('lets you edit the goal of a roadmap step', async () => {
+    const user = await openRoadmap({ completed: kneeDone })
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand, ready/ }))
+    await user.click(screen.getByRole('button', { name: 'Edit Goal' }))
+    await user.click(screen.getByRole('button', { name: 'Decrease target' }))
+    await user.click(screen.getByRole('button', { name: 'Save Goal' }))
+    expect(screen.getByRole('dialog', { name: 'Frog stand' })).toHaveTextContent('3 × 9 s')
+  })
+
+  it('shows partial progress on a row', async () => {
+    await openRoadmap({ completed: ['pull-hang', 'rm-german-1', 'rm-german-2', 'rm-bl-tuck', 'rm-bl-adv'] })
+    expect(screen.getByRole('button', { name: /^8\. Back lever, ready/ })).toHaveTextContent('1 of 3 steps')
+  })
+
+  it('remembers Roadmap when you come back to Skills', async () => {
+    const user = await openRoadmap()
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    expect(screen.getByRole('tab', { name: 'Roadmap' })).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('level-up names the Roadmap skill it unlocks, not step names', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline'], focus: { push: 'push-knee' } })} />)
+    await user.click(await screen.findByRole('button', { name: /Knee push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    const dialog = await screen.findByRole('dialog', { name: 'Level up' })
+    expect(dialog).toHaveTextContent('Unlocks in Roadmap: Frog stand.')
+    expect(dialog).not.toHaveTextContent('toes touching')
   })
 })

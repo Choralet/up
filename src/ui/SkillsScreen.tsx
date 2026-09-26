@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { DAY_LABEL } from '../data/schedule'
 import { SKILLS } from '../data/skills'
 import { MAX_ACTIVE_SKILLS } from '../engine/progress'
@@ -7,27 +6,28 @@ import { goalText, plural } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { RoadmapView } from './RoadmapView'
 
-export function SkillsScreen({ onLog }: { onLog: (nodeId: string) => void }) {
+export type SkillsView = 'mine' | 'roadmap'
+
+export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) => void; view: SkillsView; onView: (v: SkillsView) => void }) {
   const { nodes, byId, progress, activateSkill, deactivateSkill } = useProgress()
   const activeCount = Object.keys(progress.skillFocus).length
   const rows = SKILLS.map((chain) => ({ chain, s: skillStatus(nodes, progress, chain.id) }))
   const active = rows.filter((r) => r.s.status === 'active')
   const library = rows.filter((r) => r.s.status !== 'active' && !r.chain.roadmapOnly)
-  const [view, setView] = useState<'mine' | 'roadmap'>('mine')
 
   return (
     <div className="screen">
       <h1 className="large">Skills</h1>
       <div className="seg" role="tablist" aria-label="Skills view">
-        <button role="tab" aria-selected={view === 'mine'} className={view === 'mine' ? 'on' : ''} onClick={() => setView('mine')}>My Skills</button>
-        <button role="tab" aria-selected={view === 'roadmap'} className={view === 'roadmap' ? 'on' : ''} onClick={() => setView('roadmap')}>Roadmap</button>
+        <button role="tab" aria-selected={view === 'mine'} className={view === 'mine' ? 'on' : ''} onClick={() => onView('mine')}>My Skills</button>
+        <button role="tab" aria-selected={view === 'roadmap'} className={view === 'roadmap' ? 'on' : ''} onClick={() => onView('roadmap')}>Roadmap</button>
       </div>
       {view === 'roadmap' ? (
         <RoadmapView onLog={onLog} />
       ) : (
         <>
         <div className="sub">Active skills train inside your daily plan. Up to {MAX_ACTIVE_SKILLS} at a time.</div>
-  
+
         <div className="hdr">Active · {activeCount} of {MAX_ACTIVE_SKILLS}</div>
         <ul className="group list">
           {active.length === 0 && <li className="row"><span className="t"><span>No active skill yet. Start one below.</span></span></li>}
@@ -51,7 +51,7 @@ export function SkillsScreen({ onLog }: { onLog: (nodeId: string) => void }) {
             )
           })}
         </ul>
-  
+
         <div className="hdr">Library</div>
         {activeCount >= MAX_ACTIVE_SKILLS && <p className="sub" style={{ margin: '12px 4px 0' }}>Stop an active skill to start another.</p>}
         <ul className="group list">

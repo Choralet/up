@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ROADMAP, VIDEOS, type RoadmapItem } from '../data/roadmap'
 import { roadmapStatus } from '../engine/roadmap'
+import { plural } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { RoadmapSheet } from './RoadmapSheet'
 
@@ -35,7 +36,10 @@ export function RoadmapView({ onLog }: { onLog: (id: string) => void }) {
                   <span className="rmnum">{i + 1}</span>
                   <span className="t">
                     <b>{item.name}</b>
-                    <span>{s.status === 'locked' ? `Needs: ${s.needs.join(', ')}` : s.status === 'ready' ? 'Ready' : s.status === 'training' ? 'Training' : 'Done'}</span>
+                    <span>
+                      {s.status === 'locked' ? `Needs: ${s.needs.join(', ')}` : s.status === 'ready' ? 'Ready' : s.status === 'training' ? 'Training' : 'Done'}
+                      {s.done > 0 && s.status !== 'done' ? ` · ${s.done} of ${plural(item.steps.length, 'step')}` : ''}
+                    </span>
                   </span>
                   <span className="rmicon" aria-hidden="true">{ICON[s.status]}</span>
                 </button>

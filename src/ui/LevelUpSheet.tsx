@@ -2,7 +2,21 @@ import { useState, type CSSProperties } from 'react'
 import type { ExerciseNode } from '../data/types'
 import type { Suggestion } from '../engine/progress'
 import { goalText } from '../lib/format'
+import { ROADMAP } from '../data/roadmap'
+import { SKILLS } from '../data/skills'
 import { BRANCH_META } from './branches'
+
+/** Name what a level-up unlocks the way the Skills tab shows it: Roadmap skill names first, else the skill chain name. */
+function unlockNames(nodes: ExerciseNode[]): { roadmap: string[]; mine: string[] } {
+  const roadmap = new Set<string>()
+  const mine = new Set<string>()
+  for (const n of nodes) {
+    const item = ROADMAP.find((r) => r.steps.includes(n.id))
+    if (item) roadmap.add(item.name)
+    else mine.add(SKILLS.find((c) => c.id === n.skill)?.name ?? n.name)
+  }
+  return { roadmap: [...roadmap], mine: [...mine] }
+}
 
 interface Props {
   node: ExerciseNode
@@ -15,6 +29,7 @@ interface Props {
 export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, onDismiss }: Props) {
   const [choice, setChoice] = useState<string | null>(suggestions[0]?.node.id ?? null)
   const hasChoices = suggestions.length > 0
+  const unlocks = unlockNames(unlockedSkills)
 
   return (
     <>
@@ -32,12 +47,8 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
             {i === 0 && <em>Suggested</em>}
           </button>
         ))}
-        {unlockedSkills.length > 0 && (
-          <p className="sub">
-            Unlocks {unlockedSkills.length === 1 ? 'a skill' : `${unlockedSkills.length} skills`}: {unlockedSkills.slice(0, 3).map((n) => n.name).join(', ')}
-            {unlockedSkills.length > 3 ? ' and more' : ''}. Find {unlockedSkills.length === 1 ? 'it' : 'them'} in Skills.
-          </p>
-        )}
+        {unlocks.roadmap.length > 0 && <p className="sub">Unlocks in Roadmap: {unlocks.roadmap.join(', ')}.</p>}
+        {unlocks.mine.length > 0 && <p className="sub">Unlocks in My Skills: {unlocks.mine.join(', ')}.</p>}
         <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => onPick(choice)}>
           {hasChoices ? 'Set Focus' : 'Complete'}
         </button>

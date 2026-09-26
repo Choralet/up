@@ -8,14 +8,14 @@ Instructions for any AI coding agent working in this repo. `CLAUDE.md` imports t
 
 ## Current status
 
-**Plans 1, 2 and 3 are built and deployed** at https://choralet.github.io/up/ (public repo `Choralet/up`). It has: the exercise graph and skill tree, per-day workouts (default Mon/Wed/Fri, editable), skills with the hold timer, Find your level, goal editing, Progress tab, fix/remove a set, backup file export/import, automatic backup to the private repo `Choralet/up-data` (setup in `docs/BACKUP.md`; the user makes the token, never the agent), How-to demos for 19 exercises (hotlinked GIFs, `src/data/demos.ts`), midnight handling, and accessibility polish. **Plan 4:** Roadmap in the Skills tab: STRIQfit's 50-skill Year 1-3 order with prerequisites, trainable steps, "I can already do this" and video-chapter links (`docs/ROADMAP.md`). Roadmap-only moves (`roadmapOnly`) never appear in the tree or branch rings.
+**Plans 1 to 4 are built and deployed** at https://choralet.github.io/up/ (public repo `Choralet/up`). It has: the exercise graph and skill tree, per-day workouts (default Mon/Wed/Fri, editable), skills with the hold timer, Find your level, goal editing, Progress tab, fix/remove a set, backup file export/import, automatic backup to the private repo `Choralet/up-data` (setup in `docs/BACKUP.md`; the user makes the token, never the agent), How-to demos for 19 exercises (hotlinked GIFs, `src/data/demos.ts`), midnight handling, and accessibility polish. **Plan 4:** Roadmap in the Skills tab: STRIQfit's 50-skill Year 1-3 order with prerequisites, trainable steps, "I can already do this" and video-chapter links (`docs/ROADMAP.md`). Roadmap-only moves (`roadmapOnly`) never appear in the tree or branch rings.
 
 **Next:** whatever the user reports from real iPhone use. Brainstorm before any new feature; fix bugs test-first.
 
 Read these first, in order:
 1. `docs/DECISIONS.md`: user's answers (source of truth; update it)
 2. `docs/PLAN.md`: product plan and milestones
-3. `docs/superpowers/plans/` (Plans 1-3): what was built, with file maps
+3. `docs/superpowers/plans/` (Plans 1-4): what was built, with file maps
 4. `docs/SKILLS.md`, `docs/RESEARCH.md`, `docs/UI-REFERENCES.md`, `docs/DEMOS.md`
 5. `docs/mockups/index.html`: design mockups
 

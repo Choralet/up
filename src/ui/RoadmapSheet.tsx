@@ -5,12 +5,14 @@ import { roadmapStatus } from '../engine/roadmap'
 import { goalText } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { ConfirmSheet } from './ConfirmSheet'
+import { GoalEditor } from './GoalEditor'
 
 const LABEL = { done: 'Done', training: 'Training', ready: 'Ready', locked: 'Locked' } as const
 
 export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onClose: () => void; onLog: (id: string) => void }) {
-  const { byId, progress, activateSkill, setFocus, completeSteps } = useProgress()
+  const { byId, defaults, progress, activateSkill, setFocus, completeSteps, setGoal } = useProgress()
   const [confirm, setConfirm] = useState(false)
+  const [editing, setEditing] = useState(false)
   const s = roadmapStatus(byId, progress, item)
   const next = s.next
   const full = Object.keys(progress.skillFocus).length >= MAX_ACTIVE_SKILLS
@@ -56,25 +58,38 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
           })}
         </ol>
         {next && <p className="cue sub">{next.cue}</p>}
-        {s.status === 'training' && next && (
-          <button className="cta" onClick={() => { onLog(next.id); onClose() }}>Log This</button>
+        {editing && next ? (
+          <GoalEditor
+            node={next}
+            def={defaults.get(next.id)!}
+            onSave={(g) => { setGoal(next.id, g); setEditing(false) }}
+            onReset={() => { setGoal(next.id, null); setEditing(false) }}
+            onCancel={() => setEditing(false)}
+          />
+        ) : (
+        <>
+          {s.status === 'training' && next && (
+            <button className="cta" onClick={() => { onLog(next.id); onClose() }}>Log This</button>
+          )}
+          {s.status === 'ready' && (
+            <>
+              <button className="cta" disabled={!!next?.skill && full} onClick={train}>{next?.skill ? 'Train This' : 'Make This My Focus'}</button>
+              {next?.skill && full && <p className="sub">Two skills are already active. Stop one in My Skills first.</p>}
+              <button className="cta sec" onClick={() => setConfirm(true)}>I Can Already Do This</button>
+            </>
+          )}
+          {next && <button className="cta sec" onClick={() => setEditing(true)}>Edit Goal</button>}
+          <a className="cta sec videolink" href={videoUrl(item)} target="_blank" rel="noopener noreferrer">
+            Watch in video ({formatStamp(item.t)})
+          </a>
+          <button className="cta sec" onClick={onClose}>Close</button>
+        </>
         )}
-        {s.status === 'ready' && (
-          <>
-            <button className="cta" disabled={!!next?.skill && full} onClick={train}>{next?.skill ? 'Train This' : 'Make This My Focus'}</button>
-            {next?.skill && full && <p className="sub">Two skills are already active. Stop one in My Skills first.</p>}
-            <button className="cta sec" onClick={() => setConfirm(true)}>I Can Already Do This</button>
-          </>
-        )}
-        <a className="cta sec videolink" href={videoUrl(item)} target="_blank" rel="noopener noreferrer">
-          Watch in video ({formatStamp(item.t)})
-        </a>
-        <button className="cta sec" onClick={onClose}>Close</button>
       </div>
       {confirm && (
         <ConfirmSheet
           title={`Mark ${item.name} as done?`}
-          message="Only if you can already do every step cleanly. You can still train it later from the tree or Skills."
+          message="Only if you can already do every step cleanly. This marks every step as finished and can't be undone (except by restoring an older backup)."
           actions={[{ label: 'Mark Done', tone: 'primary', onClick: () => { completeSteps(item.steps); setConfirm(false) } }]}
           onCancel={() => setConfirm(false)}
         />
