@@ -74,3 +74,11 @@ export async function githubRestore(c: Cfg, f: typeof fetch): Promise<string> {
   if (!cur) throw new GithubError('No backup in this repository yet.')
   return fromBase64(cur.content)
 }
+
+/** True when the repository already holds a backup file. */
+export async function githubHasBackup(c: Cfg, f: typeof fetch): Promise<boolean> {
+  return (await current(c, f)) !== null
+}
+
+/** Same repository and token (used to avoid writing results for a config the user has since changed). */
+export const sameTarget = (a: Cfg, b: Cfg) => a.owner === b.owner && a.repo === b.repo && a.token === b.token

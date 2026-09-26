@@ -7,12 +7,13 @@ import { buildWorkout, nextTrainingDay, workoutDone } from '../engine/workout'
 import { goalText } from '../lib/format'
 import { localDate, weekdayIndex } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
+import { BackupNotice } from './BackupNotice'
 import { BRANCH_META } from './branches'
 
 const TRAIN_ANYWAY: Exclude<DayType, 'rest'>[] = ['push', 'pull', 'legs']
 const ANYWAY_LABEL = { push: 'Push', pull: 'Pull', legs: 'Legs + Core' } as const
 
-export function TodayScreen({ onOpen, onSettings }: { onOpen: (nodeId: string) => void; onSettings: () => void }) {
+export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOpen: (nodeId: string) => void; onSettings: () => void; settingsOpen?: boolean }) {
   const { nodes, progress } = useProgress()
   const [pick, setPick] = useState<DayType | null>(null)
   const [warm, setWarm] = useState<Record<string, boolean>>({})
@@ -51,6 +52,7 @@ export function TodayScreen({ onOpen, onSettings }: { onOpen: (nodeId: string) =
         </div>
         <button className="gear" aria-label="Settings" onClick={onSettings}>⚙</button>
       </div>
+      <BackupNotice refresh={settingsOpen} onOpen={onSettings} />
 
       {day === 'rest' ? (
         <>

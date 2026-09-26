@@ -21,3 +21,11 @@ export function parseBackup(text: string, nodes: ExerciseNode[]): Progress {
   }
   return { ...sanitizeProgress(nodes, d.progress), onboarded: true }
 }
+
+/** Short fingerprint of progress, to tell whether anything changed since the last upload. */
+export function progressHash(progress: Progress): string {
+  const text = JSON.stringify(progress)
+  let h = 5381
+  for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0
+  return `${text.length.toString(36)}-${(h >>> 0).toString(36)}`
+}

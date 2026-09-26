@@ -1,5 +1,5 @@
 import { NODES } from '../data/nodes'
-import { BackupError, exportBackup, parseBackup } from './backup'
+import { BackupError, exportBackup, parseBackup, progressHash } from './backup'
 import { initialProgress, logSet } from './progress'
 
 describe('backup file', () => {
@@ -32,5 +32,13 @@ describe('backup file', () => {
   it('never includes anything but progress', () => {
     const data = JSON.parse(exportBackup(progress))
     expect(Object.keys(data).sort()).toEqual(['app', 'exportedAt', 'progress', 'version'])
+  })
+})
+
+describe('progressHash', () => {
+  it('is stable for equal progress and changes when progress changes', () => {
+    const a = initialProgress(NODES)
+    expect(progressHash(a)).toBe(progressHash(initialProgress(NODES)))
+    expect(progressHash(logSet(a, 'push-wall', 10, '2026-09-21', 1))).not.toBe(progressHash(a))
   })
 })

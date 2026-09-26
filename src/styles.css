@@ -156,3 +156,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .howto::before { content: ''; border-left: 7px solid var(--blue); border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent; }
 .demo { display: grid; place-items: center; min-height: 220px; margin: 12px 0; border-radius: 16px; background: #fff; }
 .demo img { width: 200px; height: 200px; image-rendering: auto; }
+
+.notice { display: block; width: 100%; text-align: left; margin: 12px 0 0; }
+.notice b { display: block; color: var(--skill); }

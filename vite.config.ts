@@ -30,7 +30,7 @@ export default defineConfig({
           {
             urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/gh\/hasaneyldrm\//,
             handler: 'CacheFirst',
-            options: { cacheName: 'demos', expiration: { maxEntries: 60, maxAgeSeconds: 31536000 }, cacheableResponse: { statuses: [0, 200] } },
+            options: { cacheName: 'demos', expiration: { maxEntries: 60, maxAgeSeconds: 31536000 }, cacheableResponse: { statuses: [200] } },
           },
         ],
       },

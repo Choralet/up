@@ -25,13 +25,14 @@ function Shell() {
   return (
     <div className="app">
       <div inert={overlay}>
-        {tab === 'today' && <TodayScreen key={today} onOpen={setLogId} onSettings={() => setSettings(true)} />}
+        {tab === 'today' && <TodayScreen key={today} settingsOpen={settings} onOpen={setLogId} onSettings={() => setSettings(true)} />}
         {tab === 'tree' && <TreeScreen onLog={setLogId} />}
         {tab === 'skills' && <SkillsScreen onLog={setLogId} />}
         {tab === 'progress' && <ProgressScreen />}
         <TabBar tab={tab} onChange={setTab} />
       </div>
-      {logId && <LogScreen key={`${logId}:${today}`} nodeId={logId} onClose={() => setLogId(null)} />}
+      {/* not keyed by day: a hold or sheet open at midnight must survive; sets use the date at tap time */}
+      {logId && <LogScreen key={logId} nodeId={logId} onClose={() => setLogId(null)} />}
       {settings && <SettingsScreen onClose={() => setSettings(false)} />}
       {!progress.onboarded && <Onboarding />}
       <AutoBackup />

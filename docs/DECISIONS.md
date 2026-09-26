@@ -80,3 +80,8 @@ Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for
 - Demos: 19 exercises have a How-to GIF, hotlinked from a pinned commit of the dataset via jsDelivr, cached by the service worker after first view, with the "© Gym visual — gymvisual.com" credit. Inexact matches (for example the full front lever for the tuck version) were left out on purpose.
 - Fixed from both review lists: fractional stored values, Plan 1 skill focus migration, midnight/stale day (incl. Train anyway and warm-up), wake-lock race, Done during a running hold asks, ring dot at 0:00, streak rule text, step/steps wording, Skills full-slot explanation, onboarding double tap and empty frame, tree state names, rep count announced, inert background behind overlays, readable status bar in light mode. Export falls back to a download when the share sheet is refused.
 - Still unverified without a device: behaviour inside the iOS home-screen app (IndexedDB persistence, wake lock, share sheet).
+
+## Plan 3 final review fixes (2026-09-26)
+
+- Connecting to a repo that already has a backup pauses automatic backup until you choose **Restore It** or **Replace with This Phone** (stops a new phone overwriting your backup). Today shows **Backup needs attention** if backups fail, are paused, or are over a week old. Uploads happen only when progress changed. Disconnect asks first.
+- Deferred: the ~1 MB GitHub file limit (years of logs away) and its error wording; a negligible wake-lock leak on Stop then Start before the lock is granted. Two phones at once: last write wins (documented).

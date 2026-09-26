@@ -13,7 +13,7 @@ import { useProgress } from '../store/ProgressContext'
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
   const { progress, nodes, setDayType, restartOnboarding, replaceProgress } = useProgress()
   const services = useServices()
-  const [pending, setPending] = useState<Progress | null>(null)
+  const [pending, setPending] = useState<{ progress: Progress; after?: () => void } | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -28,8 +28,13 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
 
   const importFile = async (file: File | undefined) => {
     if (!file) return
+    if (file.size > 5_000_000) {
+      setMessage('That file is too big to be an Up backup.')
+      if (fileInput.current) fileInput.current.value = ''
+      return
+    }
     try {
-      setPending(parseBackup(await file.text(), nodes))
+      setPending({ progress: parseBackup(await file.text(), nodes) })
       setMessage(null)
     } catch (e) {
       setMessage(e instanceof BackupError ? e.message : "Couldn't read that file.")
@@ -61,15 +66,15 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <input ref={fileInput} type="file" accept="application/json,.json" aria-label="Import backup file" hidden onChange={(e) => importFile(e.target.files?.[0])} />
         {message && <p className="sub" role="status">{message}</p>}
         <p className="sub">Your progress lives on this phone. Export a file now and then, or connect GitHub below.</p>
-        <GithubSection onRestore={(p) => setPending(p)} />
+        <GithubSection onRestore={(p, after) => setPending({ progress: p, after })} />
         <div className="hdr">Level</div>
         <button className="cta sec" onClick={() => { restartOnboarding(); onClose() }}>Find your level again</button>
       </div>
       {pending && (
         <ConfirmSheet
           title="Replace your progress?"
-          message={`This backup has ${plural(pending.completed.length, 'finished exercise')} and ${plural(pending.logs.length, 'logged set')}. It replaces everything on this phone.`}
-          actions={[{ label: 'Replace', tone: 'danger', onClick: () => { replaceProgress(pending); setPending(null); setMessage('Backup restored.') } }]}
+          message={`This backup has ${plural(pending.progress.completed.length, 'finished exercise')} and ${plural(pending.progress.logs.length, 'logged set')}. It replaces everything on this phone.`}
+          actions={[{ label: 'Replace', tone: 'danger', onClick: () => { replaceProgress(pending.progress); pending.after?.(); setPending(null); setMessage('Backup restored.') } }]}
           onCancel={() => setPending(null)}
         />
       )}

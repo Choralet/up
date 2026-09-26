@@ -22,7 +22,7 @@ export function DemoButton({ node }: { node: ExerciseNode }) {
               {failed ? (
                 <p className="sub">Couldn't load the demo. It needs a connection the first time.</p>
               ) : (
-                <img src={src} alt={`${node.name} demonstration`} width={180} height={180} onError={() => setFailed(true)} />
+                <img crossOrigin="anonymous" src={src} alt={`${node.name} demonstration`} width={180} height={180} onError={() => setFailed(true)} />
               )}
             </div>
             <p className="sub">{node.cue}</p>

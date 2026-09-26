@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { exportBackup, parseBackup } from '../engine/backup'
+import { exportBackup, parseBackup, progressHash } from '../engine/backup'
 import type { Progress } from '../engine/progress'
-import { githubBackup, githubCheck, githubRestore } from '../store/github'
+import { githubBackup, githubCheck, githubHasBackup, githubRestore } from '../store/github'
 import { useProgress } from '../store/ProgressContext'
 import { useServices, type GithubConfig } from '../store/services'
+import { ConfirmSheet } from './ConfirmSheet'
 
-export function GithubSection({ onRestore }: { onRestore: (p: Progress) => void }) {
+/** `onRestore` shows the replace confirmation; `after` runs once the user confirmed. */
+export function GithubSection({ onRestore }: { onRestore: (p: Progress, after: () => void) => void }) {
   const { progress, nodes } = useProgress()
   const services = useServices()
   const [cfg, setCfg] = useState<GithubConfig | null>(null)
@@ -13,6 +15,7 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress) => void 
   const [form, setForm] = useState({ owner: '', repo: '', token: '' })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [askDisconnect, setAskDisconnect] = useState(false)
 
   useEffect(() => {
     services.github.load().then((c) => { setCfg(c); setLoaded(true) }, () => setLoaded(true))
@@ -30,26 +33,32 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress) => void 
     }
   }
 
+  const store = async (next: GithubConfig | null) => {
+    await services.github.save(next)
+    setCfg(next)
+  }
+
   const connect = () =>
     run(async () => {
       const next = { owner: form.owner.trim(), repo: form.repo.trim(), token: form.token.trim() }
       await githubCheck(next, services.fetch)
-      await services.github.save(next)
-      setCfg(next)
+      // a repo that already has a backup (e.g. a new phone) must not be overwritten by this phone's progress
+      await store({ ...next, paused: await githubHasBackup(next, services.fetch) })
       setForm({ owner: '', repo: '', token: '' })
     })
 
   const backUp = () =>
     run(async () => {
       await githubBackup(cfg!, exportBackup(progress), services.fetch)
-      const next = { ...cfg!, lastBackupAt: Date.now(), lastError: undefined }
-      await services.github.save(next)
-      setCfg(next)
+      await store({ ...cfg!, lastBackupAt: Date.now(), lastError: undefined, lastHash: progressHash(progress), paused: false })
     })
 
-  const restore = () => run(async () => onRestore(parseBackup(await githubRestore(cfg!, services.fetch), nodes)))
-
-  const disconnect = () => run(async () => { await services.github.save(null); setCfg(null) })
+  const restore = () =>
+    run(async () => {
+      const p = parseBackup(await githubRestore(cfg!, services.fetch), nodes)
+      const target = cfg!
+      onRestore(p, () => { void store({ ...target, paused: false, lastError: undefined, lastHash: progressHash(p) }) })
+    })
 
   if (!loaded) return null
   return (
@@ -58,13 +67,25 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress) => void 
       {cfg ? (
         <div className="card">
           <b>Connected to {cfg.owner}/{cfg.repo}</b>
-          <div className="sub" style={{ marginTop: 4 }}>
-            {cfg.lastBackupAt ? `Last backup: ${new Date(cfg.lastBackupAt).toLocaleString()}` : 'No backup yet.'} Backs up automatically when you leave the app.
-          </div>
-          {cfg.lastError && <div className="sub" style={{ color: 'var(--skill)', marginTop: 4 }}>Last automatic backup failed: {cfg.lastError}</div>}
-          <button className="cta" disabled={busy} onClick={backUp}>Back Up Now</button>
-          <button className="cta sec" disabled={busy} onClick={restore}>Restore from GitHub</button>
-          <button className="cta sec" style={{ color: 'var(--skill)' }} disabled={busy} onClick={disconnect}>Disconnect</button>
+          {cfg.paused ? (
+            <>
+              <div className="sub" style={{ marginTop: 4 }}>
+                This repository already has a backup. Restore it to this phone, or replace it with this phone's progress. Automatic backup waits until you choose.
+              </div>
+              <button className="cta" disabled={busy} onClick={restore}>Restore It</button>
+              <button className="cta sec" disabled={busy} onClick={backUp}>Replace with This Phone</button>
+            </>
+          ) : (
+            <>
+              <div className="sub" style={{ marginTop: 4 }}>
+                {cfg.lastBackupAt ? `Last backup: ${new Date(cfg.lastBackupAt).toLocaleString()}.` : 'No backup yet.'} Backs up automatically when you leave the app.
+              </div>
+              {cfg.lastError && <div className="sub" style={{ color: 'var(--skill)', marginTop: 4 }}>Last automatic backup failed: {cfg.lastError}</div>}
+              <button className="cta" disabled={busy} onClick={backUp}>Back Up Now</button>
+              <button className="cta sec" disabled={busy} onClick={restore}>Restore from GitHub</button>
+            </>
+          )}
+          <button className="cta sec" style={{ color: 'var(--skill)' }} disabled={busy} onClick={() => setAskDisconnect(true)}>Disconnect</button>
         </div>
       ) : (
         <div className="card form">
@@ -76,6 +97,14 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress) => void 
         </div>
       )}
       {error && <p className="sub" role="alert" style={{ color: 'var(--skill)' }}>{error}</p>}
+      {askDisconnect && (
+        <ConfirmSheet
+          title="Disconnect GitHub backup?"
+          message="Up forgets the token on this phone. Your backup stays on GitHub. To connect again you will need the token, which GitHub shows only once."
+          actions={[{ label: 'Disconnect', tone: 'danger', onClick: () => { setAskDisconnect(false); void run(() => store(null)) } }]}
+          onCancel={() => setAskDisconnect(false)}
+        />
+      )}
     </>
   )
 }

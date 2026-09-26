@@ -7,6 +7,10 @@ export interface GithubConfig {
   token: string
   lastBackupAt?: number
   lastError?: string
+  /** fingerprint of the progress last uploaded (skip uploads when nothing changed) */
+  lastHash?: string
+  /** the repo already had a backup when connecting: no uploads until the user restores or replaces it */
+  paused?: boolean
 }
 
 export interface Services {

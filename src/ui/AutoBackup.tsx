@@ -1,30 +1,39 @@
 import { useEffect, useRef } from 'react'
-import { exportBackup } from '../engine/backup'
-import { githubBackup } from '../store/github'
+import { exportBackup, progressHash } from '../engine/backup'
+import { githubBackup, sameTarget } from '../store/github'
 import { useProgress } from '../store/ProgressContext'
-import { useServices } from '../store/services'
+import { useServices, type GithubConfig } from '../store/services'
 
-/** When the app goes to the background, back up to GitHub if connected and something changed. */
+/** When the app goes to the background, back up to GitHub if connected, not paused, and something changed. */
 export function AutoBackup() {
   const { progress } = useProgress()
   const services = useServices()
   const latest = useRef(progress)
   latest.current = progress
-  const sent = useRef<string | null>(null)
+  const running = useRef(false)
 
   useEffect(() => {
     const onChange = async () => {
-      if (document.visibilityState !== 'hidden') return
-      const cfg = await services.github.load().catch(() => null)
-      if (!cfg) return
-      const key = JSON.stringify(latest.current)
-      if (key === sent.current) return
+      if (document.visibilityState !== 'hidden' || running.current) return
+      running.current = true
       try {
-        await githubBackup(cfg, exportBackup(latest.current), services.fetch)
-        sent.current = key
-        await services.github.save({ ...cfg, lastBackupAt: Date.now(), lastError: undefined })
-      } catch (e) {
-        await services.github.save({ ...cfg, lastError: (e as Error).message }).catch(() => {})
+        const cfg = await services.github.load().catch(() => null)
+        if (!cfg || cfg.paused) return
+        const snapshot = latest.current
+        const hash = progressHash(snapshot)
+        if (hash === cfg.lastHash) return
+        let result: Partial<GithubConfig>
+        try {
+          await githubBackup(cfg, exportBackup(snapshot), services.fetch)
+          result = { lastBackupAt: Date.now(), lastError: undefined, lastHash: hash }
+        } catch (e) {
+          result = { lastError: (e as Error).message }
+        }
+        // the user may have disconnected or switched repo while the upload was in flight
+        const now = await services.github.load().catch(() => null)
+        if (now && sameTarget(now, cfg)) await services.github.save({ ...now, ...result }).catch(() => {})
+      } finally {
+        running.current = false
       }
     }
     document.addEventListener('visibilitychange', onChange)

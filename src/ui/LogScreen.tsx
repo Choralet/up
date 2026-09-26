@@ -71,7 +71,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           <HoldTimer target={node.goal.target} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
         )}
 
-        {ready && !showLevelUp && (
+        {ready && !showLevelUp && holdStart === null && (
           <button className="cta sec" onClick={() => setShowLevelUp(true)}>Level Up</button>
         )}
 

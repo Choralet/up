@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 import { NODES } from './data/nodes'
@@ -6,6 +6,9 @@ import { memoryStorage } from './store/storage'
 import { memoryServices } from './store/services'
 import { onboardingTuning } from './ui/Onboarding'
 import { fakeGithub } from './test/fakeGithub'
+import { githubBackup } from './store/github'
+import { exportBackup, progressHash } from './engine/backup'
+import { sanitizeProgress } from './engine/progress'
 
 /** A save that has finished onboarding, so tests start on the Today screen. */
 const seed = (extra: Record<string, unknown> = {}) => memoryStorage({ onboarded: true, ...extra })
@@ -620,6 +623,8 @@ describe('GitHub backup', () => {
     render(<App storage={seed()} services={services} />)
     await connect(user)
     await user.click(await screen.findByRole('button', { name: 'Disconnect' }))
+    expect(await services.github.load()).not.toBeNull() // asks first
+    await user.click(within(screen.getByRole('dialog', { name: 'Disconnect GitHub backup?' })).getByRole('button', { name: 'Disconnect' }))
     expect(await services.github.load()).toBeNull()
     expect(screen.getByLabelText('Token')).toBeInTheDocument()
   })
@@ -727,5 +732,145 @@ describe('Plan 3 accessibility and taps', () => {
     expect(container.querySelector('nav')!.closest('[inert]')).not.toBeNull()
     await user.click(screen.getByRole('button', { name: 'Done' }))
     expect(container.querySelector('nav')!.closest('[inert]')).toBeNull()
+  })
+})
+
+describe('Plan 3 review fixes', () => {
+  const cfg = { owner: 'me', repo: 'up-data', token: 't0ken' }
+  const hide = async () => {
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true })
+    document.dispatchEvent(new Event('visibilitychange'))
+    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true })
+    await new Promise((r) => setTimeout(r, 0))
+  }
+  const puts = (gh: ReturnType<typeof fakeGithub>) => gh.calls.filter((c) => c.method === 'PUT').length
+  const connect = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.type(screen.getByLabelText('GitHub owner'), 'me')
+    await user.type(screen.getByLabelText('Repository'), 'up-data')
+    await user.type(screen.getByLabelText('Token'), 't0ken')
+    await user.click(screen.getByRole('button', { name: 'Connect' }))
+  }
+  const withOldBackup = async () => {
+    const gh = fakeGithub()
+    const old = sanitizeProgress(NODES, { completed: ['push-wall'], onboarded: true })
+    await githubBackup(cfg, exportBackup(old), gh.fetch)
+    return gh
+  }
+
+  it('a new phone connecting to a repo with a backup does not overwrite it, even when leaving the app', async () => {
+    const user = userEvent.setup()
+    const gh = await withOldBackup()
+    render(<App storage={seed()} services={memoryServices({ fetch: gh.fetch })} />)
+    await connect(user)
+    expect(await screen.findByText(/already has a backup/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Back Up Now' })).not.toBeInTheDocument()
+    await hide()
+    expect(puts(gh)).toBe(1) // only the old backup made in the test setup
+    await user.click(screen.getByRole('button', { name: 'Restore It' }))
+    await user.click(await screen.findByRole('button', { name: 'Replace' }))
+    expect(await screen.findByRole('button', { name: 'Back Up Now' })).toBeInTheDocument()
+    await hide()
+    expect(puts(gh)).toBe(1) // restored progress equals the backup: nothing to send
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
+  })
+
+  it('"Replace with This Phone" overwrites the old backup on purpose', async () => {
+    const user = userEvent.setup()
+    const gh = await withOldBackup()
+    render(<App storage={seed()} services={memoryServices({ fetch: gh.fetch })} />)
+    await connect(user)
+    await user.click(await screen.findByRole('button', { name: 'Replace with This Phone' }))
+    await vi.waitFor(() => expect(puts(gh)).toBe(2))
+    expect(JSON.parse(gh.text()!).progress.completed).toEqual([])
+  })
+
+  it('a background backup finishing after Disconnect does not bring the token back', async () => {
+    const gh = fakeGithub()
+    let release: () => void = () => {}
+    const gate = new Promise<void>((r) => { release = r })
+    const slow = (async (url: RequestInfo | URL, init?: RequestInit) => { await gate; return gh.fetch(url, init) }) as typeof fetch
+    const services = memoryServices({ fetch: slow })
+    await services.github.save(cfg)
+    render(<App storage={seed()} services={services} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    await hide()
+    await hide() // a second run while the first is still waiting
+    await services.github.save(null) // Disconnect meanwhile
+    release()
+    await vi.waitFor(() => expect(puts(gh)).toBe(1))
+    await new Promise((r) => setTimeout(r, 0))
+    expect(await services.github.load()).toBeNull()
+  })
+
+  it('does not upload again after a relaunch when nothing changed', async () => {
+    const gh = fakeGithub()
+    const services = memoryServices({ fetch: gh.fetch })
+    const progress = sanitizeProgress(NODES, { onboarded: true })
+    await services.github.save({ ...cfg, lastHash: progressHash(progress) })
+    render(<App storage={seed()} services={services} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    await hide()
+    expect(puts(gh)).toBe(0)
+  })
+
+  it('Today warns when backup needs attention', async () => {
+    const services = memoryServices()
+    await services.github.save({ ...cfg, lastError: 'GitHub rejected the token. Check it, or make a new one.' })
+    render(<App storage={seed()} services={services} />)
+    expect(await screen.findByText('Backup needs attention')).toBeInTheDocument()
+  })
+
+  it('Today warns when the last backup is over a week old, and stays quiet when it is recent', async () => {
+    const services = memoryServices()
+    await services.github.save({ ...cfg, lastBackupAt: MONDAY.getTime() - 8 * 86_400_000 })
+    const first = render(<App storage={seed()} services={services} />)
+    expect(await screen.findByText('Backup needs attention')).toBeInTheDocument()
+    first.unmount()
+    await services.github.save({ ...cfg, lastBackupAt: MONDAY.getTime() - 86_400_000 })
+    render(<App storage={seed()} services={services} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.queryByText('Backup needs attention')).not.toBeInTheDocument()
+  })
+
+  it('a new day keeps a running hold on the Log screen', async () => {
+    vi.setSystemTime(new Date(2026, 8, 23, 23, 59)) // Wednesday, pull day
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    vi.setSystemTime(new Date(2026, 8, 24, 0, 1))
+    document.dispatchEvent(new Event('visibilitychange'))
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.getByRole('button', { name: 'Stop and Log' })).toBeInTheDocument()
+  })
+
+  it('hides Level Up while a hold is running', async () => {
+    vi.setSystemTime(WEDNESDAY)
+    const user = userEvent.setup()
+    const logs = [1, 2, 3].map((at) => ({ nodeId: 'pull-hang', value: 30, date: '2026-09-23', at }))
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: /Dead hang/ }))
+    expect(screen.getByRole('button', { name: 'Level Up' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(screen.queryByRole('button', { name: 'Level Up' })).not.toBeInTheDocument()
+  })
+
+  it('demo images are requested with CORS so failures are never cached', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], focus: { push: 'push-incline' } })} />)
+    await user.click(await screen.findByRole('button', { name: /Incline push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'How-to' }))
+    expect(screen.getByRole('img', { name: /Incline push-up/ })).toHaveAttribute('crossorigin', 'anonymous')
+  })
+
+  it('rejects a huge import file without reading it', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} services={memoryServices()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.upload(screen.getByLabelText('Import backup file'), new File(['x'.repeat(5_000_001)], 'big.json', { type: 'application/json' }))
+    expect(await screen.findByText('That file is too big to be an Up backup.')).toBeInTheDocument()
   })
 })
