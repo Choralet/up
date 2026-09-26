@@ -2,6 +2,7 @@ import { useMemo, type CSSProperties } from 'react'
 import type { Branch } from '../data/types'
 import { layoutBranch, NODE_R } from '../engine/layout'
 import { nodeState, type NodeState } from '../engine/progress'
+import { wrapLabel } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 
@@ -78,7 +79,11 @@ export function TreeView({ branch, selectedId, onSelect }: Props) {
                 <path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5" />
               </g>
             )}
-            <text className="lb" y={R + 12}>{node.name}</text>
+            <text className="lb" y={R + 12}>
+              {wrapLabel(node.short ?? node.name).map((line, i) => (
+                <tspan key={i} x={0} dy={i === 0 ? 0 : 10}>{line}</tspan>
+              ))}
+            </text>
           </g>
         )
       })}

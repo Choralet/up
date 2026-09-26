@@ -91,8 +91,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .tsvg .dotc { fill: var(--accent); }
 .tsvg .lk rect { fill: var(--label3); }
 .tsvg .lk path { fill: none; stroke: var(--label3); stroke-width: 2; }
-.tsvg .lb { font-size: 9px; font-weight: 600; text-anchor: middle; fill: var(--label2); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
-.tsvg .n.locked .lb { fill: var(--label3); }
+.tsvg .lb { font-size: 8.5px; font-weight: 600; text-anchor: middle; fill: var(--label2); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
+.tsvg .n.locked .lb { fill: var(--label2); opacity: 0.75; }
 .tsvg .n:focus-visible .sh { stroke-width: 5; }
 
 .log { position: fixed; inset: 0; z-index: 10; background: var(--bg); overflow: auto; }

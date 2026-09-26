@@ -21,7 +21,7 @@ export function TodayScreen({ onOpen }: { onOpen: (nodeId: string) => void }) {
           if (!node) {
             return (
               <div className="row" key={b}>
-                <span className="dot" style={{ background: meta.color }}>{meta.label.slice(0, 2)}</span>
+                <span className="dot" style={{ background: meta.color }}>{meta.short}</span>
                 <span className="t"><b>{meta.label}</b><span>Branch complete</span></span>
               </div>
             )
@@ -29,7 +29,7 @@ export function TodayScreen({ onOpen }: { onOpen: (nodeId: string) => void }) {
           const done = todaysValues(progress, node.id, today).filter((v) => v >= node.goal.target).length
           return (
             <button className="row" key={b} onClick={() => onOpen(node.id)}>
-              <span className="dot" style={{ background: meta.color }}>{meta.label.slice(0, 2)}</span>
+              <span className="dot" style={{ background: meta.color }}>{meta.short}</span>
               <span className="t">
                 {node.kind === 'skill' && <span className="tag">SKILL</span>}
                 <b>{node.name}</b>

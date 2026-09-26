@@ -1,5 +1,5 @@
 import { localDate, formatClock } from './time'
-import { goalText } from './format'
+import { goalText, wrapLabel } from './format'
 
 describe('time helpers', () => {
   it('formats local dates with zero padding', () => {
@@ -16,5 +16,19 @@ describe('goalText', () => {
   it('shows reps and holds', () => {
     expect(goalText({ type: 'reps', sets: 3, target: 10 })).toBe('3 × 10')
     expect(goalText({ type: 'hold', sets: 3, target: 30 })).toBe('3 × 30 s')
+  })
+})
+
+describe('wrapLabel', () => {
+  it('keeps short text on one line', () => {
+    expect(wrapLabel('Push-up')).toEqual(['Push-up'])
+  })
+  it('wraps on word boundaries without exceeding the width', () => {
+    expect(wrapLabel('Incline push-up')).toEqual(['Incline', 'push-up'])
+    expect(wrapLabel('Bulgarian split squat')).toEqual(['Bulgarian', 'split squat'])
+    expect(wrapLabel('Elevated pike push-up')).toEqual(['Elevated pike', 'push-up'])
+  })
+  it('never returns an empty list', () => {
+    expect(wrapLabel('')).toEqual([''])
   })
 })

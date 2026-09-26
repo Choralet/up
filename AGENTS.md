@@ -8,15 +8,18 @@ Instructions for any AI coding agent working in this repo. `CLAUDE.md` imports t
 
 ## Current status
 
-**Planning + design phase (milestone 1: mockups and name; tree mockups revised). Do NOT write app code until the user approves the plan, mockups and name.**
+**Plan 1 (foundation and core loop) is built and deployed** at https://choralet.github.io/up/ (public repo `Choralet/up`; Pages on private repos needs a paid plan). It has: the 45-node exercise graph, the pure rules engine, the branching skill tree, Today, reps logging, hold timer, level-up suggestions, IndexedDB storage, PWA/offline.
+
+**Next: Plan 2** (weekly schedule and per-day workout plan with the skill block first, active-skills picker max 2, "Find your level" onboarding, editing goals/days, Progress screen), then **Plan 3** (backup export/import, GitHub backup, How-to demo button, polish). Write each plan with `superpowers:writing-plans` after brainstorming any open questions.
+
 Read these first, in order:
 1. `docs/DECISIONS.md`: user's answers (source of truth; update it)
 2. `docs/PLAN.md`: product plan, workout-plan structure, screens, milestones
-3. `docs/SKILLS.md`: skill progression data (draft; numbers are editable defaults)
-4. `docs/RESEARCH.md`: strength-chain research and sources
-   `docs/DEMOS.md`: exercise demo media sources and licensing
-5. `docs/UI-REFERENCES.md`: design references and principles
-6. `docs/mockups/index.html`: design mockups (open in a browser)
+3. `docs/superpowers/plans/2026-09-26-up-plan-1-foundation-and-core-loop.md`: what was built (file map inside)
+4. `docs/SKILLS.md`, `docs/RESEARCH.md`, `docs/UI-REFERENCES.md`, `docs/DEMOS.md`
+5. `docs/mockups/index.html`: design mockups (open in a browser)
+
+Code map: `src/data` (types, nodes.json graph), `src/engine` (pure rules, layout), `src/lib` (time, format), `src/store` (storage, context), `src/ui` (screens). Commands: `npm test`, `npm run build`, `npm run dev`. Deploys on push to `main` via GitHub Actions.
 
 ## Reminders
 

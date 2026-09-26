@@ -11,6 +11,8 @@ export interface Goal {
 export interface ExerciseNode {
   id: string
   name: string
+  /** shorter label for the tree drawing, only when `name` does not fit */
+  short?: string
   branch: Branch
   kind: 'strength' | 'skill'
   /** ids of nodes that must be completed first (all of them) */

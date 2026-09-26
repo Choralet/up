@@ -1,6 +1,7 @@
 import { NODES } from './nodes'
 import { BRANCHES, indexNodes } from '../engine/graph'
 import { computeDepths } from '../engine/layout'
+import { wrapLabel } from '../lib/format'
 
 describe('exercise graph', () => {
   it('has unique ids', () => {
@@ -46,6 +47,14 @@ describe('exercise graph', () => {
       expect(n.col).toBeGreaterThanOrEqual(0)
       expect(n.col).toBeLessThanOrEqual(3)
       expect(n.cue.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('every tree label fits in two short lines', () => {
+    for (const n of NODES) {
+      const lines = wrapLabel(n.short ?? n.name)
+      expect(lines.length, `${n.id} label wraps to ${lines.length} lines`).toBeLessThanOrEqual(2)
+      for (const l of lines) expect(l.length, `${n.id} line "${l}"`).toBeLessThanOrEqual(13)
     }
   })
 })

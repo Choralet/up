@@ -13,6 +13,13 @@ describe('Today screen', () => {
     expect(screen.getByRole('button', { name: /Dead bug/ })).toBeInTheDocument()
   })
 
+  it('gives each branch a distinct badge', async () => {
+    render(<App storage={memoryStorage()} />)
+    await screen.findByRole('button', { name: /Wall push-up/ })
+    const badges = ['Pu', 'Pl', 'Le', 'Co']
+    for (const b of badges) expect(screen.getAllByText(b)).toHaveLength(1)
+  })
+
   it('shows "Branch complete" when every push exercise is done', async () => {
     const allPush = NODES.filter((n) => n.branch === 'push').map((n) => n.id)
     render(<App storage={memoryStorage({ completed: allPush })} />)

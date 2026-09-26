@@ -142,9 +142,9 @@ See [DEMOS.md](DEMOS.md). Short version: good GIF sources exist, but the ones wi
 |---|---|---|
 | 0 | Plan, research, references | Done |
 | 1 | Mockups + name | Done, awaiting your final OK on this plan |
-| 2 | Project setup: Vite/React/TS, GitHub repo, auto-deploy to Pages | Blank "Up" app on your home screen |
-| 3 | Data (node graph JSON) + level-up logic, tested | Core rules work |
-| 4 | Today, Log (reps + hold timer), Skill Tree, Level-up screens | Usable workouts |
+| 2 | Project setup: Vite/React/TS, GitHub repo, auto-deploy to Pages | **Done** |
+| 3 | Data (node graph JSON) + level-up logic, tested | **Done** |
+| 4 | Today, Log (reps + hold timer), Skill Tree, Level-up screens | **Done** (Plan 1) |
 | 5 | Skills, Find-your-level onboarding, customizing days/skills/goals | Full v1 |
 | 6 | Backup: export/import, then GitHub backup | Data safe |
 | 7 | How-to demos (per your choice) | Optional button |

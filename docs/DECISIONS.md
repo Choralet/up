@@ -37,8 +37,9 @@ Source of truth for choices made about the app. Update after each answer.
 
 - **Demos:** option 3, personal use. Hotlink GIFs from the Gym visual-based dataset (never copy the files into the repo), show "© Gym visual" credit, and show the How-to button only where a demo exists. Agent flagged that this may not comply with Gym visual's terms; user accepted since it is personal use.
 - **GitHub backup:** approved (fine-grained token stored on the phone, separate private data repo).
-- **Repo:** try **private + GitHub Pages first**; if GitHub refuses (Pages on private repos needs a paid plan), use **public**. The public repo holds only code, never data.
+- **Repo (done):** private + Pages was tried first and GitHub returned 422 (plan does not support Pages on private repos), so `Choralet/up` is **public** (code and docs only). Original decision: try **private + GitHub Pages first**; if GitHub refuses (Pages on private repos needs a paid plan), use **public**. The public repo holds only code, never data.
 
 ## Open questions
 
-- User go-ahead to start milestone 2 (create repo, project setup, first deploy). Spec = docs/PLAN.md; implementation plan comes next.
+- Plan 2 scope questions (to brainstorm before writing Plan 2): default weekday schedule, how many days per week, warm-up content, whether skills also get a per-set timer
+- User feedback after trying Plan 1 on the iPhone
