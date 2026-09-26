@@ -155,6 +155,18 @@ export function setFocus(nodes: ExerciseNode[], progress: Progress, nodeId: stri
   return { ...progress, focus: { ...progress.focus, [node.branch]: nodeId } }
 }
 
+/** "I can already do this": complete the steps in order, each only if its requirements are met by then. */
+export function completeSteps(nodes: ExerciseNode[], progress: Progress, ids: string[]): Progress {
+  const byId = indexNodes(nodes)
+  const done = new Set(progress.completed)
+  for (const id of ids) {
+    const n = byId.get(id)
+    if (n && !done.has(id) && isUnlocked(n, done)) done.add(id)
+  }
+  if (done.size === progress.completed.length) return progress
+  return sanitizeProgress(nodes, { ...progress, completed: [...done] })
+}
+
 /** Start training a skill chain at its first trainable step. Refuses unknown, active, locked, finished chains and a 3rd skill. */
 export function activateSkill(nodes: ExerciseNode[], progress: Progress, chainId: string): Progress {
   if (chainId in progress.skillFocus) return progress

@@ -1,6 +1,6 @@
 import type { ExerciseNode } from '../data/types'
 import {
-  activateSkill, applyOverrides, deactivateSkill, editSet, finishOnboarding, firstStep,
+  activateSkill, applyOverrides, completeSteps, deactivateSkill, editSet, finishOnboarding, firstStep,
   goalMet, initialProgress, isUnlocked, levelUp, logSet, newlyUnlockedSkills, nodeState,
   removeSet, restartOnboarding, sanitizeProgress, setDayType, setFocus, setGoalOverride,
   suggestNext, todaysValues,
@@ -403,5 +403,26 @@ describe('sanitizeProgress, Plan 3 repairs', () => {
   it('does not migrate a skill focus when two skills are already active', () => {
     const p = sanitizeProgress(g2, { completed: ['a'], focus: { push: 's1' }, skillFocus: { k2: 'k2', k3: 'k3' } })
     expect(p.skillFocus).toEqual({ k2: 'k2', k3: 'k3' })
+  })
+})
+
+describe('completeSteps ("I can already do this")', () => {
+  it('completes steps in order when their requirements are met, and repairs focus', () => {
+    const p = completeSteps(g2, initialProgress(g2), ['a', 'b'])
+    expect(p.completed).toEqual(['a', 'b'])
+    expect(p.focus.push).toBeNull()
+  })
+  it('never completes a step whose requirement is missing', () => {
+    const p = completeSteps(g2, initialProgress(g2), ['s1'])
+    expect(p.completed).toEqual([])
+  })
+  it('frees the slot of a chain it finishes', () => {
+    const on = activateSkill(g2, afterA(), 'sk')
+    const p = completeSteps(g2, on, ['s1', 's2', 's3'])
+    expect(p.skillFocus).toEqual({})
+  })
+  it('returns the same object when nothing changes', () => {
+    const p = afterA()
+    expect(completeSteps(g2, p, ['a'])).toBe(p)
   })
 })
