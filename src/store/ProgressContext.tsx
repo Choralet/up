@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { DayType, ExerciseNode, GoalOverride } from '../data/types'
 import { indexNodes } from '../engine/graph'
 import {
-  activateSkill as activateSkillRule, applyOverrides, deactivateSkill as deactivateSkillRule,
+  activateSkill as activateSkillRule, applyOverrides, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
   levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
   sanitizeProgress, setDayType as setDayTypeRule, setFocus as setFocusRule, setGoalOverride,
@@ -32,6 +32,8 @@ export interface ProgressValue {
   restartOnboarding(): void
   /** swap in progress from a backup; the caller has already cleaned it */
   replaceProgress(p: Progress): void
+  /** "I can already do this" for these steps */
+  completeSteps(ids: string[]): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -82,6 +84,7 @@ export function ProgressProvider({
     finishOnboarding: () => update(finishOnboardingRule),
     restartOnboarding: () => update(restartOnboardingRule),
     replaceProgress: (p) => setProgress(p),
+    completeSteps: (ids) => update((p) => completeStepsRule(nodes, p, ids)),
   }
   return (
     <Ctx.Provider value={value}>

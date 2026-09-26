@@ -360,7 +360,7 @@ describe('Node sheet and level-up for skills and goals', () => {
     await user.click(await screen.findByRole('button', { name: /Pike push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' }) // the stepper starts at the goal, 8 reps
     await user.click(log); await user.click(log); await user.click(log)
-    expect(await screen.findByText(/Unlocks a skill: Chest-to-wall handstand hold/)).toBeInTheDocument()
+    expect(await screen.findByText(/Unlocks .*Chest-to-wall handstand hold/)).toBeInTheDocument()
   })
 })
 
@@ -872,5 +872,80 @@ describe('Plan 3 review fixes', () => {
     await user.click(await screen.findByRole('button', { name: 'Settings' }))
     await user.upload(screen.getByLabelText('Import backup file'), new File(['x'.repeat(5_000_001)], 'big.json', { type: 'application/json' }))
     expect(await screen.findByText('That file is too big to be an Up backup.')).toBeInTheDocument()
+  })
+})
+
+describe('Roadmap', () => {
+  const openRoadmap = async (extra: Record<string, unknown> = {}) => {
+    const user = userEvent.setup()
+    render(<App storage={seed(extra)} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    await user.click(screen.getByRole('tab', { name: 'Roadmap' }))
+    return user
+  }
+
+  it('lists Year 1 to 3 in the video order with the source note', async () => {
+    await openRoadmap()
+    expect(screen.getByRole('heading', { name: /Year 1/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Year 3/ })).toBeInTheDocument()
+    const names = screen.getAllByRole('button', { name: /^\d+\. / }).map((b) => b.getAttribute('aria-label'))
+    expect(names[0]).toMatch(/^1\. Hollow body hang/)
+    expect(names[1]).toMatch(/^2\. Frog stand/)
+    expect(names).toHaveLength(50)
+    expect(screen.getByText(/Order from STRIQfit's videos/)).toBeInTheDocument()
+  })
+
+  it('opens a skill with needs, steps and a video link at its chapter', async () => {
+    const user = await openRoadmap()
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand/ }))
+    const dialog = screen.getByRole('dialog', { name: 'Frog stand' })
+    expect(dialog).toHaveTextContent('Needs')
+    expect(dialog).toHaveTextContent('Knee push-up')
+    expect(dialog).toHaveTextContent('Frog stand, toes touching')
+    const link = within(dialog).getByRole('link', { name: /Watch in video/ })
+    expect(link).toHaveAttribute('href', 'https://www.youtube.com/watch?v=J2JHDavNZB4&t=49s')
+    expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  it('Train This starts a ready skill and it shows in that day\'s workout', async () => {
+    const user = await openRoadmap({ completed: ['push-wall', 'push-incline', 'push-knee'] })
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand, ready/ }))
+    await user.click(screen.getByRole('button', { name: 'Train This' }))
+    expect(screen.getByRole('button', { name: /^2\. Frog stand, training/ })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    expect(await screen.findByRole('button', { name: /Frog stand, toes touching/ })).toBeInTheDocument()
+  })
+
+  it('"I can already do this" marks it done after confirming', async () => {
+    const user = await openRoadmap({ completed: ['push-wall', 'push-incline', 'push-knee'] })
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand, ready/ }))
+    await user.click(screen.getByRole('button', { name: 'I Can Already Do This' }))
+    await user.click(within(screen.getByRole('dialog', { name: 'Mark Frog stand as done?' })).getByRole('button', { name: 'Mark Done' }))
+    expect(screen.getByRole('button', { name: /^2\. Frog stand, done/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Year 1 · 1 of 22 done/ })).toBeInTheDocument()
+  })
+
+  it('a locked skill says what it needs and cannot be trained', async () => {
+    const user = await openRoadmap()
+    await user.click(screen.getByRole('button', { name: /^7\. Elbow lever, locked/ }))
+    const dialog = screen.getByRole('dialog', { name: 'Elbow lever' })
+    expect(dialog).toHaveTextContent('Frog stand')
+    expect(within(dialog).queryByRole('button', { name: 'Train This' })).not.toBeInTheDocument()
+  })
+
+  it('explains when two skills are already active', async () => {
+    const user = await openRoadmap({ completed: ['push-wall', 'push-incline', 'push-knee', 'pull-hang'], skillFocus: { 'hollow-hang': 'rm-hollow-hang-1', 'butchers-block': 'rm-butcher' } })
+    await user.click(screen.getByRole('button', { name: /^2\. Frog stand, ready/ }))
+    expect(screen.getByRole('button', { name: 'Train This' })).toBeDisabled()
+    expect(screen.getByText('Two skills are already active. Stop one in My Skills first.')).toBeInTheDocument()
+  })
+
+  it('My Skills keeps its library to the tree skills, and roadmap skills do not appear in the tree', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    expect(screen.queryByRole('button', { name: 'Start Frog stand' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Tree' }))
+    expect(screen.queryByRole('button', { name: /Frog stand/ })).not.toBeInTheDocument()
   })
 })

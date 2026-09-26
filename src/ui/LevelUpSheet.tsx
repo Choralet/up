@@ -33,7 +33,10 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
           </button>
         ))}
         {unlockedSkills.length > 0 && (
-          <p className="sub">Unlocks a skill: {unlockedSkills.map((n) => n.name).join(', ')}. Start it in the Skills tab.</p>
+          <p className="sub">
+            Unlocks {unlockedSkills.length === 1 ? 'a skill' : `${unlockedSkills.length} skills`}: {unlockedSkills.slice(0, 3).map((n) => n.name).join(', ')}
+            {unlockedSkills.length > 3 ? ' and more' : ''}. Find {unlockedSkills.length === 1 ? 'it' : 'them'} in Skills.
+          </p>
         )}
         <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => onPick(choice)}>
           {hasChoices ? 'Set Focus' : 'Complete'}
