@@ -3,7 +3,7 @@ import {
   activateSkill, applyOverrides, completeSteps, deactivateSkill, editSet, finishOnboarding, firstStep,
   goalMet, initialProgress, isUnlocked, levelUp, logSet, newlyUnlockedSkills, nodeState,
   removeSet, restartOnboarding, sanitizeProgress, setDayType, setFocus, setGoalOverride,
-  suggestNext, todaysValues, setDayPick, toggleWarm, todayState, effectiveGoal, advanceStage, applyStages,
+  suggestNext, todaysValues, setDayPick, toggleWarm, todayState, effectiveGoal, advanceStage, applyStages, unlockedBy,
   type Progress,
 } from './progress'
 import { DEFAULT_SCHEDULE } from '../data/schedule'
@@ -548,5 +548,14 @@ describe('smarter goals (goal ramp after a level-up)', () => {
   })
   it('sanitize keeps valid stages only', () => {
     expect(sanitizeProgress(g2, { goalStage: { b: 1, a: 7, ghost: 0, c: 'x' } }).goalStage).toEqual({ b: 1 })
+  })
+})
+
+describe('unlockedBy (for the unlock moment)', () => {
+  it('lists nodes that a change newly unlocked', () => {
+    const before = initialProgress(g2)
+    const after = levelUp(g2, before, 'a', 'b')
+    expect(unlockedBy(g2, before, after).sort()).toEqual(['b', 'k2', 'k3', 's1'])
+    expect(unlockedBy(g2, after, after)).toEqual([])
   })
 })

@@ -1534,3 +1534,37 @@ describe('Plan 7 · calendar reminders', () => {
     expect(services.saved.at(-1)!.text).toContain('RRULE:FREQ=WEEKLY;BYDAY=MO')
   })
 })
+
+describe('Plan 7 · unlock moment, zoom, track chips', () => {
+  it('a level-up lights up the newly unlocked node in the tree', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    await user.click(await screen.findByRole('button', { name: 'Level Up' }))
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    const node = screen.getByRole('button', { name: 'Incline push-up, training' })
+    expect(node).toHaveClass('just-unlocked')
+    expect(container.querySelectorAll('.e.draw').length).toBeGreaterThan(0)
+  })
+
+  it('zoom buttons change the tree size', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Zoom In' }))
+    expect((container.querySelector('svg.tsvg') as SVGElement).style.width).toBe('125%')
+    await user.click(screen.getByRole('button', { name: 'Reset Zoom' }))
+    expect((container.querySelector('svg.tsvg') as SVGElement).style.width).toBe('100%')
+  })
+
+  it('track chips show each track’s current exercise and open it', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Dips: Bench dip' }))
+    const sheet = screen.getByRole('dialog', { name: 'Bench dip' })
+    expect(sheet).toHaveTextContent('Track: Dips')
+  })
+})

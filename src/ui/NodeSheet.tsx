@@ -6,6 +6,7 @@ import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META, SKILL_STRONG } from './branches'
 import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
+import { trackById } from '../data/tracks'
 import { HistorySheet } from './HistorySheet'
 import { skillName } from '../data/names'
 
@@ -26,6 +27,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
       <div className="sheet" role="dialog" aria-modal="true" aria-label={node.name} style={{ '--accent': meta.color, '--accent-strong': node.kind === 'skill' ? SKILL_STRONG : meta.strong } as CSSProperties}>
         <div className="eyebrow">{meta.label} · {LABEL[state]}</div>
         <h2>{node.name}</h2>
+        {node.track && <div className="sub">Track: {trackById(node.track)?.name}</div>}
         <div className="pills">
           <span className="pill">Goal {goalText(node.goal)}</span>
           {node.kind === 'skill' && <span className="pill skill">Skill</span>}

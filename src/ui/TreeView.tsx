@@ -13,10 +13,11 @@ interface Props {
   branch: Branch
   selectedId: string | null
   onSelect: (id: string) => void
+  zoom?: number
 }
 
-export function TreeView({ branch, selectedId, onSelect }: Props) {
-  const { nodes, progress } = useProgress()
+export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
+  const { nodes, progress, justUnlocked } = useProgress()
   const layout = useMemo(() => layoutBranch(nodes, branch), [nodes, branch])
   const pos = new Map(layout.placed.map((p) => [p.node.id, p]))
   const states = new Map<string, NodeState>(layout.placed.map((p) => [p.node.id, nodeState(p.node, progress)]))
@@ -28,7 +29,7 @@ export function TreeView({ branch, selectedId, onSelect }: Props) {
       viewBox={`0 0 ${layout.width} ${layout.height}`}
       role="group"
       aria-label={`${BRANCH_META[branch].label} skill tree`}
-      style={{ '--accent': BRANCH_META[branch].color } as CSSProperties}
+      style={{ '--accent': BRANCH_META[branch].color, width: `${Math.round(zoom * 100)}%` } as CSSProperties}
     >
       {layout.edges.map(({ from, to }) => {
         const a = pos.get(from)!
@@ -43,7 +44,7 @@ export function TreeView({ branch, selectedId, onSelect }: Props) {
         return (
           <path
             key={`${from}>${to}`}
-            className={`e ${cls}`}
+            className={`e ${cls}${justUnlocked.includes(to) ? ' draw' : ''}`}
             d={`M${a.x} ${a.y - R} C${a.x} ${my},${b.x} ${my},${b.x} ${b.y + R}`}
           />
         )
@@ -54,7 +55,7 @@ export function TreeView({ branch, selectedId, onSelect }: Props) {
         return (
           <g
             key={node.id}
-            className={`n ${state} ${isSkill ? 'sk' : 'st'}`}
+            className={`n ${state} ${isSkill ? 'sk' : 'st'}${justUnlocked.includes(node.id) ? ' just-unlocked' : ''}`}
             transform={`translate(${x} ${y})`}
             role="button"
             tabIndex={0}

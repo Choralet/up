@@ -5,7 +5,7 @@ import {
   activateSkill as activateSkillRule, advanceStage as advanceStageRule, applyOverrides, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
   levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
-  sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, markSeen as markSeenRule, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
+  sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, markSeen as markSeenRule, unlockedBy, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
   type Progress, type Settings,
 } from '../engine/progress'
 import { localDate } from '../lib/time'
@@ -42,6 +42,9 @@ export interface ProgressValue {
   toggleWarm(key: string): void
   setSettings(patch: Partial<Settings>): void
   markSeen(ids: string[]): void
+  /** nodes unlocked by the last level-up (this session only), for the unlock animation */
+  justUnlocked: string[]
+  clearUnlocked(): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -51,6 +54,7 @@ export function ProgressProvider({
 }: { storage: ProgressStorage; nodes: ExerciseNode[]; children: ReactNode }) {
   const [progress, setProgress] = useState<Progress | null>(null)
   const [saveFailed, setSaveFailed] = useState(false)
+  const [justUnlocked, setJustUnlocked] = useState<string[]>([])
   const defaults = useMemo(() => indexNodes(nodes), [nodes])
   const overrides = progress?.goalOverrides
   const stages = progress?.goalStage
@@ -87,7 +91,14 @@ export function ProgressProvider({
     progress,
     advanceStage: (id) => update((p) => advanceStageRule(p, id)),
     log: (nodeId, v) => update((p) => logSet(p, nodeId, v, localDate(), Date.now())),
-    levelUp: (fromId, toId) => update((p) => levelUpRule(nodes, p, fromId, toId)),
+    levelUp: (fromId, toId) =>
+      update((p) => {
+        const next = levelUpRule(nodes, p, fromId, toId)
+        if (next !== p) setJustUnlocked(unlockedBy(nodes, p, next))
+        return next
+      }),
+    justUnlocked,
+    clearUnlocked: () => setJustUnlocked([]),
     setFocus: (nodeId) => update((p) => setFocusRule(nodes, p, nodeId)),
     removeSet: (index) => update((p) => removeSetRule(p, index)),
     editSet: (index, v) => update((p) => editSetRule(p, index, v)),

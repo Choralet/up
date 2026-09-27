@@ -252,3 +252,11 @@ a.howto { text-decoration: none; }
 .achgrid li:not(.earned) .achmedal { background: var(--fill); color: var(--label3); }
 .achgrid li:not(.earned) b { color: var(--label2); font-weight: 500; }
 .selrow input[type='time'] { font: inherit; font-size: 16px; color: var(--blue-text); background: var(--fill); border: 0; border-radius: 8px; padding: 6px 10px; min-height: 36px; }
+
+.trackchips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; }
+.chipbtn { white-space: nowrap; font-size: 13px; color: var(--label); margin: 0; flex: none; }
+.chipbtn .chiptrack { color: var(--label2); font-weight: 600; }
+.zoombar { display: flex; justify-content: flex-end; gap: 6px; margin-top: 4px; }
+.zoombar .pillbtn { margin: 0; min-width: 44px; }
+.tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
+.tsvg { max-width: none; }

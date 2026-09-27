@@ -299,6 +299,13 @@ export function toggleWarm(progress: Progress, date: string, key: string): Progr
   return { ...progress, day: { ...d, warm } }
 }
 
+/** Nodes that were locked before a change and are unlocked (not done) after it: the unlock moment. */
+export function unlockedBy(nodes: ExerciseNode[], before: Progress, after: Progress): string[] {
+  const b = new Set(before.completed)
+  const a = new Set(after.completed)
+  return nodes.filter((n) => !a.has(n.id) && !isUnlocked(n, b) && isUnlocked(n, a)).map((n) => n.id)
+}
+
 export function markSeen(progress: Progress, ids: string[]): Progress {
   const seen = new Set([...(progress.seenAchievements ?? []), ...ids])
   return { ...progress, seenAchievements: [...seen] }
