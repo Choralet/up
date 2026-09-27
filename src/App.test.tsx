@@ -202,12 +202,12 @@ describe('Logging and level-up', () => {
     const user = userEvent.setup()
     render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
-    const value = screen.getByTestId('rep-value')
-    expect(value).toHaveTextContent('10')
+    const value = () => screen.getByTestId('rep-value') // re-rendered on each change so it can roll
+    expect(value()).toHaveTextContent('10')
     await user.click(screen.getByRole('button', { name: 'Increase reps' }))
-    expect(value).toHaveTextContent('11')
+    expect(value()).toHaveTextContent('11')
     for (let i = 0; i < 15; i++) await user.click(screen.getByRole('button', { name: 'Decrease reps' }))
-    expect(value).toHaveTextContent('1')
+    expect(value()).toHaveTextContent('1')
   })
 
   it('a set below the goal counts as logged but does not fill the goal bars', async () => {
@@ -1566,5 +1566,18 @@ describe('Plan 7 · unlock moment, zoom, track chips', () => {
     await user.click(screen.getByRole('button', { name: 'Dips: Bench dip' }))
     const sheet = screen.getByRole('dialog', { name: 'Bench dip' })
     expect(sheet).toHaveTextContent('Track: Dips')
+  })
+})
+
+describe('Plan 7 · motion', () => {
+  it('the rep number re-renders on change so it can roll', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const before = screen.getByTestId('rep-value')
+    await user.click(screen.getByRole('button', { name: 'Increase reps' }))
+    const after = screen.getByTestId('rep-value')
+    expect(after).not.toBe(before)
+    expect(after).toHaveClass('roll-up')
   })
 })
