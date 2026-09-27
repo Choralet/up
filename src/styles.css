@@ -236,3 +236,5 @@ a.howto { text-decoration: none; }
 :root { --blue-text: #0060c8; }
 @media (prefers-color-scheme: dark) { :root { --blue-text: #0a84ff; } }
 .cta.sec { color: var(--blue-text); }
+
+.goalup { margin: 8px auto 0; display: inline-block; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--legs) 18%, transparent); color: var(--legs); font-weight: 600; font-size: 13px; }

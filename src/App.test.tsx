@@ -1437,3 +1437,27 @@ describe('Plan 6 · movement tracks and workout length', () => {
     expect(screen.getByText(/Rows: High incline row/)).toBeInTheDocument()
   })
 })
+
+describe('Plan 7 · smarter goals', () => {
+  it('after a level-up the new exercise starts easier and says when the goal goes up', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], goalStage: { 'push-incline': 0 } })} />)
+    const row = await screen.findByRole('button', { name: /Incline push-up/ })
+    expect(row).toHaveTextContent('3 × 6')
+    await user.click(row)
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log) // stepper starts at 6
+    expect(screen.queryByRole('dialog', { name: 'Level up' })).not.toBeInTheDocument()
+    expect(screen.getByText('Goal up: 3 × 8 next time')).toBeInTheDocument()
+  })
+
+  it('hitting the full goal still offers the level-up, even at an early stage', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], goalStage: { 'push-incline': 0 } })} />)
+    await user.click(await screen.findByRole('button', { name: /Incline push-up/ }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Increase reps' }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log) // 3 × 10
+    expect(await screen.findByRole('dialog', { name: 'Level up' })).toBeInTheDocument()
+  })
+})

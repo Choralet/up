@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react'
-import { goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
+import { effectiveGoal, FINAL_STAGE, goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { stepperStart } from '../engine/workout'
 import { formatClock, localDate } from '../lib/time'
@@ -17,7 +17,7 @@ import { SetSheet } from './SetSheet'
 export const logTuning = { doubleTapMs: 600 }
 
 export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => void }) {
-  const { nodes, byId, progress, log, levelUp, editSet, removeSet } = useProgress()
+  const { nodes, byId, finalById, progress, log, levelUp, editSet, removeSet, advanceStage } = useProgress()
   const node = byId.get(nodeId)!
   const meta = BRANCH_META[node.branch]
   // start from what you did last session, not from the goal (3 quick taps must not fake a level-up)
@@ -46,7 +46,10 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const atGoal = values.filter((v) => v >= node.goal.target).length
 
   const isFocus = nodeState(node, progress) === 'focus'
-  const ready = isFocus && goalMet(node.goal, values)
+  const stage = progress.goalStage[nodeId]
+  const final = finalById.get(nodeId) ?? node
+  const ready = isFocus && goalMet(final.goal, values)
+  const [goalUp, setGoalUp] = useState<string | null>(null)
 
   const lastTap = useRef(-Infinity)
   const [fresh, setFresh] = useState<number | null>(null)
@@ -61,8 +64,14 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
     const before = todaysValues(progress, nodeId, localDate())
     log(nodeId, value)
     setFresh(progress.logs.length) // index the new set will have: highlight its chip
-    const crossed = isFocus && !goalMet(node.goal, before) && goalMet(node.goal, [...before, value])
+    const after = [...before, value]
+    // the full goal offers the level-up; an easier ramp stage only raises the goal for next time
+    const crossed = isFocus && !goalMet(final.goal, before) && goalMet(final.goal, after)
     if (crossed) setShowLevelUp(true)
+    else if (isFocus && stage !== undefined && stage < FINAL_STAGE && !goalMet(node.goal, before) && goalMet(node.goal, after)) {
+      advanceStage(nodeId)
+      setGoalUp(`Goal up: ${goalText(effectiveGoal(final.goal, stage + 1))} next time`)
+    }
     return crossed
   }
 
@@ -85,6 +94,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           {Array.from({ length: node.goal.sets }, (_, i) => <i key={i} className={i < atGoal ? 'on' : ''} />)}
         </div>
         <div className="sub">{atGoal} of {node.goal.sets} sets at goal</div>
+        {goalUp && <div className="goalup" role="status">{goalUp}</div>}
 
         {node.goal.type === 'reps' ? (
           <>

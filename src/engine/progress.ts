@@ -44,6 +44,8 @@ export interface Progress {
   /** 7 entries, Monday first */
   schedule: DayType[]
   goalOverrides: Record<string, GoalOverride>
+  /** goal ramp after a level-up: 0 = 60%, 1 = 80%, 2 = full target; no entry = full */
+  goalStage: Record<string, number>
   onboarded: boolean
   day: DayState | null
   settings: Settings
@@ -57,7 +59,7 @@ export interface Suggestion {
 export function initialProgress(nodes: ExerciseNode[]): Progress {
   const focus: Record<string, string | null> = {}
   for (const t of trackKeys(nodes)) focus[t] = pickFocus(nodes, new Set(), t)
-  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, onboarded: false, day: null, settings: { holdSound: true, length: 'standard' } }
+  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, goalStage: {}, onboarded: false, day: null, settings: { holdSound: true, length: 'standard' } }
 }
 
 export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean {
@@ -165,7 +167,9 @@ function levelUpSkill(nodes: ExerciseNode[], progress: Progress, from: ExerciseN
     delete skillFocus[chain]
     return { ...progress, completed, skillFocus }
   }
-  return { ...progress, completed, skillFocus: { ...progress.skillFocus, [chain]: valid ? to!.id : firstStep(nodes, done, chain) } }
+  const next = valid ? to!.id : firstStep(nodes, done, chain)
+  const goalStage = next ? { ...progress.goalStage, [next]: 0 } : progress.goalStage
+  return { ...progress, completed, goalStage, skillFocus: { ...progress.skillFocus, [chain]: next } }
 }
 
 /** Complete the current focus (branch or skill chain) and choose the next one. Returns the same object if `fromId` is not a focus. */
@@ -181,7 +185,30 @@ export function levelUp(nodes: ExerciseNode[], progress: Progress, fromId: strin
   const to = toId ? byId.get(toId) : undefined
   const valid = !!to && !to.skill && trackOf(to) === track && !done.has(to.id) && isUnlocked(to, done)
   const focusId = valid ? to!.id : pickFocus(nodes, done, track)
-  return { ...progress, completed, focus: refill(nodes, { ...progress.focus, [track]: focusId }, done) }
+  const goalStage = focusId ? { ...progress.goalStage, [focusId]: 0 } : progress.goalStage
+  return { ...progress, completed, goalStage, focus: refill(nodes, { ...progress.focus, [track]: focusId }, done) }
+}
+
+const RAMP = [0.6, 0.8, 1]
+export const FINAL_STAGE = RAMP.length - 1
+
+/** The goal at a ramp stage: same sets, target scaled (at least 1). */
+export function effectiveGoal(goal: Goal, stage: number): Goal {
+  const f = RAMP[Math.min(Math.max(stage, 0), FINAL_STAGE)]
+  return { ...goal, target: Math.max(1, Math.round(goal.target * f)) }
+}
+
+/** Nodes with their current ramp stage applied (nodes without a stage keep the full goal). */
+export function applyStages(nodes: ExerciseNode[], stages: Record<string, number>): ExerciseNode[] {
+  if (Object.keys(stages).length === 0) return nodes
+  return nodes.map((n) => (n.id in stages ? { ...n, goal: effectiveGoal(n.goal, stages[n.id]) } : n))
+}
+
+/** One step up the ramp; the same object when already at the full goal or not ramping. */
+export function advanceStage(progress: Progress, nodeId: string): Progress {
+  const st = progress.goalStage[nodeId]
+  if (st === undefined || st >= FINAL_STAGE) return progress
+  return { ...progress, goalStage: { ...progress.goalStage, [nodeId]: st + 1 } }
 }
 
 /** Make an available strength exercise the branch's focus. Skill steps are started with `activateSkill`. */
@@ -365,6 +392,12 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     }
   }
 
+  const goalStage: Record<string, number> = {}
+  if (r.goalStage && typeof r.goalStage === 'object') {
+    for (const [id, st] of Object.entries(r.goalStage as Record<string, unknown>)) {
+      if (byId.has(id) && Number.isInteger(st) && (st as number) >= 0 && (st as number) <= FINAL_STAGE) goalStage[id] = st as number
+    }
+  }
   const onboarded = typeof r.onboarded === 'boolean' ? r.onboarded : completed.length > 0 || logs.length > 0
   const rd = r.day as Partial<DayState> | undefined
   const day: DayState | null =
@@ -378,5 +411,5 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     length: rs && typeof rs === 'object' && WORKOUT_LENGTHS.includes(rs.length as WorkoutLength) ? (rs.length as WorkoutLength) : 'standard',
   }
   if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
-  return { completed, focus, skillFocus, logs, schedule, goalOverrides, onboarded, day, settings }
+  return { completed, focus, skillFocus, logs, schedule, goalOverrides, goalStage, onboarded, day, settings }
 }

@@ -3,7 +3,7 @@ import {
   activateSkill, applyOverrides, completeSteps, deactivateSkill, editSet, finishOnboarding, firstStep,
   goalMet, initialProgress, isUnlocked, levelUp, logSet, newlyUnlockedSkills, nodeState,
   removeSet, restartOnboarding, sanitizeProgress, setDayType, setFocus, setGoalOverride,
-  suggestNext, todaysValues, setDayPick, toggleWarm, todayState,
+  suggestNext, todaysValues, setDayPick, toggleWarm, todayState, effectiveGoal, advanceStage, applyStages,
   type Progress,
 } from './progress'
 import { DEFAULT_SCHEDULE } from '../data/schedule'
@@ -521,5 +521,28 @@ describe('Plan 6 review fixes: tracks never dead-end, migrations keep your level
     expect(p.skillFocus).toEqual({})
     expect(p.focus['push-d']).toBe('rm-dip')
     expect(p.completed).toEqual(expect.arrayContaining(['push-bench-dip', 'push-dip-neg']))
+  })
+})
+
+describe('smarter goals (goal ramp after a level-up)', () => {
+  it('stages step 60% → 80% → 100% of the target, for reps and holds', () => {
+    expect([0, 1, 2].map((st) => effectiveGoal({ type: 'reps', sets: 3, target: 10 }, st).target)).toEqual([6, 8, 10])
+    expect([0, 1, 2].map((st) => effectiveGoal({ type: 'hold', sets: 3, target: 30 }, st).target)).toEqual([18, 24, 30])
+    expect(effectiveGoal({ type: 'reps', sets: 3, target: 1 }, 0).target).toBe(1)
+  })
+  it('a node reached by level-up starts at stage 0; others keep the full goal', () => {
+    const p = levelUp(g2, initialProgress(g2), 'a', 'b')
+    expect(p.goalStage).toEqual({ b: 0 })
+    expect(applyStages(g2, p.goalStage).find((n) => n.id === 'b')!.goal.target).toBe(6)
+    expect(applyStages(g2, p.goalStage).find((n) => n.id === 'a')!.goal.target).toBe(10)
+  })
+  it('advanceStage climbs to the full goal and stops there', () => {
+    let p = levelUp(g2, initialProgress(g2), 'a', 'b')
+    p = advanceStage(p, 'b'); expect(p.goalStage.b).toBe(1)
+    p = advanceStage(p, 'b'); expect(p.goalStage.b).toBe(2)
+    expect(advanceStage(p, 'b')).toBe(p)
+  })
+  it('sanitize keeps valid stages only', () => {
+    expect(sanitizeProgress(g2, { goalStage: { b: 1, a: 7, ghost: 0, c: 'x' } }).goalStage).toEqual({ b: 1 })
   })
 })
