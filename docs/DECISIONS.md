@@ -93,3 +93,7 @@ Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for
 ## Plan 5 built: UX (2026-09-27)
 
 - User: "Build all 5 phases plus find a way to make skills tab better… Remove Library in my skills tab and make an adjustment that you think is the best." Agent decisions: workout ≈ 15–20 min (warm-up → skill → main → Volume variation → Core finisher on Push/Pull days); soft goal tone ON by default with a Settings switch; Skills tab = Now (Training + Ready to Start + Replace) | Roadmap (only catalog); Roadmap names unified to app names with the video chapter name shown as "In the video"; buttons in Title Case; level-up primary button "Level Up".
+
+## Open (2026-09-27): more exercises per day
+
+User: "1 exercise per day is too less… do more research on youtube and propose me ways." Research and options A–D in `docs/WORKOUT-VOLUME.md` (recommendation: movement tracks + workout length). Awaiting the user's choice.
