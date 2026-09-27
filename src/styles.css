@@ -238,3 +238,9 @@ a.howto { text-decoration: none; }
 .cta.sec { color: var(--blue-text); }
 
 .goalup { margin: 8px auto 0; display: inline-block; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--legs) 18%, transparent); color: var(--legs); font-weight: 600; font-size: 13px; }
+
+.histbtn::before { display: none; }
+.histchart { width: 100%; height: auto; display: block; margin: 8px 0; overflow: visible; }
+.histchart .grid { stroke: var(--sep); stroke-width: 1; }
+.histchart .goalline { stroke: var(--label3); stroke-width: 1; stroke-dasharray: 4 4; }
+.histchart .axis { font-size: 10px; fill: var(--label2); font-variant-numeric: tabular-nums; }

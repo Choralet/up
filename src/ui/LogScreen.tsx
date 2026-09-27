@@ -9,6 +9,7 @@ import { ConfirmSheet } from './ConfirmSheet'
 import { DemoButton } from './DemoButton'
 import { demoUrl } from '../data/demos'
 import { roadmapItemFor, videoUrl } from '../data/roadmap'
+import { HistorySheet } from './HistorySheet'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
 import { SetSheet } from './SetSheet'
@@ -50,6 +51,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const final = finalById.get(nodeId) ?? node
   const ready = isFocus && goalMet(final.goal, values)
   const [goalUp, setGoalUp] = useState<string | null>(null)
+  const [showHistory, setShowHistory] = useState(false)
 
   const lastTap = useRef(-Infinity)
   const [fresh, setFresh] = useState<number | null>(null)
@@ -86,6 +88,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         <div className="pills" style={{ justifyContent: 'center' }}>
           <span className="pill">Goal {goalText(node.goal)}</span>
           <DemoButton node={node} />
+          <button className="howto histbtn" onClick={() => setShowHistory(true)}>History</button>
           {!demoUrl(node.id) && roadmapItemFor(node.id) && (
             <a className="howto" href={videoUrl(roadmapItemFor(node.id)!)} target="_blank" rel="noopener noreferrer">Watch in Video</a>
           )}
@@ -142,6 +145,8 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           onCancel={() => setAskClose(false)}
         />
       )}
+
+      {showHistory && <HistorySheet node={node} onClose={() => setShowHistory(false)} />}
 
       {editN >= 0 && (
         <SetSheet

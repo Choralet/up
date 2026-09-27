@@ -1461,3 +1461,33 @@ describe('Plan 7 · smarter goals', () => {
     expect(await screen.findByRole('dialog', { name: 'Level up' })).toBeInTheDocument()
   })
 })
+
+describe('Plan 7 · exercise history', () => {
+  it('shows a chart and a session list for an exercise', async () => {
+    const user = userEvent.setup()
+    const logs = [5, 6, 8].map((value, i) => ({ nodeId: 'push-wall', value, date: `2026-09-1${i + 1}`, at: i }))
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'History' }))
+    const sheet = screen.getByRole('dialog', { name: 'History: Wall push-up' })
+    expect(within(sheet).getByRole('img', { name: /Best reps per session/ })).toBeInTheDocument()
+    expect(within(sheet).getAllByRole('listitem')).toHaveLength(3)
+    expect(sheet).toHaveTextContent('Best: 8 reps')
+  })
+
+  it('has a friendly empty state', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'History' }))
+    expect(screen.getByText('No sets logged yet. Your history starts with the first set.')).toBeInTheDocument()
+  })
+
+  it('is also on the tree sheet', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Wall push-up, training' }))
+    expect(screen.getByRole('button', { name: 'History' })).toBeInTheDocument()
+  })
+})

@@ -6,6 +6,7 @@ import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META, SKILL_STRONG } from './branches'
 import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
+import { HistorySheet } from './HistorySheet'
 import { skillName } from '../data/names'
 
 const LABEL = { locked: 'Locked', available: 'Ready', focus: 'Training', completed: 'Done' } as const
@@ -13,6 +14,7 @@ const LABEL = { locked: 'Locked', available: 'Ready', focus: 'Training', complet
 export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClose: () => void; onLog: (id: string) => void }) {
   const { progress, byId, defaults, setFocus, activateSkill, deactivateSkill, setGoal } = useProgress()
   const [editing, setEditing] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
   const state = nodeState(node, progress)
   const meta = BRANCH_META[node.branch]
   const chainActive = node.skill ? node.skill in progress.skillFocus : false
@@ -28,6 +30,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
           <span className="pill">Goal {goalText(node.goal)}</span>
           {node.kind === 'skill' && <span className="pill skill">Skill</span>}
           <DemoButton node={node} />
+          <button className="howto histbtn" onClick={() => setShowHistory(true)}>History</button>
         </div>
         {node.requires.map((id) => {
           const ok = progress.completed.includes(id)
@@ -75,6 +78,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
           </>
         )}
       </div>
+      {showHistory && <HistorySheet node={node} onClose={() => setShowHistory(false)} />}
     </>
   )
 }

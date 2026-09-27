@@ -99,3 +99,14 @@ export function weeklyGain(logs: SetLog[], nodeId: string, today: string): numbe
   const before = best(lastWeek, thisWeek)
   return now !== null && before !== null && now > before ? now - before : null
 }
+
+/** One exercise's sessions, oldest first: the best set and how many sets. */
+export function history(logs: SetLog[], nodeId: string): { date: string; best: number; sets: number }[] {
+  const byDate = new Map<string, { best: number; sets: number }>()
+  for (const l of logs) {
+    if (l.nodeId !== nodeId) continue
+    const d = byDate.get(l.date) ?? { best: 0, sets: 0 }
+    byDate.set(l.date, { best: Math.max(d.best, l.value), sets: d.sets + 1 })
+  }
+  return [...byDate.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([date, d]) => ({ date, ...d }))
+}

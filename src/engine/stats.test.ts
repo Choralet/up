@@ -1,6 +1,6 @@
 import type { ExerciseNode } from '../data/types'
 import { initialProgress, type Progress, type SetLog } from './progress'
-import { branchProgress, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
+import { branchProgress, history, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
 
 const L = (date: string, nodeId = 'a', value = 10, at = 0): SetLog => ({ nodeId, value, date, at })
 const three = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] as const
@@ -93,5 +93,16 @@ describe('week strip, sessions, weekly gain', () => {
     expect(weeklyGain(logs, 'a', '2026-09-24')).toBe(2)
     expect(weeklyGain(logs, 'b', '2026-09-24')).toBeNull()
     expect(weeklyGain(logs, 'c', '2026-09-24')).toBeNull()
+  })
+})
+
+describe('history', () => {
+  it('groups one exercise by session, oldest first, with best and sets', () => {
+    const logs = [L('2026-09-21', 'a', 6, 1), L('2026-09-14', 'a', 5, 0), L('2026-09-21', 'a', 8, 2), L('2026-09-21', 'b', 9, 3)]
+    expect(history(logs, 'a')).toEqual([
+      { date: '2026-09-14', best: 5, sets: 1 },
+      { date: '2026-09-21', best: 8, sets: 2 },
+    ])
+    expect(history(logs, 'zzz')).toEqual([])
   })
 })
