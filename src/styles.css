@@ -241,6 +241,8 @@ a.howto { text-decoration: none; }
 .goalup { margin: 8px auto 0; display: inline-block; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--legs) 18%, transparent); color: var(--legs); font-weight: 600; font-size: 13px; }
 
 .histbtn::before { display: none; }
+/* the row under an exercise name: Goal, Skill, How-to, History, Watch in Video all share one capsule size */
+.pills .pill, .pills .howto { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; font-size: 13px; line-height: 1; }
 .histchart { width: 100%; height: auto; display: block; margin: 8px 0; overflow: visible; }
 .histchart .grid { stroke: var(--sep); stroke-width: 1; }
 .histchart .goalline { stroke: var(--label3); stroke-width: 1; stroke-dasharray: 4 4; }
