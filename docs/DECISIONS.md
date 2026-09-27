@@ -114,3 +114,15 @@ User: "Your recommendation plus 2. I need more animation in my app" (iPhone test
 - **Tree:** pinch zoom 70–200% plus − / % / + buttons floating at the bottom right; track chips name each track's current exercise; a newly unlocked exercise glows and its line draws in once.
 - **Motion:** CSS only, 150–500 ms, spring-like; all of it off under Reduce Motion. No haptics (not available to web apps on iPhone).
 - iPhone checklist: `docs/IPHONE-TEST.md`.
+
+## Plan 7 final review fixes (2026-09-27)
+
+- Edit Goal edits the full goal (not the easier ramp goal), so saving never shrinks it.
+- A "Goal up" starts the next day, happens at most once a day, and is undone if you remove or fix the set that earned it (`stageRaisedOn`).
+- The level-up sheet names the full goal you hit.
+- The Tree opens on the branch you just levelled up in, and the glow runs only while it is visible.
+- VoiceOver: the rep number and 3-2-1 countdown keep one steady live region.
+- Zooming keeps the middle of the view in place; a zoomed-out tree is centred.
+- Exercises placed by Find your level don't bring a run of achievement cards.
+- The calendar file downloads directly (Safari's Add to Calendar) instead of opening the share sheet.
+- Deferred minors: History's dashed line shows the ramp goal; Not Yet at the full goal leaves the stage; Done nodes keep a stage entry; one extra backup upload after updating; streak badges follow the current schedule; re-adding reminders may duplicate them, and the button works with no training days; the unlocked-edge draw length and history line dash length are fixed values; no static unlock highlight under Reduce Motion; the next achievement card doesn't animate in; "Reset Zoom" label vs visible "%"; the level-up updater sets state inside another updater; the checklist lacks onboarding and rotation-lock steps.

@@ -34,4 +34,12 @@ describe('realServices.saveFile', () => {
     await realServices.saveFile('up.json', '{}')
     expect(click).toHaveBeenCalledTimes(1)
   })
+
+  it('downloads a calendar file directly, so Safari offers Add to Calendar', async () => {
+    const share = vi.fn(() => Promise.resolve())
+    setShare(share)
+    await realServices.saveFile('up-training.ics', 'BEGIN:VCALENDAR', 'text/calendar')
+    expect(share).not.toHaveBeenCalled()
+    expect(click).toHaveBeenCalledTimes(1)
+  })
 })

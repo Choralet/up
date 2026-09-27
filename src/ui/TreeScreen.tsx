@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { TRACKS } from '../data/tracks'
 import type { Branch } from '../data/types'
 import { BRANCHES } from '../engine/graph'
@@ -12,22 +12,44 @@ export function clampZoom(z: number): number {
   return Number.isFinite(z) ? Math.min(2, Math.max(0.7, Math.round(z * 100) / 100)) : 1
 }
 
+/** Scroll position after a zoom change that keeps the middle of the view where it was. */
+export function zoomScroll(prev: number, next: number, v: { top: number; left: number; width: number; height: number }) {
+  const r = next / prev
+  return {
+    top: Math.max(0, (v.top + v.height / 2) * r - v.height / 2),
+    left: Math.max(0, (v.left + v.width / 2) * r - v.width / 2),
+  }
+}
+
 export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
-  const [branch, setBranch] = useState<Branch>('push')
-  const [selected, setSelected] = useState<string | null>(null)
   const { byId, progress, justUnlocked, clearUnlocked } = useProgress()
+  // open where the new exercise is, so you see it light up
+  const [branch, setBranch] = useState<Branch>(() => byId.get(justUnlocked[0])?.branch ?? 'push')
+  const [selected, setSelected] = useState<string | null>(null)
   const [zoom, setZoom] = useState(1)
+  const shownZoom = useRef(1)
   const base = useRef(1)
   const scroller = useRef<HTMLDivElement>(null)
   const zoomRef = useRef(1)
   zoomRef.current = zoom
 
-  // the unlock animation plays once, then the highlight goes away
+  // the unlock animation plays once where you can see it, then the highlight goes away
+  const unlockShown = justUnlocked.some((id) => byId.get(id)?.branch === branch)
   useEffect(() => {
-    if (justUnlocked.length === 0) return
-    const id = setTimeout(clearUnlocked, 2600)
+    if (!unlockShown) return
+    const id = setTimeout(clearUnlocked, 3400)
     return () => clearTimeout(id)
-  }, [justUnlocked]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [unlockShown]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // zooming keeps the middle of what you were looking at in view
+  useLayoutEffect(() => {
+    const el = scroller.current
+    if (!el || shownZoom.current === zoom) return
+    const pos = zoomScroll(shownZoom.current, zoom, { top: el.scrollTop, left: el.scrollLeft, width: el.clientWidth, height: el.clientHeight })
+    shownZoom.current = zoom
+    el.scrollTop = pos.top
+    el.scrollLeft = pos.left
+  }, [zoom])
 
   // iPhone pinch (Safari gesture events) and ctrl/trackpad wheel zoom
   useEffect(() => {

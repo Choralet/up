@@ -741,7 +741,7 @@ describe('Plan 3 accessibility and taps', () => {
     const user = userEvent.setup()
     const { container } = render(<App storage={seed()} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
-    expect(screen.getByTestId('rep-value')).toHaveAttribute('aria-live', 'polite')
+    expect(screen.getByTestId('rep-value').closest('[aria-live="polite"]')).not.toBeNull()
     expect(container.querySelector('nav')!.closest('[inert]')).not.toBeNull()
     await user.click(screen.getByRole('button', { name: 'Done' }))
     expect(container.querySelector('nav')!.closest('[inert]')).toBeNull()
@@ -1579,5 +1579,84 @@ describe('Plan 7 · motion', () => {
     const after = screen.getByTestId('rep-value')
     expect(after).not.toBe(before)
     expect(after).toHaveClass('roll-up')
+  })
+})
+
+describe('Plan 7 · final review fixes', () => {
+  it('Edit Goal starts from the full goal, and saving it unchanged keeps the ramp', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], goalStage: { 'push-incline': 0 } })} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('button', { name: 'Incline push-up, training' }))
+    await user.click(screen.getByRole('button', { name: 'Edit Goal' }))
+    expect(screen.queryByRole('button', { name: 'Reset to Default' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Save Goal' }))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    await user.click(screen.getByRole('button', { name: 'Today' }))
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toHaveTextContent('3 × 6')
+  })
+
+  it('a goal-up waits for the next session, happens once a day, and is undone with the set', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], goalStage: { 'push-incline': 0 } })} />)
+    await user.click(await screen.findByRole('button', { name: /Incline push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log) // 3 × 6
+    expect(screen.getByText('Goal up: 3 × 8 next time')).toBeInTheDocument()
+    expect(screen.getByText('Goal 3 × 6')).toBeInTheDocument()
+    expect(screen.getByText('3 of 3 sets at goal')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Edit set 3/ }))
+    await user.click(screen.getByRole('button', { name: 'Remove Set' }))
+    expect(screen.queryByText(/Goal up/)).not.toBeInTheDocument()
+  })
+
+  it('the raised goal applies from the next day', async () => {
+    const raised = (on: string) => seed({ completed: ['push-wall'], goalStage: { 'push-incline': 1 }, stageRaisedOn: { 'push-incline': on } })
+    const first = render(<App storage={raised('2026-09-21')} />)
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toHaveTextContent('3 × 6')
+    first.unmount()
+    render(<App storage={raised('2026-09-18')} />)
+    expect(await screen.findByRole('button', { name: /Incline push-up/ })).toHaveTextContent('3 × 8')
+  })
+
+  it('the level-up sheet names the full goal you hit', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'], goalStage: { 'push-incline': 0 } })} />)
+    await user.click(await screen.findByRole('button', { name: /Incline push-up/ }))
+    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Increase reps' }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    expect(await screen.findByRole('dialog', { name: 'Level up' })).toHaveTextContent('You hit 3 × 10')
+  })
+
+  it('the Tree opens on the branch of the exercise you just unlocked', async () => {
+    vi.setSystemTime(WEDNESDAY)
+    const user = userEvent.setup()
+    const { container } = render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /High incline row/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    await user.click(await screen.findByRole('button', { name: 'Level Up' }))
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    expect(screen.getByRole('tab', { name: 'Pull' })).toHaveAttribute('aria-selected', 'true')
+    expect(container.querySelector('.just-unlocked')).not.toBeNull()
+  })
+
+  it('the rep number keeps one live region for VoiceOver', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    const live = screen.getByTestId('rep-value').closest('[aria-live]')
+    expect(live).not.toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Increase reps' }))
+    expect(screen.getByTestId('rep-value').closest('[aria-live]')).toBe(live)
+  })
+
+  it('placements from Find your level do not bring a run of achievement cards', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage({ onboarded: false, seenAchievements: [], completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Skip for Now' }))
+    await screen.findByRole('heading', { name: 'Push Day' })
+    expect(screen.queryByRole('status', { name: 'New achievement' })).not.toBeInTheDocument()
   })
 })

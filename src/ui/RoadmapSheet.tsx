@@ -11,7 +11,7 @@ import { skillName } from '../data/names'
 const LABEL = { done: 'Done', training: 'Training', ready: 'Ready', locked: 'Locked' } as const
 
 export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onClose: () => void; onLog: (id: string) => void }) {
-  const { byId, defaults, progress, activateSkill, deactivateSkill, setFocus, completeSteps, setGoal } = useProgress()
+  const { finalById, byId, defaults, progress, activateSkill, deactivateSkill, setFocus, completeSteps, setGoal } = useProgress()
   const [confirm, setConfirm] = useState(false)
   const [editing, setEditing] = useState(false)
   const s = roadmapStatus(byId, progress, item)
@@ -66,7 +66,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
         {next && <p className="cue sub">{next.cue}</p>}
         {editing && next ? (
           <GoalEditor
-            node={next}
+            node={finalById.get(next.id) ?? next}
             def={defaults.get(next.id)!}
             onSave={(g) => { setGoal(next.id, g); setEditing(false) }}
             onReset={() => { setGoal(next.id, null); setEditing(false) }}

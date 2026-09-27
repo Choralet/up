@@ -29,7 +29,8 @@ export const realServices: Services = {
   fetch: (...args) => fetch(...args),
   async saveFile(name, text, type = 'application/json') {
     const file = new File([text], name, { type })
-    if (navigator.canShare?.({ files: [file] })) {
+    // a calendar file opens Safari's Add to Calendar only as a download; the share sheet has no Calendar
+    if (type !== 'text/calendar' && navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: name })
         return true

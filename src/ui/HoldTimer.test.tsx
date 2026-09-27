@@ -28,6 +28,15 @@ describe('HoldTimer', () => {
     expect(onStop).toHaveBeenCalledWith(5)
   })
 
+  it('the countdown keeps one live region, so VoiceOver reads 3, 2, 1', async () => {
+    render(<HoldTimer target={30} onStop={vi.fn()} />)
+    await start()
+    const live = screen.getByTestId('countdown').closest('[aria-live]')
+    expect(live).not.toBeNull()
+    await tick(1000)
+    expect(screen.getByTestId('countdown').closest('[aria-live]')).toBe(live)
+  })
+
   it('tapping during the countdown cancels without logging', async () => {
     const onStop = vi.fn()
     render(<HoldTimer target={30} onStop={onStop} />)

@@ -154,7 +154,7 @@ export function HoldTimer({ target, onStop, onRunningChange, sound = false }: Pr
       <button className="holdcover" aria-label={counting ? 'Cancel Countdown' : 'Stop and Log'} onClick={counting ? cancel : stop}>
         {counting ? (
           <>
-            <span className="countdown" key={Math.ceil((startsAt - now) / 1000)} data-testid="countdown" aria-live="assertive">{Math.ceil((startsAt - now) / 1000)}</span>
+            <span className="countdown" aria-live="assertive"><span className="cdnum" key={Math.ceil((startsAt - now) / 1000)} data-testid="countdown">{Math.ceil((startsAt - now) / 1000)}</span></span>
             <span className="sub">Get into position</span>
           </>
         ) : (

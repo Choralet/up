@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react'
-import { effectiveGoal, FINAL_STAGE, goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
+import { effectiveGoal, goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { stepperStart } from '../engine/workout'
 import { formatClock, localDate } from '../lib/time'
@@ -18,7 +18,7 @@ import { SetSheet } from './SetSheet'
 export const logTuning = { doubleTapMs: 600 }
 
 export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => void }) {
-  const { nodes, byId, finalById, progress, log, levelUp, editSet, removeSet, advanceStage } = useProgress()
+  const { nodes, byId, finalById, progress, log, levelUp, editSet, removeSet } = useProgress()
   const node = byId.get(nodeId)!
   const meta = BRANCH_META[node.branch]
   // start from what you did last session, not from the goal (3 quick taps must not fake a level-up)
@@ -48,10 +48,12 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const atGoal = values.filter((v) => v >= node.goal.target).length
 
   const isFocus = nodeState(node, progress) === 'focus'
-  const stage = progress.goalStage[nodeId]
   const final = finalById.get(nodeId) ?? node
   const ready = isFocus && goalMet(final.goal, values)
-  const [goalUp, setGoalUp] = useState<string | null>(null)
+  // today's sets met this stage: the provider raised the goal, starting next session
+  const goalUp = progress.stageRaisedOn[nodeId] === today
+    ? `Goal up: ${goalText(effectiveGoal(final.goal, progress.goalStage[nodeId]))} next time`
+    : null
   const [showHistory, setShowHistory] = useState(false)
 
   const lastTap = useRef(-Infinity)
@@ -68,13 +70,9 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
     log(nodeId, value)
     setFresh(progress.logs.length) // index the new set will have: highlight its chip
     const after = [...before, value]
-    // the full goal offers the level-up; an easier ramp stage only raises the goal for next time
+    // the full goal offers the level-up (an easier ramp stage only raises the goal for next time)
     const crossed = isFocus && !goalMet(final.goal, before) && goalMet(final.goal, after)
     if (crossed) setShowLevelUp(true)
-    else if (isFocus && stage !== undefined && stage < FINAL_STAGE && !goalMet(node.goal, before) && goalMet(node.goal, after)) {
-      advanceStage(nodeId)
-      setGoalUp(`Goal up: ${goalText(effectiveGoal(final.goal, stage + 1))} next time`)
-    }
     return crossed
   }
 
@@ -102,7 +100,8 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
 
         {node.goal.type === 'reps' ? (
           <>
-            <div className={`big ${dir}`} key={reps} data-testid="rep-value" aria-live="polite">{reps}</div>
+            {/* one steady live region for VoiceOver; the inner number is re-keyed so it can roll */}
+            <div className="big" aria-live="polite"><span className={`rollnum ${dir}`} key={reps} data-testid="rep-value">{reps}</span></div>
             <div className="sub">reps{start.lastSession !== null ? ` · last session ${start.lastSession}` : ''}</div>
             <div className="steps">
               <button aria-label="Decrease reps" onClick={() => { setDir('roll-down'); setReps((r) => Math.max(1, r - 1)) }}>−</button>
@@ -163,7 +162,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
 
       {showLevelUp && (
         <LevelUpSheet
-          node={node}
+          node={final}
           suggestions={suggestNext(nodes, progress, nodeId)}
           unlockedSkills={newlyUnlockedSkills(nodes, progress, nodeId)}
           onDismiss={() => setShowLevelUp(false)}

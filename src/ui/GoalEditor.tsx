@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ExerciseNode, GoalOverride } from '../data/types'
 
 interface Props {
+  /** with your goal applied but not the easier ramp stage: the editor edits the full goal */
   node: ExerciseNode
   def: ExerciseNode
   onSave: (goal: GoalOverride) => void

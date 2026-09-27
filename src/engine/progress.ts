@@ -46,6 +46,8 @@ export interface Progress {
   goalOverrides: Record<string, GoalOverride>
   /** goal ramp after a level-up: 0 = 60%, 1 = 80%, 2 = full target; no entry = full */
   goalStage: Record<string, number>
+  /** the day a stage was raised; the raised goal starts the next day */
+  stageRaisedOn: Record<string, string>
   onboarded: boolean
   /** achievement ids already shown; null = an older save (everything earned so far counts as seen) */
   seenAchievements: string[] | null
@@ -61,7 +63,7 @@ export interface Suggestion {
 export function initialProgress(nodes: ExerciseNode[]): Progress {
   const focus: Record<string, string | null> = {}
   for (const t of trackKeys(nodes)) focus[t] = pickFocus(nodes, new Set(), t)
-  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, goalStage: {}, onboarded: false, seenAchievements: [], day: null, settings: { holdSound: true, length: 'standard' } }
+  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, goalStage: {}, stageRaisedOn: {}, onboarded: false, seenAchievements: [], day: null, settings: { holdSound: true, length: 'standard' } }
 }
 
 export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean {
@@ -211,6 +213,34 @@ export function advanceStage(progress: Progress, nodeId: string): Progress {
   const st = progress.goalStage[nodeId]
   if (st === undefined || st >= FINAL_STAGE) return progress
   return { ...progress, goalStage: { ...progress.goalStage, [nodeId]: st + 1 } }
+}
+/** The stage each exercise trains at today: a goal raised today starts next session. */
+export function currentStages(progress: Pick<Progress, 'goalStage' | 'stageRaisedOn'>, today: string): Record<string, number> {
+  const out = { ...progress.goalStage }
+  for (const [id, on] of Object.entries(progress.stageRaisedOn)) if (on === today && id in out) out[id] = Math.max(0, out[id] - 1)
+  return out
+}
+/**
+ * After today's sets of an exercise change: meeting today's stage goal raises the goal for
+ * next time (once a day); removing or fixing sets so it's no longer met undoes today's raise.
+ * The full goal offers a level-up instead, so it never raises the stage.
+ */
+export function settleStage(progress: Progress, nodeId: string, final: Goal, today: string): Progress {
+  const st = progress.goalStage[nodeId]
+  if (st === undefined || progress.completed.includes(nodeId)) return progress
+  const raisedToday = progress.stageRaisedOn[nodeId] === today
+  const stage = raisedToday ? st - 1 : st
+  const values = todaysValues(progress, nodeId, today)
+  const metStage = goalMet(effectiveGoal(final, stage), values)
+  if (raisedToday && !metStage) {
+    const stageRaisedOn = { ...progress.stageRaisedOn }
+    delete stageRaisedOn[nodeId]
+    return { ...progress, goalStage: { ...progress.goalStage, [nodeId]: stage }, stageRaisedOn }
+  }
+  if (!raisedToday && stage < FINAL_STAGE && metStage && !goalMet(final, values)) {
+    return { ...progress, goalStage: { ...progress.goalStage, [nodeId]: stage + 1 }, stageRaisedOn: { ...progress.stageRaisedOn, [nodeId]: today } }
+  }
+  return progress
 }
 
 /** Make an available strength exercise the branch's focus. Skill steps are started with `activateSkill`. */
@@ -412,6 +442,12 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
       if (byId.has(id) && Number.isInteger(st) && (st as number) >= 0 && (st as number) <= FINAL_STAGE) goalStage[id] = st as number
     }
   }
+  const stageRaisedOn: Record<string, string> = {}
+  if (r.stageRaisedOn && typeof r.stageRaisedOn === 'object') {
+    for (const [id, on] of Object.entries(r.stageRaisedOn as Record<string, unknown>)) {
+      if ((goalStage[id] ?? 0) >= 1 && typeof on === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(on)) stageRaisedOn[id] = on
+    }
+  }
   const onboarded = typeof r.onboarded === 'boolean' ? r.onboarded : completed.length > 0 || logs.length > 0
   const rd = r.day as Partial<DayState> | undefined
   const day: DayState | null =
@@ -426,5 +462,5 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
   }
   if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
   const seenAchievements = Array.isArray(r.seenAchievements) ? r.seenAchievements.filter((x): x is string => typeof x === 'string') : null
-  return { completed, focus, skillFocus, logs, schedule, goalOverrides, goalStage, onboarded, seenAchievements, day, settings }
+  return { completed, focus, skillFocus, logs, schedule, goalOverrides, goalStage, stageRaisedOn, onboarded, seenAchievements, day, settings }
 }

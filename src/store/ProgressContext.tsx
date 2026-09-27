@@ -2,12 +2,13 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { DayType, ExerciseNode, GoalOverride } from '../data/types'
 import { indexNodes } from '../engine/graph'
 import {
-  activateSkill as activateSkillRule, advanceStage as advanceStageRule, applyOverrides, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
+  activateSkill as activateSkillRule, applyOverrides, currentStages, settleStage, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
   levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
   sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, markSeen as markSeenRule, unlockedBy, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
   type Progress, type Settings,
 } from '../engine/progress'
+import { achievements } from '../engine/achievements'
 import { localDate } from '../lib/time'
 import type { ProgressStorage } from './storage'
 
@@ -19,7 +20,6 @@ export interface ProgressValue {
   byId: Map<string, ExerciseNode>
   /** the full goal (with your overrides), ignoring the ramp stage */
   finalById: Map<string, ExerciseNode>
-  advanceStage(nodeId: string): void
   progress: Progress
   log(nodeId: string, value: number): void
   levelUp(fromId: string, toId: string | null): void
@@ -58,9 +58,14 @@ export function ProgressProvider({
   const defaults = useMemo(() => indexNodes(nodes), [nodes])
   const overrides = progress?.goalOverrides
   const stages = progress?.goalStage
+  const raisedOn = progress?.stageRaisedOn
+  const today = localDate()
   // your goals (overrides) are the full goals; after a level-up the current ramp stage is what screens show
   const finals = useMemo(() => (overrides ? applyOverrides(nodes, overrides) : nodes), [nodes, overrides])
-  const effective = useMemo(() => (stages ? applyStages(finals, stages) : finals), [finals, stages])
+  const effective = useMemo(
+    () => (stages && raisedOn ? applyStages(finals, currentStages({ goalStage: stages, stageRaisedOn: raisedOn }, today)) : finals),
+    [finals, stages, raisedOn, today],
+  )
   const byId = useMemo(() => indexNodes(effective), [effective])
   const finalById = useMemo(() => indexNodes(finals), [finals])
 
@@ -83,14 +88,21 @@ export function ProgressProvider({
   if (!progress) return null
 
   const update = (fn: (p: Progress) => Progress) => setProgress((p) => (p ? fn(p) : p))
+  // the goal ramp follows today's sets of that exercise
+  const settle = (p: Progress, id: string | undefined): Progress => {
+    const f = id ? finalById.get(id) : undefined
+    return f ? settleStage(p, f.id, f.goal, localDate()) : p
+  }
+  // what Find your level placed you at is already yours: no pile of achievement cards for it
+  const seeEarned = (p: Progress): Progress =>
+    p.seenAchievements === null ? p : markSeenRule(p, achievements(nodes, p, localDate()).filter((a) => a.earned).map((a) => a.id))
   const value: ProgressValue = {
     nodes: effective,
     defaults,
     byId,
     finalById,
     progress,
-    advanceStage: (id) => update((p) => advanceStageRule(p, id)),
-    log: (nodeId, v) => update((p) => logSet(p, nodeId, v, localDate(), Date.now())),
+    log: (nodeId, v) => update((p) => settle(logSet(p, nodeId, v, localDate(), Date.now()), nodeId)),
     levelUp: (fromId, toId) =>
       update((p) => {
         const next = levelUpRule(nodes, p, fromId, toId)
@@ -100,13 +112,13 @@ export function ProgressProvider({
     justUnlocked,
     clearUnlocked: () => setJustUnlocked([]),
     setFocus: (nodeId) => update((p) => setFocusRule(nodes, p, nodeId)),
-    removeSet: (index) => update((p) => removeSetRule(p, index)),
-    editSet: (index, v) => update((p) => editSetRule(p, index, v)),
+    removeSet: (index) => update((p) => settle(removeSetRule(p, index), p.logs[index]?.nodeId)),
+    editSet: (index, v) => update((p) => settle(editSetRule(p, index, v), p.logs[index]?.nodeId)),
     activateSkill: (chainId) => update((p) => activateSkillRule(nodes, p, chainId)),
     deactivateSkill: (chainId) => update((p) => deactivateSkillRule(p, chainId)),
     setDayType: (weekday, type) => update((p) => setDayTypeRule(p, weekday, type)),
     setGoal: (nodeId, goal) => update((p) => setGoalOverride(p, nodeId, goal, nodes)),
-    finishOnboarding: () => update(finishOnboardingRule),
+    finishOnboarding: () => update((p) => seeEarned(finishOnboardingRule(p))),
     restartOnboarding: () => update(restartOnboardingRule),
     replaceProgress: (p) => setProgress(p),
     completeSteps: (ids) => update((p) => completeStepsRule(nodes, p, ids)),

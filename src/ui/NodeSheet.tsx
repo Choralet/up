@@ -13,7 +13,7 @@ import { skillName } from '../data/names'
 const LABEL = { locked: 'Locked', available: 'Ready', focus: 'Training', completed: 'Done' } as const
 
 export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClose: () => void; onLog: (id: string) => void }) {
-  const { progress, byId, defaults, setFocus, activateSkill, deactivateSkill, setGoal } = useProgress()
+  const { finalById, progress, byId, defaults, setFocus, activateSkill, deactivateSkill, setGoal } = useProgress()
   const [editing, setEditing] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const state = nodeState(node, progress)
@@ -46,7 +46,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
         <p className="cue">{node.cue}</p>
         {editing ? (
           <GoalEditor
-            node={node}
+            node={finalById.get(node.id) ?? node}
             def={defaults.get(node.id)!}
             onSave={(g) => { setGoal(node.id, g); setEditing(false) }}
             onReset={() => { setGoal(node.id, null); setEditing(false) }}

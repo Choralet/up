@@ -72,7 +72,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .choice b { display: block; font-size: 15px; } .choice span { font-size: 12px; color: var(--label2); }
 .choice em { font-style: normal; font-size: 10px; font-weight: 700; color: #fff; background: var(--accent, var(--push)); padding: 3px 8px; border-radius: 999px; }
 
-.tsvg { display: block; width: 100%; height: auto; }
+.tsvg { display: block; width: 100%; height: auto; margin: 0 auto; }
 .tsvg .e { fill: none; stroke-width: 3; stroke-linecap: round; }
 .tsvg .e.done { stroke: var(--accent); }
 .tsvg .e.avail { stroke: var(--accent); opacity: 0.55; stroke-dasharray: 2 6; }
@@ -185,6 +185,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .holdcover { position: fixed; inset: 0; z-index: 12; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--bg); width: 100%; }
 .log .close { position: relative; z-index: 13; min-height: 44px; min-width: 44px; }
+.rollnum, .cdnum { display: inline-block; }
 .countdown { font-size: 120px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; color: var(--accent); }
 .switchrow { justify-content: space-between; }
 .switch { width: 51px; height: 31px; border-radius: 16px; background: var(--fill); position: relative; flex: none; transition: background 0.2s; }
@@ -305,8 +306,8 @@ a.howto { text-decoration: none; }
   @keyframes pop { 0% { transform: scale(0.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
   /* rep number rolls */
-  .big.roll-up { animation: rollUp 0.22s var(--ease); }
-  .big.roll-down { animation: rollDown 0.22s var(--ease); }
+  .rollnum.roll-up { animation: rollUp 0.22s var(--ease); }
+  .rollnum.roll-down { animation: rollDown 0.22s var(--ease); }
   @keyframes rollUp { from { transform: translateY(18px); opacity: 0.2; } }
   @keyframes rollDown { from { transform: translateY(-18px); opacity: 0.2; } }
 
@@ -339,6 +340,6 @@ a.howto { text-decoration: none; }
   @keyframes breathe { 50% { opacity: 0.08; transform: scale(1.12); } }
 
   /* hold countdown ticks */
-  .countdown { animation: pop 0.4s var(--spring); }
+  .cdnum { animation: pop 0.4s var(--spring); }
   .switch::after { transition: transform 0.25s var(--spring); }
 }
