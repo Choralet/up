@@ -104,3 +104,13 @@ User: "1 exercise per day is too less… do more research on youtube and propose
 - Older saves: the easier steps added in Plan 6 (Pike hold, Bench dip, Negative dip, High incline row, Glute bridge, Single-leg glute bridge, Lying leg raise) count as done under work you already did, so nobody restarts at a beginner move. An old "Parallel bar dip" skill moves into the Dips track.
 - Short on Legs + Core day = Squats + Plank & hollow. The Push/Pull core finisher moves on to Leg raises once Plank & hollow is finished.
 - Deferred minors: arrow keys in the Workout Length control; Full looks like Standard for a beginner (no finished variation yet); track tags share one colour; the Tree sheet doesn't name the track it replaces; some stale code comments; the Dips and Rows chains sit in the same tree column.
+
+## Plan 7 built: v1.1 (2026-09-27)
+
+User: "Your recommendation plus 2. I need more animation in my app" (iPhone test pass, exercise history, achievements, smarter goals, calendar reminders, unlock moment + tree zoom + track labels, app-wide motion). Agent decisions:
+- **Goal ramp:** only an exercise reached by Level Up ramps: 60% → 80% → 100% of its goal; meeting the current stage shows "Goal up: 3 × 8 next time". Beginner roots, Find your level placements and older saves keep the full goal.
+- **Achievements:** 15 quiet badges (workouts, week streaks, level-ups, first push-up / pull-up / dip / pistol, first skill step, freestanding handstand, Roadmap Year 1). One card at a time on Today with **Nice**; older saves count what they already earned as seen. No confetti.
+- **Reminders:** a calendar file (`up-training.ics`, weekly events with an alert) instead of push notifications, which an iPhone home-screen web app can't schedule reliably.
+- **Tree:** pinch zoom 70–200% plus − / % / + buttons floating at the bottom right; track chips name each track's current exercise; a newly unlocked exercise glows and its line draws in once.
+- **Motion:** CSS only, 150–500 ms, spring-like; all of it off under Reduce Motion. No haptics (not available to web apps on iPhone).
+- iPhone checklist: `docs/IPHONE-TEST.md`.
