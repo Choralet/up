@@ -82,14 +82,14 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
               )
             })}
           </div>
-          <div className="zoombar" aria-label="Zoom">
-            <button className="pillbtn" aria-label="Zoom Out" onClick={() => setZoom((z) => clampZoom(z - 0.25))}>−</button>
-            <button className="pillbtn" aria-label="Reset Zoom" onClick={() => setZoom(1)}>{Math.round(zoom * 100)}%</button>
-            <button className="pillbtn" aria-label="Zoom In" onClick={() => setZoom((z) => clampZoom(z + 0.25))}>+</button>
-          </div>
         </div>
         <div className="tree-scroll" ref={scroller}>
           <TreeView branch={branch} selectedId={selected} onSelect={setSelected} zoom={zoom} />
+        </div>
+        <div className="zoombar" aria-label="Zoom">
+          <button className="pillbtn" aria-label="Zoom Out" onClick={() => setZoom((z) => clampZoom(z - 0.25))}>−</button>
+          <button className="pillbtn" aria-label="Reset Zoom" onClick={() => setZoom(1)}>{Math.round(zoom * 100)}%</button>
+          <button className="pillbtn" aria-label="Zoom In" onClick={() => setZoom((z) => clampZoom(z + 0.25))}>+</button>
         </div>
       </div>
       {/* outside the fixed container, otherwise the tab bar paints over the sheet */}
