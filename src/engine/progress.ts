@@ -1,5 +1,6 @@
 import type { DayType, ExerciseNode, Goal, GoalOverride } from '../data/types'
 import { DAY_TYPES, DEFAULT_SCHEDULE } from '../data/schedule'
+import { ADDED_BELOW } from '../data/tracks'
 import { indexNodes } from './graph'
 
 export type NodeState = 'locked' | 'available' | 'focus' | 'completed'
@@ -131,6 +132,13 @@ export function firstStep(nodes: ExerciseNode[], done: Set<string>, chain: strin
   return nodes.find((n) => n.skill === chain && !done.has(n.id) && isUnlocked(n, done))?.id ?? null
 }
 
+/** Give every empty track its first trainable exercise (a level-up elsewhere can unlock one). */
+function refill(nodes: ExerciseNode[], focus: Record<string, string | null>, done: Set<string>): Record<string, string | null> {
+  const next = { ...focus }
+  for (const t of trackKeys(nodes)) if (!next[t]) next[t] = pickFocus(nodes, done, t)
+  return next
+}
+
 /** A strength exercise's movement track (falls back to its branch for data without tracks). */
 export const trackOf = (n: ExerciseNode): string => n.track ?? n.branch
 
@@ -173,7 +181,7 @@ export function levelUp(nodes: ExerciseNode[], progress: Progress, fromId: strin
   const to = toId ? byId.get(toId) : undefined
   const valid = !!to && !to.skill && trackOf(to) === track && !done.has(to.id) && isUnlocked(to, done)
   const focusId = valid ? to!.id : pickFocus(nodes, done, track)
-  return { ...progress, completed, focus: { ...progress.focus, [track]: focusId } }
+  return { ...progress, completed, focus: refill(nodes, { ...progress.focus, [track]: focusId }, done) }
 }
 
 /** Make an available strength exercise the branch's focus. Skill steps are started with `activateSkill`. */
@@ -291,11 +299,33 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
         .map((l) => ({ nodeId: l.nodeId, value: Math.floor(l.value), date: l.date, at: l.at }))
         .filter((l) => l.value >= 1)
     : []
-  const done = new Set(completed)
-
   const rawFocus = r.focus && typeof r.focus === 'object' ? (r.focus as Record<string, unknown>) : {}
+  const rawSkill = r.skillFocus && typeof r.skillFocus === 'object' ? (r.skillFocus as Record<string, unknown>) : {}
+  // Exercises that were a skill step before and are a track exercise now (Parallel bar dip → Dip)
+  const converted = Object.values(rawSkill).map((id) => (typeof id === 'string' ? byId.get(id) : undefined)).filter((n): n is ExerciseNode => !!n && !n.skill)
+
+  // Catch-up for older saves: the easier steps added in Plan 6 below work you already did (or were training)
+  // count as done, so no one is sent back to a beginner move. Nothing else is ever filled in.
+  const done = new Set(completed)
+  const legacyFocus = [...Object.values(rawFocus), ...converted.map((n) => n.id)]
+    .map((id) => (typeof id === 'string' ? byId.get(id) : undefined))
+    .filter((n): n is ExerciseNode => !!n && !n.skill)
+  const queue = [...completed.map((id) => byId.get(id)!), ...legacyFocus]
+  while (queue.length) {
+    const n = queue.pop()!
+    if (n.skill) continue
+    for (const r of n.requires) {
+      const p = byId.get(r)
+      if (p && ADDED_BELOW.has(p.id) && trackOf(p) === trackOf(n) && !done.has(p.id)) {
+        done.add(p.id)
+        completed.push(p.id)
+        queue.push(p)
+      }
+    }
+  }
+
   const trainable = (n: ExerciseNode | undefined, t: string) => !!n && !n.skill && trackOf(n) === t && !done.has(n.id) && isUnlocked(n, done)
-  const stored = Object.values(rawFocus).filter((v): v is string => typeof v === 'string').map((id) => byId.get(id))
+  const stored = [...Object.values(rawFocus), ...converted.map((n) => n.id)].filter((v): v is string => typeof v === 'string').map((id) => byId.get(id))
   const focus: Record<string, string | null> = {}
   for (const t of trackKeys(nodes)) {
     const own = typeof rawFocus[t] === 'string' ? byId.get(rawFocus[t] as string) : undefined
@@ -304,11 +334,11 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     focus[t] = pick ? pick.id : pickFocus(nodes, done, t)
   }
 
-  const rawSkill = r.skillFocus && typeof r.skillFocus === 'object' ? (r.skillFocus as Record<string, unknown>) : {}
   const skillFocus: Record<string, string | null> = {}
   for (const chain of Object.keys(rawSkill)) {
     if (Object.keys(skillFocus).length >= MAX_ACTIVE_SKILLS) break
     if (!nodes.some((n) => n.skill === chain)) continue
+    if (converted.some((n) => n.id === rawSkill[chain])) continue // its step is a track exercise now (see above)
     if (nodes.filter((n) => n.skill === chain).every((n) => done.has(n.id))) continue // finished chains are not active
     const stored = typeof rawSkill[chain] === 'string' ? byId.get(rawSkill[chain] as string) : undefined
     const ok = !!stored && stored.skill === chain && !done.has(stored.id) && isUnlocked(stored, done)

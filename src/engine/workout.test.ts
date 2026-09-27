@@ -74,3 +74,28 @@ describe('sessionSummary / stepperStart', () => {
     expect(stepperStart(base, 'push-wall', '2026-09-21', 10)).toEqual({ value: 10, lastSession: null })
   })
 })
+
+describe('Plan 6 review fixes: workout', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  const ids = (w: ReturnType<typeof buildWorkout>) => ({ main: w.main.map((m) => m.node?.id ?? null), extra: w.extra.map((e) => `${e.role}:${e.node.id}`) })
+  it('Short Legs + Core keeps core: squats and plank & hollow', () => {
+    expect(ids(buildWorkout(NODES, real(), 'legs', SKILLS, 'short')).main).toEqual(['legs-assisted', 'core-deadbug'])
+  })
+  it('the core finisher moves on to leg raises once plank & hollow is finished', () => {
+    const p = real({ completed: ['core-deadbug', 'core-plank', 'core-hollow'] })
+    expect(ids(buildWorkout(NODES, p, 'push', SKILLS, 'standard')).extra).toEqual(['core:core-lying-raise'])
+  })
+  it('levelling up the core finisher mid-session still completes the day', () => {
+    const L = (nodeId: string, at: number) => ({ nodeId, value: 1, date: '2026-09-21', at })
+    const logs = ['push-wall', 'push-pike-hold', 'push-bench-dip', 'core-deadbug'].flatMap((id, i) => [1, 2, 3].map((k) => L(id, i * 10 + k)))
+    const p = real({ completed: ['core-deadbug'], logs })
+    expect(workoutDone(buildWorkout(NODES, p, 'push', SKILLS, 'standard'), p, '2026-09-21')).toBe(true)
+  })
+  it('a finished track shows null, a skill with no step is left out, an empty workout is never done', () => {
+    const p = real({ completed: ['push-bench-dip', 'push-dip-neg', 'rm-dip'], skillFocus: { handstand: null } })
+    const w = buildWorkout(NODES, p, 'push', SKILLS, 'standard')
+    expect(w.main.find((m) => m.track === 'push-d')?.node).toBeNull()
+    expect(w.skill).toEqual([])
+    expect(workoutDone(buildWorkout(NODES, real(), 'rest', SKILLS, 'standard'), real(), '2026-09-21')).toBe(false)
+  })
+})

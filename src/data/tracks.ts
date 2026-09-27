@@ -28,7 +28,18 @@ export const DAY_TRACKS: Record<DayType, string[]> = {
   rest: [],
 }
 
-/** Core finisher on Push and Pull days. */
-export const FINISHER_TRACK = 'core-a'
+/** Short length: two tracks per day (Legs + Core keeps one core track). */
+export const SHORT_TRACKS: Record<DayType, string[]> = {
+  push: ['push-h', 'push-v'],
+  pull: ['pull-v', 'pull-r'],
+  legs: ['legs-s', 'core-a'],
+  rest: [],
+}
+
+/** Core finisher on Push and Pull days: plank & hollow, then leg raises once that track is finished. */
+export const FINISHER_TRACKS = ['core-a', 'core-l']
+
+/** Easier steps added under existing exercises in Plan 6. Older saves get them marked done when they already did (or trained) the harder move. */
+export const ADDED_BELOW = new Set(['push-pike-hold', 'push-bench-dip', 'push-dip-neg', 'pull-row-high', 'legs-bridge', 'legs-sl-bridge', 'core-lying-raise'])
 
 export const trackById = (id: string) => TRACKS.find((t) => t.id === id)

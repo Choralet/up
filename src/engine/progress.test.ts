@@ -489,3 +489,37 @@ describe('movement tracks (real data)', () => {
     expect(real({ settings: { holdSound: true, length: 'huge' } }).settings.length).toBe('standard')
   })
 })
+
+describe('Plan 6 review fixes: tracks never dead-end, migrations keep your level', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  it('Pull-ups continue after Scapular pull-up without any Rows exercise', () => {
+    let p = real()
+    p = levelUp(NODES, p, 'pull-hang', null)
+    p = levelUp(NODES, p, 'pull-scap', null)
+    expect(p.focus['pull-v']).toBe('pull-negative')
+  })
+  it('a finished track refills when something in it becomes trainable', () => {
+    const p = { ...real(), focus: { ...real().focus, 'push-h': null } }
+    expect(levelUp(NODES, p, 'push-pike-hold', null).focus['push-h']).toBe('push-wall')
+  })
+  it('old saves keep their level: new easier steps below done work count as done', () => {
+    const rows = real({ completed: ['pull-hang', 'pull-scap', 'pull-row'] })
+    expect(rows.completed).toContain('pull-row-high')
+    expect(rows.focus['pull-r']).toBe('pull-row-elevated')
+    const dips = real({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'rm-dip'] })
+    expect(dips.completed).toEqual(expect.arrayContaining(['push-bench-dip', 'push-dip-neg']))
+    expect(dips.focus['push-d']).toBeNull()
+    const pike = real({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'], focus: { push: 'push-pike' } })
+    expect(pike.completed).toContain('push-pike-hold')
+    expect(pike.focus['push-v']).toBe('push-pike')
+    const legs = real({ completed: ['core-deadbug', 'core-plank', 'core-hollow', 'core-knee-raise'] })
+    expect(legs.completed).toContain('core-lying-raise')
+    expect(legs.focus['core-l']).toBe('core-leg-raise')
+  })
+  it('an old Parallel bar dip skill moves into the Dips track and frees its slot', () => {
+    const p = real({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'], skillFocus: { 'bulgarian-dip': 'rm-dip' } })
+    expect(p.skillFocus).toEqual({})
+    expect(p.focus['push-d']).toBe('rm-dip')
+    expect(p.completed).toEqual(expect.arrayContaining(['push-bench-dip', 'push-dip-neg']))
+  })
+})

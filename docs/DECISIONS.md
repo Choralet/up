@@ -97,3 +97,10 @@ Minor polish noticed in the browser check: "0 of 1 steps" should read "step" for
 ## Open (2026-09-27): more exercises per day
 
 User: "1 exercise per day is too less… do more research on youtube and propose me ways." Research and options A–D in `docs/WORKOUT-VOLUME.md`. **User chose A + C (built in Plan 6).** Agent decisions: 9 tracks (push-ups, pike & handstand, dips; pull-ups, rows; squats, hinge; plank & hollow, leg raises); new starter moves (pike hold, bench dip, negative dip, high incline row, feet-elevated row, archer row, glute bridge, single-leg glute bridge, Nordic curl negative, lying leg raise); Pike push-up now needs Pike hold (not Push-up), Inverted row needs High incline row, Negative pull-up needs Scapular pull-up and Inverted row, Hanging knee raise needs Lying leg raise; the Roadmap 'Parallel bar dip' became the tree exercise 'Dip'. Length: Short = first two tracks, Standard (default) = all + core finisher on Push/Pull, Full = + Volume.
+
+## Plan 6 final review fixes (2026-09-27)
+
+- Negative pull-up needs only Scapular pull-up (a Rows requirement had dead-ended the Pull-ups track); an empty track refills after any level-up.
+- Older saves: the easier steps added in Plan 6 (Pike hold, Bench dip, Negative dip, High incline row, Glute bridge, Single-leg glute bridge, Lying leg raise) count as done under work you already did, so nobody restarts at a beginner move. An old "Parallel bar dip" skill moves into the Dips track.
+- Short on Legs + Core day = Squats + Plank & hollow. The Push/Pull core finisher moves on to Leg raises once Plank & hollow is finished.
+- Deferred minors: arrow keys in the Workout Length control; Full looks like Standard for a beginner (no finished variation yet); track tags share one colour; the Tree sheet doesn't name the track it replaces; some stale code comments; the Dips and Rows chains sit in the same tree column.

@@ -1077,7 +1077,7 @@ describe('Plan 5 · Phase 1 slips', () => {
     const completed = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike', 'pull-hang', 'pull-scap', 'legs-assisted', 'legs-squat', 'core-deadbug', 'core-plank', 'rm-frog-1']
     const text = JSON.stringify({ app: 'up', version: 1, progress: { completed, onboarded: true } })
     await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
-    expect(await screen.findByRole('dialog', { name: 'Replace your progress?' })).toHaveTextContent('12 finished exercises')
+    expect(await screen.findByRole('dialog', { name: 'Replace your progress?' })).toHaveTextContent('13 finished exercises') // Pike push-up in the file also counts the Pike hold added below it
   })
 })
 

@@ -1,5 +1,5 @@
 import type { DayType, ExerciseNode, SkillChain } from '../data/types'
-import { DAY_TRACKS, FINISHER_TRACK } from '../data/tracks'
+import { DAY_TRACKS, FINISHER_TRACKS, SHORT_TRACKS } from '../data/tracks'
 import { indexNodes } from './graph'
 import { todaysValues, trackOf, type Progress, type WorkoutLength } from './progress'
 
@@ -10,7 +10,7 @@ export interface Workout {
   /** focus exercise of each track trained today (null = track finished), and `prev`: the variation just finished below it */
   main: { track: string; node: ExerciseNode | null; prev?: ExerciseNode }[]
   /** "Also today": a Volume variation (Full length) and a core finisher on Push and Pull days */
-  extra: { node: ExerciseNode; role: 'volume' | 'core'; of?: string }[]
+  extra: { node: ExerciseNode; role: 'volume' | 'core'; of?: string; prev?: ExerciseNode }[]
 }
 
 /**
@@ -23,21 +23,27 @@ export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: Day
     const node = id ? byId.get(id) : undefined
     return node && chains.find((c) => c.id === chain)?.day === day ? [node] : []
   })
-  const tracks = length === 'short' ? DAY_TRACKS[day].slice(0, 2) : DAY_TRACKS[day]
+  const tracks = length === 'short' ? SHORT_TRACKS[day] : DAY_TRACKS[day]
   const done = new Set(progress.completed)
+  // the variation you just finished below an exercise (none below a track's first exercise)
+  const prevOf = (node: ExerciseNode | null, track: string) =>
+    node?.requires.map((r) => byId.get(r)).find((p): p is ExerciseNode => !!p && !p.skill && trackOf(p) === track && done.has(p.id))
   const main = tracks.map((track) => {
     const id = progress.focus[track]
     const node = id ? byId.get(id) ?? null : null
-    // the variation you just finished (none below a track's first exercise)
-    const prev = node?.requires.map((r) => byId.get(r)).find((p): p is ExerciseNode => !!p && !p.skill && trackOf(p) === track && done.has(p.id))
+    const prev = prevOf(node, track)
     return prev ? { track, node, prev } : { track, node }
   })
   const extra: Workout['extra'] = []
   if (length === 'full') {
     for (const m of main) if (m.node && m.prev) extra.push({ node: m.prev, role: 'volume', of: m.node.id })
   }
-  const core = progress.focus[FINISHER_TRACK] ? byId.get(progress.focus[FINISHER_TRACK]!) : undefined
-  if (length !== 'short' && (day === 'push' || day === 'pull') && core) extra.push({ node: core, role: 'core' })
+  const finisherTrack = FINISHER_TRACKS.find((t) => progress.focus[t])
+  const core = finisherTrack ? byId.get(progress.focus[finisherTrack]!) : undefined
+  if (length !== 'short' && (day === 'push' || day === 'pull') && core && finisherTrack) {
+    const prev = prevOf(core, finisherTrack)
+    extra.push(prev ? { node: core, role: 'core', prev } : { node: core, role: 'core' })
+  }
   return { day, skill, main, extra }
 }
 
@@ -66,7 +72,7 @@ export function workoutDone(workout: Workout, progress: Progress, date: string):
     workout.skill.every(logged) &&
     // levelling up mid-session: the sets logged on the variation you just finished count for that track
     mains.every((m) => logged(m.node!) || (!!m.prev && logged(m.prev))) &&
-    workout.extra.filter((e) => e.role === 'core').every((e) => logged(e.node))
+    workout.extra.filter((e) => e.role === 'core').every((e) => logged(e.node) || (!!e.prev && logged(e.prev)))
   )
 }
 
