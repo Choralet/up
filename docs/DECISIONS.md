@@ -126,3 +126,12 @@ User: "Your recommendation plus 2. I need more animation in my app" (iPhone test
 - Exercises placed by Find your level don't bring a run of achievement cards.
 - The calendar file downloads directly (Safari's Add to Calendar) instead of opening the share sheet.
 - Deferred minors: History's dashed line shows the ramp goal; Not Yet at the full goal leaves the stage; Done nodes keep a stage entry; one extra backup upload after updating; streak badges follow the current schedule; re-adding reminders may duplicate them, and the button works with no training days; the unlocked-edge draw length and history line dash length are fixed values; no static unlock highlight under Reduce Motion; the next achievement card doesn't animate in; "Reset Zoom" label vs visible "%"; the level-up updater sets state inside another updater; the checklist lacks onboarding and rotation-lock steps.
+
+## Visual audit fixes (2026-09-27)
+
+User asked for an agent to find layout bugs like the stretched Goal pill. Fixed from its report:
+- Entrance animations no longer leave a transform behind (`animation-fill-mode: backwards`), which had trapped pop-up sheets and the hold cover inside the screen: the hold cover is full screen again, and the Finish summary, Skills Replace, Roadmap and Settings confirm sheets show properly.
+- Sheet titles and Done are vertically centred; goal editor numbers line up with − / +; picked training days in Find your level are no longer crossed out; locked Roadmap items have a grey (not green) lock; Ready Now rows have separators.
+- Tree: more room between rows (labels no longer hit the node below or cut the glow), slanted lines stop under labels.
+- Tab bar fits at larger text; goals never split across lines ("4 ×" / "20 s"); History chart gridlines use whole numbers with room above the goal; the selected segment is visible in dark mode; zoom % keeps its width; long names wrap.
+- Not done yet (polish, awaiting the user): see the audit's polish list (mixed accent colours on skill screens, two blues, Goal pill looking like a button, Settings footnote spacing, rest-day pills, Today icon abbreviations, light-mode contrast on icons, Progress streak wording, node sheet covering the tapped node).

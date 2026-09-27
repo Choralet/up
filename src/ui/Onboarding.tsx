@@ -118,7 +118,7 @@ export function Onboarding() {
         <p className="sub" style={{ margin: '12px 4px 0' }}>Each day you pick gets a workout; days you already train keep theirs. Change any day later in Settings.</p>
         <div className="group">
           {WEEKDAYS.map((name, i) => (
-            <button key={name} className="check" role="checkbox" aria-checked={days[i]} aria-label={name}
+            <button key={name} className="check pick" role="checkbox" aria-checked={days[i]} aria-label={name}
               onClick={() => setDays((d) => d.map((v, j) => (j === i ? !v : v)))}>
               <span className="box" aria-hidden="true">{days[i] ? '✓' : ''}</span>
               <span className="lbl">{name}</span>

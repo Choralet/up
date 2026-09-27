@@ -6,7 +6,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #000; --card: #1c1c1e; --label: #fff; --label2: #98989f; --label3: #48484a;
+    --bg: #000; --card: #1c1c1e; --segon: #636366; --label: #fff; --label2: #98989f; --label3: #48484a;
     --sep: rgba(84, 84, 88, 0.55); --fill: rgba(120, 120, 128, 0.24);
     --push: #ff9f0a; --legs: #30d158; --core: #bf5af2; --skill: #ff375f;
   }
@@ -26,18 +26,19 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .navt { text-align: center; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center; gap: 12px;
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); background: var(--card); border-top: 0.5px solid var(--sep);
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center; gap: 0;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); background: var(--card); border-top: 0.5px solid var(--sep);
 }
-.tabbar button { min-width: 72px; min-height: 44px; font-size: 11px; color: var(--label2); }
+.tabbar button { flex: 1 1 0; max-width: 96px; min-width: 0; min-height: 44px; font-size: 11px; color: var(--label2); }
 .tabbar button[aria-current='page'] { color: var(--blue); font-weight: 600; }
 
 .group { background: var(--card); border-radius: 14px; overflow: hidden; margin: 16px 0; }
 .row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; text-align: left; min-height: 56px; }
-.row + .row { border-top: 0.5px solid var(--sep); }
+.row + .row, .group > li + li > .row { border-top: 0.5px solid var(--sep); }
 .dot { width: 36px; height: 36px; border-radius: 10px; flex: none; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; }
 .row .t { flex: 1; min-width: 0; display: block; }
 .row .t b { display: block; font-size: 15px; font-weight: 600; }
+.t b { overflow-wrap: anywhere; }
 .row .t span { font-size: 13px; color: var(--label2); }
 .row .chev { color: var(--label3); font-size: 22px; }
 .tag { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: var(--skill); }
@@ -48,7 +49,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .seg { display: flex; background: var(--fill); border-radius: 9px; padding: 2px; margin: 8px 0; }
 .seg button { flex: 1; text-align: center; font-size: 13px; padding: 7px 0; border-radius: 7px; font-weight: 600; color: var(--label2); }
-.seg button.on { background: var(--card); color: var(--label); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); }
+.seg button.on { background: var(--segon, var(--card)); color: var(--label); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); }
 
 .scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 20; }
 .sheet {
@@ -118,7 +119,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }
 
-.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .gear { min-width: 44px; min-height: 44px; border-radius: 50%; background: var(--fill); font-size: 20px; }
 .card { background: var(--card); border-radius: 14px; padding: 14px; margin: 16px 0; }
 .check { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; text-align: left; min-height: 48px; }
@@ -126,6 +127,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .check .box { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--label3); flex: none; display: grid; place-items: center; font-size: 13px; color: #fff; }
 .check[aria-checked='true'] .box { background: var(--legs); border-color: var(--legs); }
 .check[aria-checked='true'] .lbl { color: var(--label2); text-decoration: line-through; }
+.check.pick[aria-checked='true'] .lbl { color: var(--label); text-decoration: none; }
 .hdr { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label2); margin: 16px 4px -8px; }
 .pillbtn { display: inline-block; padding: 8px 14px; border-radius: 999px; background: var(--fill); color: var(--blue); font-weight: 600; font-size: 14px; margin: 4px 6px 0 0; min-height: 36px; }
 .done-banner { text-align: center; color: var(--legs); font-weight: 700; margin: 8px 0; }
@@ -135,10 +137,11 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .skillrow { align-items: flex-start; }
 .linkbtn { display: block; text-align: left; color: var(--blue); font-weight: 600; font-size: 14px; padding: 6px 0; min-height: 32px; }
 .pillbtn:disabled { opacity: 0.4; }
+.head .pillbtn, .achcard .pillbtn { margin: 0; }
 .goaled .steps { margin: 10px 0; }
 .goaled .field { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
 .goaled .field b { font-size: 24px; font-variant-numeric: tabular-nums; min-width: 56px; text-align: center; }
-.goaled .field .steps { margin: 0; gap: 12px; }
+.goaled .field .steps { margin: 0; gap: 12px; align-items: center; }
 .goaled .field .steps button { width: 44px; height: 44px; font-size: 24px; }
 
 .onboarding { z-index: 40; }
@@ -162,8 +165,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .rmrow .rmnum { width: 28px; flex: none; color: var(--label2); font-variant-numeric: tabular-nums; font-weight: 600; }
 .rmrow.done b { color: var(--label2); }
 .rmrow.locked b { color: var(--label2); }
-.rmrow .rmicon { width: 22px; text-align: center; color: var(--legs); }
-.rmrow.training .rmicon { color: var(--skill); }
+.rmrow .rmicon { width: 22px; text-align: center; }
 .roadmap-sheet { max-height: 85dvh; overflow: auto; }
 .steplist { margin: 4px 0 8px 20px; padding: 0; }
 .steplist li { margin: 4px 0; }
@@ -262,6 +264,7 @@ a.howto { text-decoration: none; }
 .chipbtn { white-space: nowrap; font-size: 13px; color: var(--label); margin: 0; flex: none; }
 .chipbtn .chiptrack { color: var(--label2); font-weight: 600; }
 .zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: 999px; background: var(--card); box-shadow: 0 2px 10px rgb(0 0 0 / 0.25); }
+.zoombar .pillbtn:nth-child(2) { min-width: 56px; font-variant-numeric: tabular-nums; }
 .zoombar .pillbtn { margin: 0; min-height: 32px; min-width: 32px; padding: 0 8px; font-size: 13px; background: none; }
 .tree-scroll { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 .tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
@@ -269,24 +272,25 @@ a.howto { text-decoration: none; }
 
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
+  /* entrance animations fill backwards only: a transform kept after the end would trap fixed sheets inside the screen */
   :root { --spring: cubic-bezier(0.2, 0.9, 0.3, 1.15); --ease: cubic-bezier(0.25, 0.8, 0.25, 1); }
 
   /* sheets rise, the scrim fades */
-  .sheet { animation: sheetUp 0.34s var(--spring) both; }
-  .scrim { animation: fadeIn 0.22s var(--ease) both; }
+  .sheet { animation: sheetUp 0.34s var(--spring) backwards; }
+  .scrim { animation: fadeIn 0.22s var(--ease) backwards; }
   @keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes fadeIn { from { opacity: 0; } }
 
   /* full screens (log, settings, onboarding) slide in from the right */
-  .log { animation: slideIn 0.3s var(--ease) both; }
+  .log { animation: slideIn 0.3s var(--ease) backwards; }
   @keyframes slideIn { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 
   /* tab content fades up */
-  .app > div > .screen, .tree-screen { animation: tabIn 0.25s var(--ease) both; }
+  .app > div > .screen, .tree-screen { animation: tabIn 0.25s var(--ease) backwards; }
   @keyframes tabIn { from { opacity: 0; transform: translateY(6px); } }
 
   /* lists: first rows fade up one after another */
-  .group > .row, .group > li, .summary > li, .achgrid > li { animation: rowIn 0.32s var(--ease) both; }
+  .group > .row, .group > li, .summary > li, .achgrid > li { animation: rowIn 0.32s var(--ease) backwards; }
   .group > :nth-child(2), .summary > :nth-child(2), .achgrid > :nth-child(2) { animation-delay: 0.03s; }
   .group > :nth-child(3), .summary > :nth-child(3), .achgrid > :nth-child(3) { animation-delay: 0.06s; }
   .group > :nth-child(4), .summary > :nth-child(4), .achgrid > :nth-child(4) { animation-delay: 0.09s; }
@@ -315,29 +319,29 @@ a.howto { text-decoration: none; }
   @keyframes rollDown { from { transform: translateY(-18px); opacity: 0.2; } }
 
   /* level-up medal pops with a ring burst */
-  .medal { position: relative; animation: pop 0.5s var(--spring) both; }
+  .medal { position: relative; animation: pop 0.5s var(--spring) backwards; }
   .medal::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 3px solid var(--accent-strong, var(--accent, var(--push))); animation: burst 0.8s 0.15s var(--ease) both; }
   @keyframes burst { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(1.8); opacity: 0; } }
   .choice { transition: border-color 0.2s, background-color 0.2s; }
   .goalup { animation: pop 0.4s var(--spring); }
 
   /* progress rings and week dots fill in */
-  .ringcard svg circle:nth-child(2) { animation: ringFill 0.9s var(--ease) both; }
+  .ringcard svg circle:nth-child(2) { animation: ringFill 0.9s var(--ease) backwards; }
   @keyframes ringFill { from { stroke-dashoffset: 201; } }
-  .weekstrip li.trained .wsdot { animation: pop 0.4s var(--spring) both; }
-  .histline { stroke-dasharray: 1000; animation: draw 0.9s var(--ease) both; }
+  .weekstrip li.trained .wsdot { animation: pop 0.4s var(--spring) backwards; }
+  .histline { stroke-dasharray: 1000; animation: draw 0.9s var(--ease) backwards; }
   @keyframes draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
 
   /* achievement card and badges */
-  .achcard { animation: sheetUp 0.45s var(--spring) both; }
-  .achcard .achmedal, .achgrid li.earned .achmedal { animation: pop 0.5s var(--spring) both; }
+  .achcard { animation: sheetUp 0.45s var(--spring) backwards; }
+  .achcard .achmedal, .achgrid li.earned .achmedal { animation: pop 0.5s var(--spring) backwards; }
 
   /* unlock moment in the tree: node glows, incoming line draws */
   .tsvg .n.just-unlocked .sh { animation: unlockGlow 1.4s var(--ease) 0.4s 2; }
-  .tsvg .n.just-unlocked { animation: unlockPop 0.6s var(--spring) 0.3s both; transform-box: fill-box; transform-origin: center; }
+  .tsvg .n.just-unlocked { animation: unlockPop 0.6s var(--spring) 0.3s backwards; transform-box: fill-box; transform-origin: center; }
   @keyframes unlockGlow { 50% { stroke-width: 7; filter: drop-shadow(0 0 8px var(--accent)); } }
   @keyframes unlockPop { from { opacity: 0.2; } }
-  .tsvg .e.draw { stroke-dasharray: 200; animation: draw2 0.8s var(--ease) both; }
+  .tsvg .e.draw { stroke-dasharray: 200; animation: draw2 0.8s var(--ease) backwards; }
   @keyframes draw2 { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
   .tsvg .glow { animation: breathe 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
   @keyframes breathe { 50% { opacity: 0.08; transform: scale(1.12); } }

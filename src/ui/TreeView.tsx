@@ -7,6 +7,17 @@ import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 
 // the same words as everywhere else in the app (Locked / Ready / Training / Done)
+/** A label's first line sits this far below the node's edge; each further line adds 10. */
+export const LABEL_Y = 16
+
+/** A line from a node up to the one it unlocks. A slanted line stops under the upper node's label so it never crosses the text. */
+export function edgePath(a: { x: number; y: number }, b: { x: number; y: number }, bLines: number): string {
+  const R = NODE_R
+  const endY = a.x === b.x ? b.y + R : b.y + R + LABEL_Y + 10 * (bLines - 1) + 4
+  const my = (a.y - R + endY) / 2
+  return `M${a.x} ${a.y - R} C${a.x} ${my},${b.x} ${my},${b.x} ${endY}`
+}
+
 const WORD = { locked: 'locked', available: 'ready', focus: 'training', completed: 'done' } as const
 
 interface Props {
@@ -40,12 +51,11 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
           sa === 'completed' && (sb === 'completed' || sb === 'focus') ? 'done'
           : sa === 'completed' && sb === 'available' ? 'avail'
           : 'lock'
-        const my = (a.y + b.y) / 2
         return (
           <path
             key={`${from}>${to}`}
             className={`e ${cls}${justUnlocked.includes(to) ? ' draw' : ''}`}
-            d={`M${a.x} ${a.y - R} C${a.x} ${my},${b.x} ${my},${b.x} ${b.y + R}`}
+            d={edgePath(a, b, wrapLabel(b.node.short ?? b.node.name).length)}
           />
         )
       })}
@@ -68,7 +78,7 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
               }
             }}
           >
-            {state === 'focus' && <circle className="glow" r={R + 9} />}
+            {state === 'focus' && <circle className="glow" r={R + 7} />}
             {selectedId === node.id && <circle className="sel" r={R + 8} />}
             {isSkill ? (
               <rect className="sh" x={-(R - 2)} y={-(R - 2)} width={2 * (R - 2)} height={2 * (R - 2)} rx={6} transform="rotate(45)" />
@@ -83,7 +93,7 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
                 <path d="M-3 -1 v-2.5 a3 3 0 0 1 6 0 v2.5" />
               </g>
             )}
-            <text className="lb" y={R + 12}>
+            <text className="lb" y={R + LABEL_Y}>
               {wrapLabel(node.short ?? node.name).map((line, i) => (
                 <tspan key={i} x={0} dy={i === 0 ? 0 : 10}>{line}</tspan>
               ))}

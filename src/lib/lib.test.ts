@@ -14,8 +14,9 @@ describe('time helpers', () => {
 
 describe('goalText', () => {
   it('shows reps and holds', () => {
-    expect(goalText({ type: 'reps', sets: 3, target: 10 })).toBe('3 × 10')
-    expect(goalText({ type: 'hold', sets: 3, target: 30 })).toBe('3 × 30 s')
+    // no-break spaces, so a goal never splits across two lines ("4 ×" / "20 s")
+    expect(goalText({ type: 'reps', sets: 3, target: 10 })).toBe('3\u00a0×\u00a010')
+    expect(goalText({ type: 'hold', sets: 3, target: 30 })).toBe('3\u00a0×\u00a030\u00a0s')
   })
 })
 

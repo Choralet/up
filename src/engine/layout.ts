@@ -2,7 +2,7 @@ import type { Branch, ExerciseNode } from '../data/types'
 import { indexNodes } from './graph'
 
 export const COL_W = 66
-export const ROW_H = 64
+export const ROW_H = 78
 export const PAD_X = 42
 export const PAD_Y = 28
 export const NODE_R = 17
@@ -53,6 +53,6 @@ export function layoutBranch(nodes: ExerciseNode[], branch: Branch): TreeLayout 
     placed,
     edges,
     width: PAD_X * 2 + (COLS - 1) * COL_W,
-    height: PAD_Y * 2 + maxDepth * ROW_H + 12,
+    height: PAD_Y * 2 + maxDepth * ROW_H + 22,
   }
 }

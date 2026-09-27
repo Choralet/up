@@ -9,6 +9,12 @@ const W = 320
 const H = 150
 const PAD = { l: 30, r: 12, t: 12, b: 22 }
 
+/** Chart top: some room above the goal, and even, so the middle gridline is a whole number. */
+export function chartTop(max: number): number {
+  const top = Math.ceil(max * 1.15)
+  return top % 2 === 0 ? top : top + 1
+}
+
 const shortDate = (date: string) => new Date(`${date}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 
 /** Best set per session over time: one series, so no legend; the title names it. */
@@ -19,7 +25,7 @@ export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: (
   const rows = all.slice(-12)
   const unit = node.goal.type === 'hold' ? 's' : 'reps'
   const color = BRANCH_META[node.branch].color
-  const max = Math.max(node.goal.target, ...rows.map((r) => r.best))
+  const max = chartTop(Math.max(node.goal.target, ...rows.map((r) => r.best)))
   const x = (i: number) => PAD.l + (rows.length === 1 ? (W - PAD.l - PAD.r) / 2 : (i * (W - PAD.l - PAD.r)) / (rows.length - 1))
   const y = (v: number) => PAD.t + (1 - v / max) * (H - PAD.t - PAD.b)
   const best = Math.max(0, ...all.map((r) => r.best))
@@ -41,7 +47,7 @@ export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: (
               {[0, 0.5, 1].map((f) => (
                 <g key={f}>
                   <line x1={PAD.l} x2={W - PAD.r} y1={y(max * f)} y2={y(max * f)} className="grid" />
-                  <text x={PAD.l - 6} y={y(max * f) + 4} textAnchor="end" className="axis">{Math.round(max * f)}</text>
+                  <text x={PAD.l - 6} y={y(max * f) + 4} textAnchor="end" className="axis">{max * f}</text>
                 </g>
               ))}
               <line x1={PAD.l} x2={W - PAD.r} y1={y(node.goal.target)} y2={y(node.goal.target)} className="goalline" />
