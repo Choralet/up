@@ -1,4 +1,6 @@
-# More exercises per day: research and options (proposal, not built)
+# More exercises per day: research and options
+
+**Status: A + C built (Plan 6, 2026-09-27).** Tracks: Push-ups · Pike & handstand · Dips | Pull-ups · Rows | Squats · Hinge | Plank & hollow · Leg raises (`src/data/tracks.ts`). Settings → Workout Length: Short (first two tracks), Standard (all + core finisher on Push/Pull days, default), Full (+ Volume variations). D (circuit) not built.
 
 Researched 2026-09-27 from YouTube (video chapters) and the channels' written routines. Today Up gives a Push day **one main exercise** (plus a Volume variation and a core finisher since Plan 5). Real routines do much more.
 
