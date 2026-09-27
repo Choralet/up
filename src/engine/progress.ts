@@ -47,6 +47,8 @@ export interface Progress {
   /** goal ramp after a level-up: 0 = 60%, 1 = 80%, 2 = full target; no entry = full */
   goalStage: Record<string, number>
   onboarded: boolean
+  /** achievement ids already shown; null = an older save (everything earned so far counts as seen) */
+  seenAchievements: string[] | null
   day: DayState | null
   settings: Settings
 }
@@ -59,7 +61,7 @@ export interface Suggestion {
 export function initialProgress(nodes: ExerciseNode[]): Progress {
   const focus: Record<string, string | null> = {}
   for (const t of trackKeys(nodes)) focus[t] = pickFocus(nodes, new Set(), t)
-  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, goalStage: {}, onboarded: false, day: null, settings: { holdSound: true, length: 'standard' } }
+  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, goalStage: {}, onboarded: false, seenAchievements: [], day: null, settings: { holdSound: true, length: 'standard' } }
 }
 
 export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean {
@@ -297,6 +299,11 @@ export function toggleWarm(progress: Progress, date: string, key: string): Progr
   return { ...progress, day: { ...d, warm } }
 }
 
+export function markSeen(progress: Progress, ids: string[]): Progress {
+  const seen = new Set([...(progress.seenAchievements ?? []), ...ids])
+  return { ...progress, seenAchievements: [...seen] }
+}
+
 export function setSettings(progress: Progress, patch: Partial<Settings>): Progress {
   return { ...progress, settings: { ...progress.settings, ...patch } }
 }
@@ -411,5 +418,6 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     length: rs && typeof rs === 'object' && WORKOUT_LENGTHS.includes(rs.length as WorkoutLength) ? (rs.length as WorkoutLength) : 'standard',
   }
   if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
-  return { completed, focus, skillFocus, logs, schedule, goalOverrides, goalStage, onboarded, day, settings }
+  const seenAchievements = Array.isArray(r.seenAchievements) ? r.seenAchievements.filter((x): x is string => typeof x === 'string') : null
+  return { completed, focus, skillFocus, logs, schedule, goalOverrides, goalStage, onboarded, seenAchievements, day, settings }
 }

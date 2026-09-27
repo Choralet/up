@@ -25,7 +25,7 @@ export function parseBackup(text: string, nodes: ExerciseNode[]): Progress {
 
 /** Short fingerprint of progress, to tell whether anything changed since the last upload. */
 export function progressHash(progress: Progress): string {
-  const { day: _day, ...kept } = progress // warm-up ticks alone should not trigger an upload
+  const { day: _day, seenAchievements: _seen, ...kept } = progress // warm-up ticks and seen badges alone should not trigger an upload
   const text = JSON.stringify(kept)
   let h = 5381
   for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0

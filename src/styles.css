@@ -244,3 +244,10 @@ a.howto { text-decoration: none; }
 .histchart .grid { stroke: var(--sep); stroke-width: 1; }
 .histchart .goalline { stroke: var(--label3); stroke-width: 1; stroke-dasharray: 4 4; }
 .histchart .axis { font-size: 10px; fill: var(--label2); font-variant-numeric: tabular-nums; }
+
+.achcard { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.achmedal { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 20px; color: #fff; background: linear-gradient(160deg, #ffd60a, #ff9f0a); }
+.achgrid { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.achgrid li { background: var(--card); border-radius: 14px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; }
+.achgrid li:not(.earned) .achmedal { background: var(--fill); color: var(--label3); }
+.achgrid li:not(.earned) b { color: var(--label2); font-weight: 500; }

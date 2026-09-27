@@ -8,6 +8,7 @@ import { FinishSheet } from './FinishSheet'
 import { goalText } from '../lib/format'
 import { localDate, weekdayIndex } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
+import { AchievementCard } from './AchievementCard'
 import { BackupNotice } from './BackupNotice'
 import { BRANCH_META } from './branches'
 import { trackById } from '../data/tracks'
@@ -63,6 +64,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
         <button className="gear" aria-label="Settings" onClick={onSettings}>⚙</button>
       </div>
       <BackupNotice refresh={settingsOpen} onOpen={onSettings} />
+      <AchievementCard />
 
       {day === 'rest' ? (
         <>

@@ -5,7 +5,7 @@ import {
   activateSkill as activateSkillRule, advanceStage as advanceStageRule, applyOverrides, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
   levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
-  sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
+  sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, markSeen as markSeenRule, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
   type Progress, type Settings,
 } from '../engine/progress'
 import { localDate } from '../lib/time'
@@ -41,6 +41,7 @@ export interface ProgressValue {
   setDayPick(pick: DayType | null): void
   toggleWarm(key: string): void
   setSettings(patch: Partial<Settings>): void
+  markSeen(ids: string[]): void
 }
 
 const Ctx = createContext<ProgressValue | null>(null)
@@ -101,6 +102,7 @@ export function ProgressProvider({
     setDayPick: (pick) => update((p) => setDayPickRule(p, localDate(), pick)),
     toggleWarm: (key) => update((p) => toggleWarmRule(p, localDate(), key)),
     setSettings: (patch) => update((p) => setSettingsRule(p, patch)),
+    markSeen: (ids) => update((p) => markSeenRule(p, ids)),
   }
   return (
     <Ctx.Provider value={value}>

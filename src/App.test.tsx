@@ -1491,3 +1491,34 @@ describe('Plan 7 · exercise history', () => {
     expect(screen.getByRole('button', { name: 'History' })).toBeInTheDocument()
   })
 })
+
+describe('Plan 7 · achievements', () => {
+  it('Today shows a newly earned achievement once', async () => {
+    const user = userEvent.setup()
+    const storage = seed({ seenAchievements: [], logs: [{ nodeId: 'push-wall', value: 5, date: '2026-09-18', at: 1 }] })
+    const first = render(<App storage={storage} />)
+    const card = await screen.findByRole('status', { name: 'New achievement' })
+    expect(card).toHaveTextContent('First Workout')
+    await user.click(within(card).getByRole('button', { name: 'Nice' }))
+    expect(screen.queryByRole('status', { name: 'New achievement' })).not.toBeInTheDocument()
+    first.unmount()
+    render(<App storage={storage} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    expect(screen.queryByRole('status', { name: 'New achievement' })).not.toBeInTheDocument()
+  })
+
+  it('an older save does not get a pile of cards for what it already earned', async () => {
+    render(<App storage={seed({ logs: [{ nodeId: 'push-wall', value: 5, date: '2026-09-18', at: 1 }] })} />)
+    await screen.findByRole('heading', { name: 'Push Day' })
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.queryByRole('status', { name: 'New achievement' })).not.toBeInTheDocument()
+  })
+
+  it('Progress lists achievements with a count', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ logs: [{ nodeId: 'push-wall', value: 5, date: '2026-09-18', at: 1 }] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.getByRole('heading', { name: /Achievements · 1 of \d+/ })).toBeInTheDocument()
+    expect(screen.getByRole('listitem', { name: /First Workout, earned/ })).toBeInTheDocument()
+  })
+})

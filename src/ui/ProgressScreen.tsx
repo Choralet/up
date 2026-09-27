@@ -1,6 +1,7 @@
 import { BRANCHES } from '../engine/graph'
 import { branchProgress, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from '../engine/stats'
 import { DAY_LABEL } from '../data/schedule'
+import { achievements } from '../engine/achievements'
 import { goalText, plural } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
@@ -15,6 +16,7 @@ export function ProgressScreen() {
   const planned = strip.filter((d) => d.planned !== 'rest').length
   const trainedDays = strip.filter((d) => d.trained).length
   const sessions = recentSessions(progress.logs, 5)
+  const achs = achievements(nodes, progress, today)
   const dayName = (date: string) => new Date(`${date}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
   const bests = personalBests(progress.logs, byId, 5)
 
@@ -59,6 +61,16 @@ export function ProgressScreen() {
         {sessions.map((x) => (
           <li className="row" key={x.date}>
             <span className="t"><b>{dayName(x.date)}</b><span>{plural(x.exercises, 'exercise')} · {plural(x.sets, 'set')}</span></span>
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="hdr">Achievements · {achs.filter((a) => a.earned).length} of {achs.length}</h2>
+      <ul className="achgrid" aria-label="Achievements">
+        {achs.map((a) => (
+          <li key={a.id} className={a.earned ? 'earned' : ''} aria-label={`${a.name}, ${a.earned ? 'earned' : 'not yet'}: ${a.detail}`}>
+            <span className="achmedal" aria-hidden="true">★</span>
+            <b>{a.name}</b>
           </li>
         ))}
       </ul>

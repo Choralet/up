@@ -134,8 +134,12 @@ describe('setFocus', () => {
 
 describe('sanitizeProgress', () => {
   it('turns garbage into initial progress', () => {
-    for (const raw of [undefined, null, 'x', 42, [], {}]) {
+    for (const raw of [undefined, null, 'x', 42]) {
       expect(sanitizeProgress(graph, raw)).toEqual(fresh())
+    }
+    // an object is treated as a saved progress: badges earned so far count as seen (null)
+    for (const raw of [[], {}]) {
+      expect(sanitizeProgress(graph, raw)).toEqual({ ...fresh(), seenAchievements: null })
     }
   })
   it('drops unknown ids and bad logs', () => {
