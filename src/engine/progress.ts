@@ -1,6 +1,6 @@
-import type { Branch, DayType, ExerciseNode, Goal, GoalOverride } from '../data/types'
+import type { DayType, ExerciseNode, Goal, GoalOverride } from '../data/types'
 import { DAY_TYPES, DEFAULT_SCHEDULE } from '../data/schedule'
-import { BRANCHES, indexNodes, rootOf } from './graph'
+import { indexNodes } from './graph'
 
 export type NodeState = 'locked' | 'available' | 'focus' | 'completed'
 
@@ -22,16 +22,21 @@ export interface DayState {
   warm: string[]
 }
 
+export type WorkoutLength = 'short' | 'standard' | 'full'
+export const WORKOUT_LENGTHS: WorkoutLength[] = ['short', 'standard', 'full']
+
 export interface Settings {
   /** soft tone when a hold reaches its goal */
   holdSound: boolean
+  /** how many exercises a day's workout has */
+  length: WorkoutLength
   lastExportAt?: number
 }
 
 export interface Progress {
   completed: string[]
-  /** strength exercise being trained per branch (never a skill step) */
-  focus: Record<Branch, string | null>
+  /** strength exercise being trained per movement track (never a skill step) */
+  focus: Record<string, string | null>
   /** active skill chains (max 2) and the step each one is on; null = no trainable step */
   skillFocus: Record<string, string | null>
   logs: SetLog[]
@@ -49,9 +54,9 @@ export interface Suggestion {
 }
 
 export function initialProgress(nodes: ExerciseNode[]): Progress {
-  const focus = {} as Record<Branch, string | null>
-  for (const b of BRANCHES) focus[b] = rootOf(nodes, b)?.id ?? null
-  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, onboarded: false, day: null, settings: { holdSound: true } }
+  const focus: Record<string, string | null> = {}
+  for (const t of trackKeys(nodes)) focus[t] = pickFocus(nodes, new Set(), t)
+  return { completed: [], focus, skillFocus: {}, logs: [], schedule: [...DEFAULT_SCHEDULE], goalOverrides: {}, onboarded: false, day: null, settings: { holdSound: true, length: 'standard' } }
 }
 
 export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean {
@@ -60,7 +65,7 @@ export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean 
 
 export function nodeState(node: ExerciseNode, progress: Progress): NodeState {
   if (progress.completed.includes(node.id)) return 'completed'
-  if (progress.focus[node.branch] === node.id || Object.values(progress.skillFocus).includes(node.id)) return 'focus'
+  if (Object.values(progress.focus).includes(node.id) || Object.values(progress.skillFocus).includes(node.id)) return 'focus'
   return isUnlocked(node, new Set(progress.completed)) ? 'available' : 'locked'
 }
 
@@ -108,7 +113,7 @@ export function suggestNext(nodes: ExerciseNode[], progress: Progress, fromId: s
   const after = new Set([...progress.completed, fromId])
   const score = (s: Suggestion) => kindRank(s.node) * 2 + (s.isNew ? 0 : 1)
   return nodes
-    .filter((n) => !after.has(n.id) && isUnlocked(n, after) && (from.skill ? n.skill === from.skill : n.branch === from.branch && !n.skill))
+    .filter((n) => !after.has(n.id) && isUnlocked(n, after) && (from.skill ? n.skill === from.skill : !n.skill && trackOf(n) === trackOf(from)))
     .map((n) => ({ node: n, isNew: !isUnlocked(n, before) }))
     .sort((a, b) => score(a) - score(b))
 }
@@ -126,9 +131,17 @@ export function firstStep(nodes: ExerciseNode[], done: Set<string>, chain: strin
   return nodes.find((n) => n.skill === chain && !done.has(n.id) && isUnlocked(n, done))?.id ?? null
 }
 
-function pickFocus(nodes: ExerciseNode[], done: Set<string>, branch: Branch): string | null {
-  const open = nodes.filter((n) => n.branch === branch && !n.skill && !done.has(n.id) && isUnlocked(n, done))
-  return [...open].sort((a, b) => kindRank(a) - kindRank(b))[0]?.id ?? null
+/** A strength exercise's movement track (falls back to its branch for data without tracks). */
+export const trackOf = (n: ExerciseNode): string => n.track ?? n.branch
+
+/** Every track that has strength exercises, in data order. */
+export function trackKeys(nodes: ExerciseNode[]): string[] {
+  return [...new Set(nodes.filter((n) => !n.skill).map(trackOf))]
+}
+
+/** The first strength exercise of a track that is not done and is unlocked. */
+function pickFocus(nodes: ExerciseNode[], done: Set<string>, track: string): string | null {
+  return nodes.find((n) => !n.skill && trackOf(n) === track && !done.has(n.id) && isUnlocked(n, done))?.id ?? null
 }
 
 function levelUpSkill(nodes: ExerciseNode[], progress: Progress, from: ExerciseNode, toId: string | null): Progress {
@@ -153,13 +166,14 @@ export function levelUp(nodes: ExerciseNode[], progress: Progress, fromId: strin
   const from = byId.get(fromId)
   if (!from) return progress
   if (from.skill) return levelUpSkill(nodes, progress, from, toId)
-  if (progress.focus[from.branch] !== fromId) return progress
+  const track = trackOf(from)
+  if (progress.focus[track] !== fromId) return progress
   const completed = [...new Set([...progress.completed, fromId])]
   const done = new Set(completed)
   const to = toId ? byId.get(toId) : undefined
-  const valid = !!to && to.branch === from.branch && !to.skill && !done.has(to.id) && isUnlocked(to, done)
-  const focusId = valid ? to!.id : pickFocus(nodes, done, from.branch)
-  return { ...progress, completed, focus: { ...progress.focus, [from.branch]: focusId } }
+  const valid = !!to && !to.skill && trackOf(to) === track && !done.has(to.id) && isUnlocked(to, done)
+  const focusId = valid ? to!.id : pickFocus(nodes, done, track)
+  return { ...progress, completed, focus: { ...progress.focus, [track]: focusId } }
 }
 
 /** Make an available strength exercise the branch's focus. Skill steps are started with `activateSkill`. */
@@ -167,7 +181,7 @@ export function setFocus(nodes: ExerciseNode[], progress: Progress, nodeId: stri
   const node = indexNodes(nodes).get(nodeId)
   if (!node || node.skill) return progress
   if (nodeState(node, progress) !== 'available') return progress
-  return { ...progress, focus: { ...progress.focus, [node.branch]: nodeId } }
+  return { ...progress, focus: { ...progress.focus, [trackOf(node)]: nodeId } }
 }
 
 /** "I can already do this": complete the steps in order, each only if its requirements are met by then. */
@@ -280,11 +294,14 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
   const done = new Set(completed)
 
   const rawFocus = r.focus && typeof r.focus === 'object' ? (r.focus as Record<string, unknown>) : {}
-  const focus = { ...base.focus }
-  for (const b of BRANCHES) {
-    const id = rawFocus[b]
-    const n = typeof id === 'string' ? byId.get(id) : undefined
-    focus[b] = n && n.branch === b && !n.skill && !done.has(n.id) && isUnlocked(n, done) ? n.id : pickFocus(nodes, done, b)
+  const trainable = (n: ExerciseNode | undefined, t: string) => !!n && !n.skill && trackOf(n) === t && !done.has(n.id) && isUnlocked(n, done)
+  const stored = Object.values(rawFocus).filter((v): v is string => typeof v === 'string').map((id) => byId.get(id))
+  const focus: Record<string, string | null> = {}
+  for (const t of trackKeys(nodes)) {
+    const own = typeof rawFocus[t] === 'string' ? byId.get(rawFocus[t] as string) : undefined
+    // older saves keyed focus by branch: take any stored exercise that belongs to this track
+    const pick = trainable(own, t) ? own : stored.find((n) => trainable(n, t))
+    focus[t] = pick ? pick.id : pickFocus(nodes, done, t)
   }
 
   const rawSkill = r.skillFocus && typeof r.skillFocus === 'object' ? (r.skillFocus as Record<string, unknown>) : {}
@@ -299,8 +316,7 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
   }
 
   // Plan 1 saves could hold a skill step as a branch focus: carry it over as an active skill when there is room
-  for (const b of BRANCHES) {
-    const id = rawFocus[b]
+  for (const id of Object.values(rawFocus)) {
     const n = typeof id === 'string' ? byId.get(id) : undefined
     if (!n?.skill || n.skill in skillFocus || Object.keys(skillFocus).length >= MAX_ACTIVE_SKILLS) continue
     const step = !done.has(n.id) && isUnlocked(n, done) ? n.id : firstStep(nodes, done, n.skill)
@@ -327,7 +343,10 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
       ? { date: rd.date, pick: rd.pick as DayType | null, warm: [...rd.warm] }
       : null
   const rs = r.settings as Partial<Settings> | undefined
-  const settings: Settings = { holdSound: rs && typeof rs === 'object' && typeof rs.holdSound === 'boolean' ? rs.holdSound : true }
+  const settings: Settings = {
+    holdSound: rs && typeof rs === 'object' && typeof rs.holdSound === 'boolean' ? rs.holdSound : true,
+    length: rs && typeof rs === 'object' && WORKOUT_LENGTHS.includes(rs.length as WorkoutLength) ? (rs.length as WorkoutLength) : 'standard',
+  }
   if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
   return { completed, focus, skillFocus, logs, schedule, goalOverrides, onboarded, day, settings }
 }

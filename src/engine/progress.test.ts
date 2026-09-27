@@ -7,6 +7,7 @@ import {
   type Progress,
 } from './progress'
 import { DEFAULT_SCHEDULE } from '../data/schedule'
+import { NODES } from '../data/nodes'
 
 const N = (id: string, requires: string[] = [], over: Partial<ExerciseNode> = {}): ExerciseNode => ({
   id, name: id, branch: 'push', kind: 'strength', requires, col: 1,
@@ -21,7 +22,7 @@ describe('initialProgress', () => {
   it('focuses the root of a branch and leaves empty branches null', () => {
     const p = fresh()
     expect(p.focus.push).toBe('a')
-    expect(p.focus.pull).toBeNull()
+    expect(p.focus.pull).toBeUndefined() // no nodes in that track
     expect(p.completed).toEqual([])
     expect(p.logs).toEqual([])
   })
@@ -447,9 +448,44 @@ describe('today state (warm-up ticks and Train Anyway)', () => {
   it('sanitize keeps a well-formed day and settings, and defaults the rest', () => {
     const ok = sanitizeProgress(g2, { day: { date: '2026-09-26', pick: 'push', warm: ['a'] }, settings: { holdSound: false, lastExportAt: 5 } })
     expect(ok.day).toEqual({ date: '2026-09-26', pick: 'push', warm: ['a'] })
-    expect(ok.settings).toEqual({ holdSound: false, lastExportAt: 5 })
+    expect(ok.settings).toEqual({ holdSound: false, length: 'standard', lastExportAt: 5 })
     const bad = sanitizeProgress(g2, { day: { date: 3, pick: 'yoga' }, settings: 'x' })
     expect(bad.day).toBeNull()
-    expect(bad.settings).toEqual({ holdSound: true })
+    expect(bad.settings).toEqual({ holdSound: true, length: 'standard' })
+  })
+})
+
+describe('movement tracks (real data)', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  it('every track starts at its own first exercise', () => {
+    const f = initialProgress(NODES).focus
+    expect(f).toMatchObject({
+      'push-h': 'push-wall', 'push-v': 'push-pike-hold', 'push-d': 'push-bench-dip',
+      'pull-v': 'pull-hang', 'pull-r': 'pull-row-high',
+      'legs-s': 'legs-assisted', 'legs-h': 'legs-bridge',
+      'core-a': 'core-deadbug', 'core-l': 'core-lying-raise',
+    })
+  })
+  it('an old save keyed by branch moves into the right track', () => {
+    const p = real({ completed: ['push-wall', 'push-incline'], focus: { push: 'push-knee', pull: 'pull-hang' } })
+    expect(p.focus['push-h']).toBe('push-knee')
+    expect(p.focus['push-v']).toBe('push-pike-hold')
+    expect(p.focus['pull-v']).toBe('pull-hang')
+  })
+  it('levelling up moves only that track', () => {
+    const p = levelUp(NODES, real(), 'push-pike-hold', null)
+    expect(p.focus['push-v']).toBe('push-pike')
+    expect(p.focus['push-h']).toBe('push-wall')
+  })
+  it('suggestions stay in the same track', () => {
+    const p = real({ completed: ['push-wall', 'push-incline', 'push-knee'] })
+    const ids = suggestNext(NODES, p, 'push-standard').map((s) => s.node.id)
+    expect(ids).toEqual(expect.arrayContaining(['push-diamond', 'push-decline']))
+    expect(ids).not.toContain('push-pike')
+  })
+  it('workout length setting defaults to standard and is kept when valid', () => {
+    expect(initialProgress(NODES).settings.length).toBe('standard')
+    expect(real({ settings: { holdSound: true, length: 'short' } }).settings.length).toBe('short')
+    expect(real({ settings: { holdSound: true, length: 'huge' } }).settings.length).toBe('standard')
   })
 })

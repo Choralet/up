@@ -8,7 +8,7 @@ function Probe() {
   const { progress, log } = useProgress()
   return (
     <button onClick={() => log('push-wall', 10)}>
-      {`focus:${progress.focus.push} logs:${progress.logs.length}`}
+      {`focus:${progress.focus['push-h']} logs:${progress.logs.length}`}
     </button>
   )
 }

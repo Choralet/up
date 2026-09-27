@@ -1,37 +1,44 @@
-import type { Branch, DayType, ExerciseNode, SkillChain } from '../data/types'
-import { DAY_BRANCHES } from '../data/schedule'
+import type { DayType, ExerciseNode, SkillChain } from '../data/types'
+import { DAY_TRACKS, FINISHER_TRACK } from '../data/tracks'
 import { indexNodes } from './graph'
-import { todaysValues, type Progress } from './progress'
+import { todaysValues, trackOf, type Progress, type WorkoutLength } from './progress'
 
 export interface Workout {
   day: DayType
   /** current step of each active skill trained on this day type */
   skill: ExerciseNode[]
-  /** focus exercise of each branch trained on this day type; null = branch finished */
-  main: { branch: Branch; node: ExerciseNode | null }[]
-  /** "Also today": the finished variation for volume, and a core finisher on Push and Pull days */
+  /** focus exercise of each track trained today; null = track finished */
+  main: { track: string; node: ExerciseNode | null }[]
+  /** "Also today": a Volume variation (Full length) and a core finisher on Push and Pull days */
   extra: { node: ExerciseNode; role: 'volume' | 'core'; of?: string }[]
 }
 
-export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: DayType, chains: SkillChain[]): Workout {
+/**
+ * The day's workout. Short = the first two tracks; Standard = every track of the day plus a core finisher on
+ * Push/Pull days; Full = Standard plus the finished variation of each main exercise for extra volume.
+ */
+export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: DayType, chains: SkillChain[], length: WorkoutLength = 'standard'): Workout {
   const byId = indexNodes(nodes)
   const skill = Object.entries(progress.skillFocus).flatMap(([chain, id]) => {
     const node = id ? byId.get(id) : undefined
     return node && chains.find((c) => c.id === chain)?.day === day ? [node] : []
   })
-  const main = DAY_BRANCHES[day].map((branch) => {
-    const id = progress.focus[branch]
-    return { branch, node: id ? byId.get(id) ?? null : null }
+  const tracks = length === 'short' ? DAY_TRACKS[day].slice(0, 2) : DAY_TRACKS[day]
+  const main = tracks.map((track) => {
+    const id = progress.focus[track]
+    return { track, node: id ? byId.get(id) ?? null : null }
   })
   const done = new Set(progress.completed)
   const extra: Workout['extra'] = []
-  for (const { node } of main) {
-    // the variation you just finished, for easy extra volume (none below a branch root)
-    const parent = node?.requires.map((r) => byId.get(r)).find((p) => p && !p.skill && p.branch === node.branch && done.has(p.id))
-    if (parent) extra.push({ node: parent, role: 'volume', of: node!.id })
+  if (length === 'full') {
+    for (const { node } of main) {
+      // the variation you just finished, for easy extra volume (none below a track's first exercise)
+      const parent = node?.requires.map((r) => byId.get(r)).find((p) => p && !p.skill && trackOf(p) === trackOf(node) && done.has(p.id))
+      if (parent) extra.push({ node: parent, role: 'volume', of: node!.id })
+    }
   }
-  const core = progress.focus.core ? byId.get(progress.focus.core) : undefined
-  if ((day === 'push' || day === 'pull') && core) extra.push({ node: core, role: 'core' })
+  const core = progress.focus[FINISHER_TRACK] ? byId.get(progress.focus[FINISHER_TRACK]!) : undefined
+  if (length !== 'short' && (day === 'push' || day === 'pull') && core) extra.push({ node: core, role: 'core' })
   return { day, skill, main, extra }
 }
 

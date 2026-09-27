@@ -24,7 +24,7 @@ describe('roadmapStatus', () => {
     expect(roadmapStatus(byId, p, item('y1-hollow-hang')).status).toBe('training')
   })
   it('training for a linked strength exercise that is the branch focus', () => {
-    const s = roadmapStatus(byId, save({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'], focus: { push: 'push-pike' } }), item('y1-pike-pushup'))
+    const s = roadmapStatus(byId, save({ completed: ['push-pike-hold'], focus: { 'push-v': 'push-pike' } }), item('y1-pike-pushup'))
     expect(s.status).toBe('training')
   })
   it('done when every step is completed', () => {
