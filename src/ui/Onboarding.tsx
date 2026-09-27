@@ -1,10 +1,9 @@
 import { useRef, useState } from 'react'
 import { DAY_LABEL, WEEKDAYS } from '../data/schedule'
+import { TRACKS } from '../data/tracks'
 import type { DayType, ExerciseNode } from '../data/types'
-import { BRANCHES } from '../engine/graph'
 import { levelUp, type Progress } from '../engine/progress'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META } from './branches'
 
 /** Ignore a second tap this soon after an answer (a double tap would otherwise answer the next question). */
 export const onboardingTuning = { answerLockMs: 350 }
@@ -49,9 +48,9 @@ export function Onboarding() {
 
   // skip branches with nothing left to ask, so no empty frame is ever drawn
   let s = step
-  while (s >= 0 && s < BRANCHES.length && !draft.focus[BRANCHES[s]]) s++
-  const branch = s >= 0 && s < BRANCHES.length ? BRANCHES[s] : null
-  const node = branch ? byId.get(draft.focus[branch]!) : undefined
+  while (s >= 0 && s < TRACKS.length && !draft.focus[TRACKS[s].id]) s++
+  const track = s >= 0 && s < TRACKS.length ? TRACKS[s] : null
+  const node = track ? byId.get(draft.focus[track.id]!) : undefined
 
   const answer = (next: () => void) => () => {
     const now = Date.now()
@@ -82,16 +81,16 @@ export function Onboarding() {
       <>
         <h1 className="large">Find your level</h1>
         <p className="sub" style={{ margin: '8px 0 24px' }}>
-          A few quick questions so Up starts each muscle group at the right exercise. It takes about a minute, and nothing changes until you finish.
+          A few quick questions so Up starts each movement (push-ups, pull-ups, squats…) at the right exercise. It takes about a minute, and nothing changes until you finish.
         </p>
         <button className="cta" onClick={() => setStep(0)}>Start</button>
         <button className="cta sec" onClick={finishOnboarding}>Skip for Now</button>
       </>
     )
-  } else if (branch && node) {
+  } else if (track && node) {
     body = (
       <>
-        <div className="eyebrow">{BRANCH_META[branch].label} · {s + 1} of {BRANCHES.length}</div>
+        <div className="eyebrow">{track.name} · {s + 1} of {TRACKS.length}</div>
         <h1 className="large" style={{ fontSize: 26, margin: '8px 0' }}>{node.name}</h1>
         <p style={{ fontSize: 17, margin: '8px 0' }}>{question(node)}</p>
         <p className="sub">{node.cue}</p>
@@ -106,11 +105,11 @@ export function Onboarding() {
       <>
         <h1 className="large">You're set</h1>
         <div className="group">
-          {BRANCHES.map((b) => {
-            const id = draft.focus[b]
+          {TRACKS.map((t) => {
+            const id = draft.focus[t.id]
             return (
-              <div className="row" key={b}>
-                <span className="t"><b>{BRANCH_META[b].label}: {id ? byId.get(id)!.name : 'Complete'}</b></span>
+              <div className="row" key={t.id}>
+                <span className="t"><b>{t.name}: {id ? byId.get(id)!.name : 'Complete'}</b></span>
               </div>
             )
           })}

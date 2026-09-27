@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { BackupError, exportBackup, parseBackup } from '../engine/backup'
-import type { Progress } from '../engine/progress'
+import { WORKOUT_LENGTHS, type Progress } from '../engine/progress'
 import { plural } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useServices } from '../store/services'
@@ -9,6 +9,13 @@ import { GithubSection } from './GithubSection'
 import { DAY_LABEL, DAY_TYPES, WEEKDAYS } from '../data/schedule'
 import type { DayType } from '../data/types'
 import { useProgress } from '../store/ProgressContext'
+
+const LENGTH_LABEL = { short: 'Short', standard: 'Standard', full: 'Full' } as const
+const LENGTH_HINT = {
+  short: 'About 20 minutes: your skill and the first two exercises of the day.',
+  standard: 'About 35 minutes: every exercise of the day, plus a core finisher on Push and Pull days.',
+  full: 'About 50 minutes: Standard plus the variation you just finished, for extra volume.',
+} as const
 
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
   const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings } = useProgress()
@@ -60,6 +67,16 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <p className="sub">Default is Monday Push, Wednesday Pull, Friday Legs + Core. Change any day you like.</p>
+
+        <div className="hdr">Workout Length</div>
+        <div className="seg" role="radiogroup" aria-label="Workout Length">
+          {WORKOUT_LENGTHS.map((l) => (
+            <button key={l} role="radio" aria-checked={progress.settings.length === l} className={progress.settings.length === l ? 'on' : ''} onClick={() => setSettings({ length: l })}>
+              {LENGTH_LABEL[l]}
+            </button>
+          ))}
+        </div>
+        <p className="sub" style={{ margin: '0 4px' }}>{LENGTH_HINT[progress.settings.length]}</p>
 
         <div className="hdr">Hold Timer</div>
         <div className="group">

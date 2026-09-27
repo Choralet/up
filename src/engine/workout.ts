@@ -7,8 +7,8 @@ export interface Workout {
   day: DayType
   /** current step of each active skill trained on this day type */
   skill: ExerciseNode[]
-  /** focus exercise of each track trained today; null = track finished */
-  main: { track: string; node: ExerciseNode | null }[]
+  /** focus exercise of each track trained today (null = track finished), and `prev`: the variation just finished below it */
+  main: { track: string; node: ExerciseNode | null; prev?: ExerciseNode }[]
   /** "Also today": a Volume variation (Full length) and a core finisher on Push and Pull days */
   extra: { node: ExerciseNode; role: 'volume' | 'core'; of?: string }[]
 }
@@ -24,18 +24,17 @@ export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: Day
     return node && chains.find((c) => c.id === chain)?.day === day ? [node] : []
   })
   const tracks = length === 'short' ? DAY_TRACKS[day].slice(0, 2) : DAY_TRACKS[day]
+  const done = new Set(progress.completed)
   const main = tracks.map((track) => {
     const id = progress.focus[track]
-    return { track, node: id ? byId.get(id) ?? null : null }
+    const node = id ? byId.get(id) ?? null : null
+    // the variation you just finished (none below a track's first exercise)
+    const prev = node?.requires.map((r) => byId.get(r)).find((p): p is ExerciseNode => !!p && !p.skill && trackOf(p) === track && done.has(p.id))
+    return prev ? { track, node, prev } : { track, node }
   })
-  const done = new Set(progress.completed)
   const extra: Workout['extra'] = []
   if (length === 'full') {
-    for (const { node } of main) {
-      // the variation you just finished, for easy extra volume (none below a track's first exercise)
-      const parent = node?.requires.map((r) => byId.get(r)).find((p) => p && !p.skill && trackOf(p) === trackOf(node) && done.has(p.id))
-      if (parent) extra.push({ node: parent, role: 'volume', of: node!.id })
-    }
+    for (const m of main) if (m.node && m.prev) extra.push({ node: m.prev, role: 'volume', of: m.node.id })
   }
   const core = progress.focus[FINISHER_TRACK] ? byId.get(progress.focus[FINISHER_TRACK]!) : undefined
   if (length !== 'short' && (day === 'push' || day === 'pull') && core) extra.push({ node: core, role: 'core' })
@@ -61,12 +60,12 @@ export const workoutItems = (w: Workout): ExerciseNode[] => [...w.skill, ...w.ma
  */
 export function workoutDone(workout: Workout, progress: Progress, date: string): boolean {
   const logged = (n: ExerciseNode) => todaysValues(progress, n.id, date).length >= n.goal.sets
-  const volumeOf = new Map(workout.extra.filter((e) => e.role === 'volume').map((e) => [e.of, e.node]))
-  const mains = workout.main.flatMap((m) => (m.node ? [m.node] : []))
+  const mains = workout.main.filter((m) => m.node)
   if (workout.skill.length + mains.length + workout.extra.length === 0) return false
   return (
     workout.skill.every(logged) &&
-    mains.every((n) => logged(n) || (volumeOf.has(n.id) && logged(volumeOf.get(n.id)!))) &&
+    // levelling up mid-session: the sets logged on the variation you just finished count for that track
+    mains.every((m) => logged(m.node!) || (!!m.prev && logged(m.prev))) &&
     workout.extra.filter((e) => e.role === 'core').every((e) => logged(e.node))
   )
 }

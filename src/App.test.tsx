@@ -88,7 +88,7 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
   it('shows "Branch complete" when every push exercise is done', async () => {
     const allPush = NODES.filter((n) => n.branch === 'push').map((n) => n.id)
     render(<App storage={seed({ completed: allPush })} />)
-    expect(await screen.findByText('Branch complete')).toBeInTheDocument()
+    expect(await screen.findAllByText('Track complete')).toHaveLength(3) // push-ups, pike & handstand, dips
     expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument()
   })
 
@@ -105,7 +105,8 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
 
   it('says the workout is done once every goal is met', async () => {
     const user = userEvent.setup()
-    render(<App storage={seed()} />)
+    const done = (nodeId: string, value: number) => [1, 2, 3].map((at) => ({ nodeId, value, date: '2026-09-21', at: at + value }))
+    render(<App storage={seed({ logs: [...done('push-pike-hold', 20), ...done('push-bench-dip', 10)] })} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
@@ -169,7 +170,7 @@ describe('Logging and level-up', () => {
     await user.click(screen.getByRole('button', { name: /Incline push-up/ }))
     await user.click(screen.getByRole('button', { name: 'Level Up' }))
     expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Wall push-up/ })).toHaveTextContent('Volume') // the finished variation stays as extra volume
+    expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument() // Volume variations only on Full length
   })
 
   it('"Not yet" keeps the same focus, and a 4th set does not re-open the sheet', async () => {
@@ -366,7 +367,7 @@ describe('Node sheet and level-up for skills and goals', () => {
   it('the level-up sheet points at skills a new exercise unlocks', async () => {
     const user = userEvent.setup()
     const done = ['push-wall', 'push-incline', 'push-knee', 'push-standard']
-    render(<App storage={seed({ completed: done, focus: { push: 'push-pike' } })} />)
+    render(<App storage={seed({ completed: [...done, 'push-pike-hold'], focus: { 'push-v': 'push-pike' } })} />)
     await user.click(await screen.findByRole('button', { name: /Pike push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' }) // the stepper starts at the goal, 8 reps
     await user.click(log); await user.click(log); await user.click(log)
@@ -384,14 +385,12 @@ describe('Find your level', () => {
     expect(screen.getByText('Can you do 3 sets of 10 clean reps?')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Yes' }))
     expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // push done
-    expect(screen.getByRole('heading', { name: 'Dead hang' })).toBeInTheDocument()
-    expect(screen.getByText('Can you hold it for 30 s, 3 times?')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // pull done
-    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // legs done
-    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // core done
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // push-ups done
+    expect(screen.getByRole('heading', { name: 'Pike hold' })).toBeInTheDocument()
+    expect(screen.getByText('Can you hold it for 20 s, 3 times?')).toBeInTheDocument()
+    for (let i = 0; i < 8; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' })) // the other 8 tracks
     expect(screen.getByRole('heading', { name: "You're set" })).toBeInTheDocument()
-    expect(screen.getByText(/Push: Incline push-up/)).toBeInTheDocument()
+    expect(screen.getByText(/Push-ups: Incline push-up/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
     expect(screen.queryByRole('heading', { name: 'Find your level' })).not.toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Incline push-up/ })).toBeInTheDocument()
@@ -477,8 +476,8 @@ describe('Progress tab', () => {
     render(<App storage={seed({ completed: ['push-wall', 'push-incline'], logs })} />)
     await user.click(await screen.findByRole('button', { name: 'Progress' }))
     expect(screen.getByText('2 week streak')).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'Push: 2 of 19 steps' })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'Pull: 0 of 13 steps' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Push: 2 of 23 steps' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Pull: 0 of 16 steps' })).toBeInTheDocument()
     expect(screen.getByText('Wall push-up')).toBeInTheDocument()
     expect(screen.getByText('12 reps')).toBeInTheDocument()
   })
@@ -1098,7 +1097,7 @@ describe('Plan 5 · Phase 2 complete workout', () => {
   })
 
   it('adds a core finisher on Push day and the finished variation for volume', async () => {
-    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee'] })} />)
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee'], settings: { holdSound: true, length: 'full' } })} />)
     expect(await screen.findByRole('heading', { name: 'Also Today' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Knee push-up/ })).toHaveTextContent('Volume')
     expect(screen.getByRole('button', { name: /Dead bug/ })).toHaveTextContent('Core finisher')
@@ -1238,7 +1237,7 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     expect(screen.getByRole('heading', { name: 'Incline push-up' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Back' }))
     expect(screen.getByRole('heading', { name: 'Wall push-up' })).toBeInTheDocument()
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    for (let i = 0; i < 9; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
     expect(((await store.load()) as { completed: string[] }).completed).toEqual([])
   })
@@ -1260,7 +1259,7 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     const user = userEvent.setup()
     render(<App storage={memoryStorage()} />)
     await user.click(await screen.findByRole('button', { name: 'Start' }))
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    for (let i = 0; i < 9; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
     expect(screen.getByRole('checkbox', { name: 'Monday' })).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByRole('checkbox', { name: 'Tuesday' })).toHaveAttribute('aria-checked', 'false')
     await user.click(screen.getByRole('checkbox', { name: 'Tuesday' }))
@@ -1310,7 +1309,8 @@ describe('Plan 5 · Phase 5 icons and polish', () => {
 describe('Plan 5 review fixes', () => {
   it('levelling up does not make today look unfinished', async () => {
     const user = userEvent.setup()
-    render(<App storage={seed({ completed: ['core-deadbug'], focus: { core: 'core-plank' } , logs: [1, 2, 3].map((at) => ({ nodeId: 'core-plank', value: 30, date: '2026-09-21', at })) })} />)
+    const done = (nodeId: string, value: number) => [1, 2, 3].map((at) => ({ nodeId, value, date: '2026-09-21', at: at + value }))
+    render(<App storage={seed({ completed: ['core-deadbug'], focus: { core: 'core-plank' }, logs: [...done('core-plank', 30), ...done('push-pike-hold', 20), ...done('push-bench-dip', 10)] })} />)
     await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
     const log = screen.getByRole('button', { name: 'Log Set' })
     await user.click(log); await user.click(log); await user.click(log)
@@ -1326,7 +1326,7 @@ describe('Plan 5 review fixes', () => {
     await user.click(screen.getByRole('button', { name: 'Find Your Level Again' }))
     await user.click(within(screen.getByRole('dialog', { name: 'Find your level again?' })).getByRole('button', { name: 'Start' }))
     await user.click(await screen.findByRole('button', { name: 'Start' }))
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    for (let i = 0; i < 9; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
     await user.click(await screen.findByRole('button', { name: 'Settings' }))
     expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('legs')
@@ -1337,7 +1337,7 @@ describe('Plan 5 review fixes', () => {
     const user = userEvent.setup()
     render(<App storage={memoryStorage()} />)
     await user.click(await screen.findByRole('button', { name: 'Start' }))
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    for (let i = 0; i < 9; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
     expect(screen.getByRole('checkbox', { name: 'Friday' })).toHaveTextContent('Legs + Core')
   })
 
@@ -1395,5 +1395,45 @@ describe('Plan 5 review fixes', () => {
     await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
     await user.click(await screen.findByRole('button', { name: 'Replace' }))
     expect(screen.getByRole('switch', { name: 'Sound at Hold Goal' })).toHaveAttribute('aria-checked', 'false')
+  })
+})
+
+describe('Plan 6 · movement tracks and workout length', () => {
+  it('Standard push day trains push-ups, pike and dips, then a core finisher', async () => {
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('button', { name: /Wall push-up/ })).toHaveTextContent('Push-ups')
+    expect(screen.getByRole('button', { name: /Pike hold/ })).toHaveTextContent('Pike & handstand')
+    expect(screen.getByRole('button', { name: /Bench dip/ })).toHaveTextContent('Dips')
+    expect(screen.getByRole('button', { name: /Dead bug/ })).toHaveTextContent('Core finisher')
+  })
+
+  it('Workout Length in Settings: Short keeps two, Full adds Volume', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline', 'push-knee'] })} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('radio', { name: 'Short' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('button', { name: /Push-up/ })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Bench dip/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Dead bug/ })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('radio', { name: 'Full' }))
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('button', { name: /Knee push-up/ })).toHaveTextContent('Volume')
+  })
+
+  it('a finished track says so', async () => {
+    render(<App storage={seed({ completed: ['push-bench-dip', 'push-dip-neg', 'rm-dip'] })} />)
+    expect(await screen.findByText('Track complete')).toBeInTheDocument()
+  })
+
+  it('Find your level asks about every track', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    expect(screen.getByText(/Push-ups · 1 of 9/)).toBeInTheDocument()
+    for (let i = 0; i < 9; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    expect(screen.getByRole('heading', { name: "You're set" })).toBeInTheDocument()
+    expect(screen.getByText(/Rows: High incline row/)).toBeInTheDocument()
   })
 })

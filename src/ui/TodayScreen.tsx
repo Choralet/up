@@ -10,6 +10,7 @@ import { localDate, weekdayIndex } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BackupNotice } from './BackupNotice'
 import { BRANCH_META } from './branches'
+import { trackById } from '../data/tracks'
 
 const TRAIN_ANYWAY: Exclude<DayType, 'rest'>[] = ['push', 'pull', 'legs']
 const ANYWAY_LABEL = { push: 'Push', pull: 'Pull', legs: 'Legs + Core' } as const
@@ -22,7 +23,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
   const { pick, warm } = todayState(progress, today)
   const weekday = weekdayIndex(now)
   const day = pick ?? progress.schedule[weekday]
-  const workout = useMemo(() => buildWorkout(nodes, progress, day, SKILLS), [nodes, progress, day])
+  const workout = useMemo(() => buildWorkout(nodes, progress, day, SKILLS, progress.settings.length), [nodes, progress, day])
   const next = nextTrainingDay(progress.schedule, weekday)
   const heading = now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })
 
@@ -109,14 +110,15 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
 
           <div className="hdr">Strength</div>
           <div className="group">
-            {workout.main.map(({ branch, node }) =>
-              node ? row(node) : (
-                <div className="row" key={branch}>
-                  <span className="dot" style={{ background: BRANCH_META[branch].color }}>{BRANCH_META[branch].short}</span>
-                  <span className="t"><b>{BRANCH_META[branch].label}</b><span>Branch complete</span></span>
+            {workout.main.map(({ track, node }) => {
+              const t = trackById(track)!
+              return node ? row(node, t.name) : (
+                <div className="row" key={track}>
+                  <span className="dot" style={{ background: BRANCH_META[t.branch].color }}>{BRANCH_META[t.branch].short}</span>
+                  <span className="t"><span className="tag extra">{t.name}</span><b>{BRANCH_META[t.branch].label}</b><span>Track complete</span></span>
                 </div>
-              ),
-            )}
+              )
+            })}
           </div>
           {workout.extra.length > 0 && (
             <>
