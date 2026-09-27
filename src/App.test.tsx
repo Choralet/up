@@ -1522,3 +1522,15 @@ describe('Plan 7 · achievements', () => {
     expect(screen.getByRole('listitem', { name: /First Workout, earned/ })).toBeInTheDocument()
   })
 })
+
+describe('Plan 7 · calendar reminders', () => {
+  it('Settings saves a calendar file with the training days', async () => {
+    const user = userEvent.setup()
+    const services = memoryServices()
+    render(<App storage={seed()} services={services} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    await user.click(screen.getByRole('button', { name: 'Add Reminders to Calendar' }))
+    expect(services.saved.at(-1)!.name).toBe('up-training.ics')
+    expect(services.saved.at(-1)!.text).toContain('RRULE:FREQ=WEEKLY;BYDAY=MO')
+  })
+})

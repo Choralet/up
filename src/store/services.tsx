@@ -16,7 +16,7 @@ export interface GithubConfig {
 export interface Services {
   fetch: typeof fetch
   /** true when a file was handed to the phone (false if you closed the share sheet) */
-  saveFile(name: string, text: string): Promise<boolean>
+  saveFile(name: string, text: string, type?: string): Promise<boolean>
   github: {
     load(): Promise<GithubConfig | null>
     save(cfg: GithubConfig | null): Promise<void>
@@ -27,8 +27,8 @@ const GITHUB_KEY = 'up.github'
 
 export const realServices: Services = {
   fetch: (...args) => fetch(...args),
-  async saveFile(name, text) {
-    const file = new File([text], name, { type: 'application/json' })
+  async saveFile(name, text, type = 'application/json') {
+    const file = new File([text], name, { type })
     if (navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: name })

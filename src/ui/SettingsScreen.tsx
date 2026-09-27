@@ -3,6 +3,7 @@ import { BackupError, exportBackup, parseBackup } from '../engine/backup'
 import { WORKOUT_LENGTHS, type Progress } from '../engine/progress'
 import { plural } from '../lib/format'
 import { localDate } from '../lib/time'
+import { scheduleIcs } from '../lib/ics'
 import { useServices } from '../store/services'
 import { ConfirmSheet } from './ConfirmSheet'
 import { GithubSection } from './GithubSection'
@@ -21,6 +22,14 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
   const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings } = useProgress()
   const services = useServices()
   const [askRedo, setAskRedo] = useState(false)
+  const [remindAt, setRemindAt] = useState('18:00')
+  const addReminders = async () => {
+    try {
+      await services.saveFile('up-training.ics', scheduleIcs(progress.schedule, remindAt), 'text/calendar')
+    } catch {
+      setMessage("Couldn't create the calendar file.")
+    }
+  }
   const [pending, setPending] = useState<{ progress: Progress; after?: () => void } | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -77,6 +86,16 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <p className="sub" style={{ margin: '0 4px' }}>{LENGTH_HINT[progress.settings.length]}</p>
+
+        <div className="hdr">Reminders</div>
+        <div className="group">
+          <label className="row selrow">
+            <span className="t"><b>Reminder time</b><span>On your training days</span></span>
+            <input type="time" aria-label="Reminder time" value={remindAt} onChange={(e) => setRemindAt(e.target.value || '18:00')} />
+          </label>
+        </div>
+        <button className="cta sec" onClick={addReminders}>Add Reminders to Calendar</button>
+        <p className="sub" style={{ margin: '0 4px' }}>Opens a calendar file: add it to Apple Calendar to get an alert each training day. Add it again after you change your schedule.</p>
 
         <div className="hdr">Hold Timer</div>
         <div className="group">
