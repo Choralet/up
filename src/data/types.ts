@@ -19,6 +19,8 @@ export interface ExerciseNode {
   skill?: string
   /** new move from the Roadmap: not drawn in the tree, may require any branch */
   roadmapOnly?: boolean
+  /** movement track (strength exercises only), see src/data/tracks.ts */
+  track?: string
   /** ids of nodes that must be completed first (all of them) */
   requires: string[]
   /** column 0..3 in the tree drawing */

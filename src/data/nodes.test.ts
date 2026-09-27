@@ -1,11 +1,12 @@
 import { NODES } from './nodes'
-import { BRANCHES, indexNodes } from '../engine/graph'
+import { indexNodes } from '../engine/graph'
 import { computeDepths } from '../engine/layout'
 import { wrapLabel } from '../lib/format'
 import { SKILLS } from './skills'
 import { DEMO_IDS, demoUrl } from './demos'
 import { DAY_BRANCHES } from './schedule'
 import { formatStamp, ROADMAP, videoUrl } from './roadmap'
+import { TRACKS } from './tracks'
 
 const TREE = NODES.filter((n) => !n.roadmapOnly)
 
@@ -31,11 +32,27 @@ describe('exercise graph', () => {
     expect(() => computeDepths(NODES)).not.toThrow()
   })
 
-  it('has exactly one root per branch', () => {
-    for (const b of BRANCHES) {
-      const roots = TREE.filter((n) => n.branch === b && n.requires.length === 0)
-      expect(roots, `roots in ${b}`).toHaveLength(1)
+  it('every strength exercise belongs to one track of its branch; skill steps have none', () => {
+    const byId = new Map(TRACKS.map((t) => [t.id, t]))
+    for (const n of NODES) {
+      if (n.kind === 'skill') expect(n.track, n.id).toBeUndefined()
+      else expect(byId.get(n.track!)?.branch, `${n.id} track ${n.track}`).toBe(n.branch)
     }
+  })
+
+  it('each track has exactly one starting exercise (no requirements)', () => {
+    for (const t of TRACKS) {
+      const roots = NODES.filter((n) => n.track === t.id && n.requires.length === 0)
+      expect(roots.map((r) => r.id), t.id).toHaveLength(1)
+    }
+  })
+
+  it('the new starter moves exist in their tracks', () => {
+    const track = (id: string) => NODES.find((n) => n.id === id)?.track
+    expect([track('push-pike-hold'), track('push-bench-dip'), track('push-dip-neg'), track('rm-dip')]).toEqual(['push-v', 'push-d', 'push-d', 'push-d'])
+    expect([track('pull-row-high'), track('pull-row'), track('pull-row-elevated'), track('pull-row-archer')]).toEqual(['pull-r', 'pull-r', 'pull-r', 'pull-r'])
+    expect([track('legs-bridge'), track('legs-sl-bridge'), track('legs-nordic-neg')]).toEqual(['legs-h', 'legs-h', 'legs-h'])
+    expect([track('core-lying-raise'), track('core-knee-raise'), track('core-leg-raise')]).toEqual(['core-l', 'core-l', 'core-l'])
   })
 
   it('never draws two nodes in the same cell of a tree', () => {
