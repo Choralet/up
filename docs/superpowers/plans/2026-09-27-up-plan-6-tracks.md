@@ -52,4 +52,14 @@ Skill steps keep no track. Roadmap chain `bulgarian-dip` becomes just `rm-bulgar
 
 ## Tasks
 
-1. Data + data tests. 2. Engine (progress, workout, roadmap, onboarding logic) + tests. 3. UI (Today, Settings length, Onboarding) + tests, update older tests. 4. Browser check, docs, deploy, fresh final review, fixes.
+### Task 1: Data + data tests
+Tracks table above, test list item 1.
+
+### Task 2: Engine
+Engine section, test list item 2.
+
+### Task 3: UI
+UI section, test list items 3 and 4.
+
+### Task 4: Verify, docs, deploy, review
+Browser check, docs, deploy, fresh final review, fixes.
