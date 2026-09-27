@@ -58,8 +58,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .sheet h2, .sheet h3 { font-size: 21px; letter-spacing: -0.01em; }
 .sheet p { color: var(--label2); font-size: 14px; margin: 6px 0; }
 .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label2); }
-.pills { margin: 8px 0; display: flex; gap: 6px; flex-wrap: wrap; }
-.pill { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--fill); font-size: 12px; font-weight: 600; color: var(--label2); }
+.pills { margin: 8px 0; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pill { display: inline-block; white-space: nowrap; padding: 3px 10px; border-radius: 999px; background: var(--fill); font-size: 12px; font-weight: 600; color: var(--label2); }
 .pill.skill { color: var(--skill); }
 .req { font-size: 13px; margin-top: 6px; color: var(--label2); }
 .req span { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; margin-right: 6px; font-size: 11px; font-weight: 700; color: #fff; }
@@ -259,8 +259,9 @@ a.howto { text-decoration: none; }
 .trackchips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; }
 .chipbtn { white-space: nowrap; font-size: 13px; color: var(--label); margin: 0; flex: none; }
 .chipbtn .chiptrack { color: var(--label2); font-weight: 600; }
-.zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; gap: 6px; }
-.zoombar .pillbtn { margin: 0; min-width: 44px; background: var(--card); box-shadow: 0 2px 10px rgb(0 0 0 / 0.25); }
+.zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: 999px; background: var(--card); box-shadow: 0 2px 10px rgb(0 0 0 / 0.25); }
+.zoombar .pillbtn { margin: 0; min-height: 32px; min-width: 32px; padding: 0 8px; font-size: 13px; background: none; }
+.tree-scroll { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 .tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
 .tsvg { max-width: none; }
 
