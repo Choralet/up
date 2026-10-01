@@ -4,7 +4,7 @@ Instructions for any AI coding agent working in this repo. `CLAUDE.md` imports t
 
 ## Project
 
-**Up**: an iPhone-home-screen web app that tracks calisthenics progress like a game: skill-tree branches (Push, Pull, Legs, Core), one node per exercise variation, and the user **levels up** to the next variation when they hit a goal. Apple-like design. Local-first, no account.
+**Up**: an iPhone-home-screen web app that tracks calisthenics progress like a game: skill-tree branches (Push, Pull, Legs, Core), one node per exercise variation, and the user **levels up** to the next variation when they hit a goal. Game Quest look (rounded, chunky, Duolingo-like). Local-first, no account.
 
 ## Current status
 
@@ -53,7 +53,7 @@ React + TypeScript + Vite PWA, IndexedDB, bundled JSON for the exercise graph, V
 
 - **Colours:** tokens live in `src/tokens.css` (primitive `--p-*` → semantic). Text on a bright fill is `var(--on-color)`, never white; colour as text uses `--<branch>-text`. `src/tokens.test.ts` checks every pair at 4.5:1: change the colour, never the threshold.
 - **Visual check:** `npm run shots -- <dir> [scenario]` (after `npm run build` and `npx vite preview --port 4173 --strictPort`); `LARGE=1`, `REDUCE=1`, `WIDTH`/`HEIGHT` for large text, reduced motion and other screen sizes.
-- **Motion:** all animation lives inside `@media (prefers-reduced-motion: no-preference)` in `src/styles.css`. Entrance animations use `animation-fill-mode: backwards`, never `both`/`forwards`, on anything that contains sheets or fixed elements (`.log`, `.screen`, `.tree-screen`, rows). A transform kept after the animation makes the element the containing block for `position: fixed` children, so sheets open off-screen and the hold cover shrinks. Only the medal ring burst uses `both`.
+- **Motion:** all animation lives inside `@media (prefers-reduced-motion: no-preference)` in `src/styles.css`. Entrance animations use `animation-fill-mode: backwards`, never `both`/`forwards`, on anything that contains sheets or fixed elements (`.log`, `.screen`, `.tree-screen`, rows). A transform kept after the animation makes the element the containing block for `position: fixed` children, so sheets open off-screen and the hold cover shrinks. Only the level-up card's burst shapes (`.burst i`) use `both`: they hold no sheet and end invisible on purpose.
 - **Sheets** render outside fixed containers (see the comment in `TreeScreen.tsx`), or the tab bar paints over them.
 - **Two goal sources:** `byId`/`nodes` from `useProgress()` carry today's ramp-stage goal (60/80/100%), while `finalById` carries the full goal with the user's overrides. Use `finalById` for the level-up check, the level-up sheet text, and the goal editor. A stage raised today (`stageRaisedOn`) takes effect the next day, and `settleStage` in the provider undoes it if a set is removed.
 - **New `Progress` fields** must be optional in old saves: add them to `initialProgress` and `sanitizeProgress`, and keep `progressHash` (backup) blind to display-only state (`day`, `seenAchievements`).
