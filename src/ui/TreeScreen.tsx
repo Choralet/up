@@ -118,7 +118,7 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
             })}
           </div>
         </div>
-        <div className="tree-scroll" ref={scroller}>
+        <div className={node ? 'tree-scroll has-sheet' : 'tree-scroll'} ref={scroller}>
           <TreeView branch={branch} selectedId={selected} onSelect={setSelected} zoom={zoom} />
         </div>
         <div className="zoombar" aria-label="Zoom">

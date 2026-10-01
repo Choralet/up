@@ -65,6 +65,13 @@ describe.each(['light', 'dark'] as const)('%s mode text contrast (at least 4.5:1
       [`on-color on ${k}`, c('--on-color'), c(`--${k}`)],
     ]),
   ]
+  // the level-up card's glow: text over the strongest point of the branch-colour glow
+  const glow = parseFloat(vars['--glow-mix']) / 100
+  pairs.push(...ACCENTS.flatMap((k): [string, string, string][] => [
+    [`${k}-text on the ${k} glow`, c(`--${k}-text`), mix(c(`--${k}`), c('--bg'), glow)],
+    [`ink2 on the ${k} glow`, c('--ink2'), mix(c(`--${k}`), c('--bg'), glow)],
+    [`ink on the ${k} glow`, c('--ink'), mix(c(`--${k}`), c('--bg'), glow)],
+  ]))
   it.each(pairs)('%s', (_name, fg, bg) => {
     expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
   })

@@ -64,6 +64,14 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     expect(screen.getByRole('img', { name: /^Core: 0 of \d+ steps$/ })).toBeInTheDocument()
   })
 
+  it('the level caption keeps each count whole, so it can wrap instead of being cut off', async () => {
+    vi.setSystemTime(FRIDAY)
+    const { container } = render(<App storage={seed()} />)
+    await screen.findByRole('img', { name: /^Legs: 0 of \d+ steps$/ })
+    const counts = [...container.querySelectorAll('.lvinfo .lvcount')].map((e) => e.textContent)
+    expect(counts).toEqual([expect.stringMatching(/^0\/\d+$/), expect.stringMatching(/^0\/\d+$/)])
+  })
+
   it('a rest day shows the streak but no branch level', async () => {
     vi.setSystemTime(SATURDAY)
     render(<App storage={seed()} />)
@@ -143,6 +151,18 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
 })
 
 describe('Skill Tree screen', () => {
+  it('reserves room under the tree while a node sheet is open, so a bottom node can scroll above it', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    const scroller = container.querySelector('.tree-scroll')!
+    expect(scroller).not.toHaveClass('has-sheet')
+    await user.click(screen.getByRole('button', { name: 'Wall push-up, training' }))
+    expect(scroller).toHaveClass('has-sheet')
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    expect(scroller).not.toHaveClass('has-sheet')
+  })
+
   it('shows nodes with their state and lets you open one', async () => {
     const user = userEvent.setup()
     render(<App storage={seed()} />)

@@ -48,6 +48,8 @@ const SCENARIOS = {
   progress: { steps: [['text', 'Progress']] },
   settings: { steps: [['sel', '[aria-label="Settings"]']] },
   onboarding: { seed: { onboarded: false }, steps: [] },
+  'node-bottom': { steps: [['text', 'Tree'], ['sel', '[aria-label^="Wall push-up,"]']] },
+  'fri-high': { date: FRI, seed: { completed: ["legs-assisted", "legs-squat", "legs-split", "legs-bulgarian", "legs-shrimp", "legs-assisted-pistol", "legs-pistol", "core-deadbug", "core-plank", "core-hollow", "core-knee-raise", "core-tuck-lsit", "core-leg-raise", "core-lsit", "core-dragon", "core-dragon-full", "legs-bridge", "legs-sl-bridge", "legs-nordic-neg", "core-lying-raise"] }, steps: [] },
 }
 
 function dateInit([y, m, d]) {
@@ -102,6 +104,8 @@ function layoutCheck() {
     const cs = getComputedStyle(el)
     if ((r.right > innerWidth + 1 || r.left < -1) && !clipsX(el)) out.push(`past viewport: ${name(el)}`)
     if (el.children.length === 0 && cs.display !== 'inline' && cs.overflowX === 'visible' && el.scrollWidth > el.clientWidth + 1) out.push(`text overflows: ${name(el)}`)
+    // touch targets: at least 44×44 (inline text links are exempt, like WCAG 2.5.8)
+    if (el.matches('button, a, select, input, summary, [role=button], [role=tab], [role=switch]') && !el.matches('.inline, a.inline') && cs.display !== 'inline' && (r.width < 43.5 || r.height < 43.5) && !el.closest('[inert]')) out.push(`small target: ${name(el)} ${Math.round(r.width)}×${Math.round(r.height)}`)
     if (cs.display.includes('flex') && !cs.flexDirection.startsWith('column')) {
       const hs = [...el.children]
         .filter((k) => k.matches('button, a, .pill, .howto, .pillbtn') && k.getBoundingClientRect().height)

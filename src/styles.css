@@ -129,7 +129,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .xpbar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.15); clip-path: inset(0 calc(100% - var(--r) * 100%) 0 0 round var(--r-pill)); }
 .lvrow { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 .lvinfo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-.lvinfo > span { font-size: var(--fs-small); font-weight: 900; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lvcap { display: flex; flex-wrap: wrap; column-gap: 4px; font-size: var(--fs-small); font-weight: 900; line-height: 1.25; color: var(--ink); }
+.lvcount { white-space: nowrap; }
 .streak { display: inline-flex; align-items: center; gap: 3px; flex: none; color: var(--push-text); font-weight: 900; font-size: 0.9375rem; }
 
 /* ============ Inputs ============ */
@@ -205,6 +206,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .tree-scroll { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 .tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
+/* while a node sheet is open, leave room so even a bottom-row node can scroll above the sheet */
+.tree-scroll.has-sheet { padding-bottom: 60dvh; }
 
 /* ============ Today ============ */
 .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
@@ -288,7 +291,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .chipbtn { gap: 6px; white-space: nowrap; font-size: var(--fs-small); color: var(--ink); margin: 0; flex: none; text-transform: none; letter-spacing: 0; box-shadow: 0 3px 0 var(--line); }
 .chipbtn .chiptrack { color: var(--accent-text); font-weight: 900; }
 .zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: var(--r-md); background: var(--bg); border: 2px solid var(--line); box-shadow: 0 var(--edge) 0 var(--line); }
-.zoombar .pillbtn { margin: 0; min-height: 40px; min-width: 40px; padding: 0 8px; border: 0; box-shadow: none; font-size: var(--fs-small); }
+.zoombar .pillbtn { margin: 0; min-height: 44px; min-width: 44px; padding: 0 8px; border: 0; box-shadow: none; font-size: var(--fs-small); }
 .zoombar .pillbtn:nth-child(2) { min-width: 56px; font-variant-numeric: tabular-nums; }
 
 /* ============ Skills and Roadmap ============ */
@@ -344,7 +347,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .howtoken ol { padding-left: 20px; color: var(--ink2); }
 
 /* ============ Reward moments ============ */
-.levelup { background: radial-gradient(circle at 50% 22%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 62%), var(--bg); }
+.levelup { background: radial-gradient(circle at 50% 22%, color-mix(in srgb, var(--accent) var(--glow-mix), transparent), transparent 62%), var(--bg); }
 .levelup .xpbar { margin: 12px 0 4px; }
 .burst { position: relative; width: 150px; height: 150px; margin: 4px auto 18px; display: grid; place-items: center; }
 .burst i { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 3px; background: var(--accent); opacity: 0; }

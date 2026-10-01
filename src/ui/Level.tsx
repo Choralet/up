@@ -37,7 +37,7 @@ export function BranchLevel({ branch }: { branch: Branch }) {
     <div className="lvrow" style={accentStyle(branch)}>
       <LevelBadge branch={branch} level={l.level} />
       <div className="lvinfo">
-        <span aria-hidden="true">{name} {l.done}/{l.total}</span>
+        <span className="lvcap" aria-hidden="true"><span>{name}</span> <span className="lvcount">{l.done}/{l.total}</span></span>
         <XpBar ratio={l.ratio} label={`${name}: ${l.done} of ${l.total} steps`} />
       </div>
     </div>

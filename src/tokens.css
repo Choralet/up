@@ -47,6 +47,9 @@
   --r-sm: 12px; --r-md: 16px; --r-lg: 18px; --r-sheet: 28px; --r-pill: 999px;
   --edge: 4px;
 
+  /* strength of the branch-colour glow behind the level-up card (text sits on it, so it is contrast-checked) */
+  --glow-mix: 14%;
+
   color-scheme: light dark;
 }
 
