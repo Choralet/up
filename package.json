@@ -11,7 +11,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "shots": "node scripts/shots.mjs"
   },
   "keywords": [],
   "author": "",
