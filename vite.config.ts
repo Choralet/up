@@ -25,7 +25,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,json}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,json,woff2}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/gh\/hasaneyldrm\//,
@@ -36,5 +36,5 @@ export default defineConfig({
       },
     }),
   ],
-  test: { environment: 'jsdom', setupFiles: './src/test-setup.ts', globals: true },
+  test: { environment: 'jsdom', setupFiles: './src/test-setup.ts', globals: true, css: { include: [/tokens\.css/] } },
 })

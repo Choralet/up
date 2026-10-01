@@ -1,0 +1,74 @@
+/* Game Quest design tokens. Layers: primitive (raw values, --p-*) → semantic (meaning, per mode) → component (in styles.css).
+   Components use semantic tokens only. Every text pair is contrast-checked by src/tokens.test.ts. */
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url('./assets/fonts/nunito-latin-wght.woff2') format('woff2');
+}
+
+:root {
+  /* primitive: brights, their darker edge, and a darker ink for text on white */
+  --p-orange: #ff9600; --p-orange-edge: #cc7800; --p-orange-ink: #9e5c00;
+  --p-blue: #1cb0f6; --p-blue-edge: #1899d6; --p-blue-ink: #12729f;
+  --p-green: #58cc02; --p-green-edge: #46a302; --p-green-ink: #357c01;
+  --p-purple: #ce82ff; --p-purple-edge: #a568cc; --p-purple-ink: #8a57aa;
+  --p-pink: #ff4b8b; --p-pink-edge: #d63a70; --p-pink-ink: #ba3665; --p-pink-glow: #ff6b9e;
+  --p-red: #ff4b4b; --p-red-edge: #d93636; --p-red-ink: #bf3838; --p-red-glow: #ff7070;
+  --p-yellow: #ffc800; --p-yellow-edge: #cc9a00;
+  --p-night-900: #131f24; --p-night-800: #202f36; --p-night-600: #37464f; --p-night-300: #8fa6b2; --p-night-50: #f1f7fb;
+  --p-white: #ffffff; --p-gray-100: #f2f2f2; --p-gray-200: #e5e5e5; --p-gray-600: #666666; --p-gray-800: #3c3c3c;
+  --p-cocoa: #2b1a00;
+
+  /* semantic, light mode */
+  --bg: var(--p-white);
+  --card: var(--p-white);
+  --ink: var(--p-gray-800);
+  --ink2: var(--p-gray-600);
+  --line: var(--p-gray-200);
+  --fill: var(--p-gray-100);
+  --on-color: var(--p-cocoa);
+  --push: var(--p-orange); --push-edge: var(--p-orange-edge); --push-text: var(--p-orange-ink);
+  --pull: var(--p-blue); --pull-edge: var(--p-blue-edge); --pull-text: var(--p-blue-ink);
+  --legs: var(--p-green); --legs-edge: var(--p-green-edge); --legs-text: var(--p-green-ink);
+  --core: var(--p-purple); --core-edge: var(--p-purple-edge); --core-text: var(--p-purple-ink);
+  --skill: var(--p-pink); --skill-edge: var(--p-pink-edge); --skill-text: var(--p-pink-ink);
+  --danger: var(--p-red); --danger-edge: var(--p-red-edge); --danger-text: var(--p-red-ink);
+  --primary: var(--pull); --primary-edge: var(--pull-edge); --primary-text: var(--pull-text);
+  --gold: var(--p-yellow); --gold-edge: var(--p-yellow-edge);
+
+  /* type: rem so larger text scales the app */
+  --font: 'Nunito', ui-rounded, system-ui, sans-serif;
+  --fs-title: 1.875rem; --fs-heading: 1.625rem; --fs-body: 1rem; --fs-small: 0.8125rem; --fs-label: 0.75rem; --fs-big: 6rem;
+
+  /* shape and depth: a solid bottom edge instead of a blurred shadow */
+  --r-sm: 12px; --r-md: 16px; --r-lg: 18px; --r-sheet: 28px; --r-pill: 999px;
+  --edge: 4px;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--p-night-900);
+    --card: var(--p-night-900);
+    --ink: var(--p-night-50);
+    --ink2: var(--p-night-300);
+    --line: var(--p-night-600);
+    --fill: var(--p-night-800);
+    --push-text: var(--p-orange);
+    --pull-text: var(--p-blue);
+    --legs-text: var(--p-green);
+    --core-text: var(--p-purple);
+    --skill-text: var(--p-pink-glow);
+    --danger-text: var(--p-red-glow);
+  }
+}
+
+/* legacy names still used in styles.css; removed in the final task */
+:root {
+  --label: var(--ink); --label2: var(--ink2); --label3: var(--ink2); --sep: var(--line);
+  --blue: var(--primary-text); --blue-text: var(--primary-text);
+}

@@ -1,20 +1,7 @@
-:root {
-  --bg: #f2f2f7; --card: #fff; --label: #000; --label2: #6c6c70; --label3: #aeaeb2;
-  --sep: rgba(60, 60, 67, 0.14); --fill: rgba(120, 120, 128, 0.12);
-  --push: #ff9500; --pull: #0a84ff; --legs: #30b455; --core: #af52de; --skill: #ff2d55; --blue: #0a84ff;
-  color-scheme: light dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000; --card: #1c1c1e; --segon: #636366; --label: #fff; --label2: #98989f; --label3: #48484a;
-    --sep: rgba(84, 84, 88, 0.55); --fill: rgba(120, 120, 128, 0.24);
-    --push: #ff9f0a; --legs: #30d158; --core: #bf5af2; --skill: #ff375f;
-  }
-}
 * { box-sizing: border-box; margin: 0; }
 html, body { background: var(--bg); color: var(--label); }
 body {
-  font: 15px/1.35 -apple-system, 'SF Pro Text', system-ui, sans-serif;
+  font: 700 var(--fs-body)/1.45 var(--font);
   -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
 }
 button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
@@ -236,8 +223,6 @@ a.howto { text-decoration: none; }
 .sheet { max-height: 88dvh; overflow: auto; }
 .tag { text-transform: uppercase; }
 .tag.extra { color: var(--label2); }
-:root { --blue-text: #0060c8; }
-@media (prefers-color-scheme: dark) { :root { --blue-text: #0a84ff; } }
 .cta.sec { color: var(--blue-text); }
 
 .goalup { margin: 8px auto 0; display: inline-block; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--legs) 18%, transparent); color: var(--legs); font-weight: 600; font-size: 13px; }
