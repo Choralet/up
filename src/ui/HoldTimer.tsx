@@ -137,14 +137,14 @@ export function HoldTimer({ target, onStop, onRunningChange, sound = false }: Pr
 
   const progress = Math.min(elapsed / target, 1)
   const ring = (
-    <svg className="ring" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label={`${formatClock(elapsed)} of ${target} seconds`} style={{ margin: '14px auto 0', display: 'block' }}>
+    <svg className="ring" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label={`${formatClock(elapsed)} of ${target} seconds`}>
       <circle cx="100" cy="100" r={R} fill="none" stroke="var(--fill)" strokeWidth="14" />
       {progress > 0 && (
         <circle cx="100" cy="100" r={R} fill="none" stroke="var(--accent)" strokeWidth="14" strokeLinecap="round"
           strokeDasharray={C} strokeDashoffset={C * (1 - progress)} transform="rotate(-90 100 100)" />
       )}
-      <text x="100" y="112" textAnchor="middle" fontSize="52" fontWeight="700" fill="var(--label)" style={{ fontVariantNumeric: 'tabular-nums' }}>{formatClock(elapsed)}</text>
-      <text x="100" y="138" textAnchor="middle" fontSize="13" fill="var(--label2)">of {target} s</text>
+      <text x="100" y="112" textAnchor="middle" fontSize="52" fontWeight="900" fill="var(--ink)">{formatClock(elapsed)}</text>
+      <text x="100" y="138" textAnchor="middle" fontSize="13" fontWeight="800" fill="var(--ink2)">of {target} s</text>
     </svg>
   )
 
@@ -170,8 +170,8 @@ export function HoldTimer({ target, onStop, onRunningChange, sound = false }: Pr
   return (
     <div>
       {ring}
-      {logged !== null && <div className="sub" style={{ marginTop: 8 }}>{logged >= 1 ? `Logged ${formatClock(logged)}` : 'Too short to log'}</div>}
-      <button className="cta" style={{ background: 'var(--accent)', marginTop: 20 }} onClick={start}>Start</button>
+      {logged !== null && <div className="hint">{logged >= 1 ? `Logged ${formatClock(logged)}` : 'Too short to log'}</div>}
+      <button className="cta spaced" onClick={start}>Start</button>
     </div>
   )
 }

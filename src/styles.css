@@ -152,7 +152,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 
 
-.cue { margin: 10px 0 6px; }
 .medal { width: 68px; height: 68px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; color: #fff; font-size: 30px; background: var(--accent, var(--push)); }
 .center { text-align: center; }
 
@@ -180,15 +179,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .log { position: fixed; inset: 0; z-index: 10; background: var(--bg); overflow: auto; }
 .log .screen { padding-bottom: 32px; text-align: center; }
-.log .close { display: block; margin: 0 0 8px auto; padding: 8px 4px; color: var(--blue); font-weight: 600; }
-.bars { display: flex; gap: 6px; justify-content: center; margin: 12px 0 4px; }
-.bars i { width: 36px; height: 6px; border-radius: 3px; background: var(--fill); }
-.bars i.on { background: var(--accent); }
-.big { font-size: 96px; font-weight: 700; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; line-height: 1; margin: 20px 0 4px; }
-.steps { display: flex; justify-content: center; gap: 24px; margin: 18px 0; }
-.steps button { width: 68px; height: 68px; border-radius: 50%; background: var(--fill); font-size: 34px; font-weight: 300; }
-.chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-.ring text { font-family: inherit; }
 
 .banner { position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding: calc(env(safe-area-inset-top) + 8px) 12px 8px; background: var(--skill); color: #fff; text-align: center; font-size: 13px; font-weight: 600; }
 
@@ -196,7 +186,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .tree-head { flex: none; padding: calc(env(safe-area-inset-top) + 16px) 16px 6px; background: var(--bg); }
 .tree-head .seg { margin: 4px 0 0; }
 .tree-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 8px 16px calc(96px + env(safe-area-inset-bottom)); }
-.pill.chip { min-height: 32px; padding: 4px 14px; font-size: 14px; color: var(--label); }
 
 /* hide scrollbars everywhere; scrolling still works */
 * { scrollbar-width: none; }
@@ -207,11 +196,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .list { list-style: none; padding: 0; }
 .skillrow { align-items: flex-start; }
-.goaled .steps { margin: 10px 0; }
 .goaled .field { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
 .goaled .field b { font-size: 24px; font-variant-numeric: tabular-nums; min-width: 56px; text-align: center; }
 .goaled .field .steps { margin: 0; gap: 12px; align-items: center; }
-.goaled .field .steps button { width: 44px; height: 44px; font-size: 24px; }
 
 .onboarding { z-index: 40; }
 
@@ -220,7 +207,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .ringcard { background: var(--card); border-radius: 16px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
 
-.demo { display: grid; place-items: center; min-height: 220px; margin: 12px 0; border-radius: 16px; background: #fff; }
 .demo img { width: 200px; height: 200px; image-rendering: auto; }
 
 .notice { display: block; width: 100%; text-align: left; margin: 12px 0 0; }
@@ -237,9 +223,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .videolink { text-decoration: none; }
 
 .needs { list-style: none; padding: 0; margin: 0; }
-.pill.chip.new { animation: chipin 0.9s ease-out; }
-@keyframes chipin { from { background: var(--accent, var(--blue)); color: #fff; } }
-@media (prefers-reduced-motion: reduce) { .pill.chip.new { animation: none; } }
 .rmrow.done b { color: var(--label); }
 .rmrow.done .rmicon { color: var(--legs); }
 
@@ -248,10 +231,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .summary li b { flex: 1 1 100%; }
 .newbest { font-size: 11px; font-weight: 700; color: var(--legs); text-transform: uppercase; letter-spacing: 0.04em; }
 
-.holdcover { position: fixed; inset: 0; z-index: 12; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--bg); width: 100%; }
-.log .close { position: relative; z-index: 13; min-height: 44px; min-width: 44px; }
 .rollnum, .cdnum { display: inline-block; }
-.countdown { font-size: 120px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; color: var(--accent); }
 .switchrow { justify-content: space-between; }
 
 .yearbtn { font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; padding: 8px 0; min-height: 44px; width: 100%; text-align: left; }
@@ -278,13 +258,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .howtoken summary { color: var(--blue); font-weight: 600; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
 .howtoken ol { padding-left: 20px; color: var(--label2); }
 
-.goalup { margin: 8px auto 0; display: inline-block; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--legs) 18%, transparent); color: var(--legs); font-weight: 600; font-size: 13px; }
 
 /* the row under an exercise name: Goal, Skill, How-to, History, Watch in Video all share one capsule size */
 .histchart { width: 100%; height: auto; display: block; margin: 8px 0; overflow: visible; }
-.histchart .grid { stroke: var(--sep); stroke-width: 1; }
-.histchart .goalline { stroke: var(--label3); stroke-width: 1; stroke-dasharray: 4 4; }
-.histchart .axis { font-size: 10px; fill: var(--label2); font-variant-numeric: tabular-nums; }
 
 .achcard { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
 .achcard .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -324,6 +300,33 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .quest .tick { color: var(--legs-text); }
 .quest .tick.done, .quest .chev { color: var(--ink2); }
 .done-banner { text-align: center; color: var(--legs-text); font-weight: 900; margin: 8px 0; }
+
+/* ============ Log a set ============ */
+.log .close { display: block; margin: 0 0 8px auto; padding: 8px 4px; min-height: 44px; min-width: 44px; position: relative; z-index: 13; color: var(--primary-text); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.875rem; }
+.spaced { margin-top: 24px; }
+.cue { margin: 16px 0 6px; }
+.bars { display: flex; gap: 8px; justify-content: center; margin: 16px 0 6px; }
+.bars i { width: 44px; height: 12px; border-radius: var(--r-pill); background: var(--fill); }
+.bars i.on { background: var(--accent); box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.15); }
+.big { font-size: var(--fs-big); font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; margin: 18px 0 4px; }
+.big.md { font-size: 4rem; margin: 8px 0; }
+.steps { display: flex; justify-content: center; gap: 26px; margin: 18px 0; }
+.steps.tight { margin: 8px 0 12px; }
+.steps button { width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; border: 2px solid var(--line); box-shadow: 0 var(--edge) 0 var(--line); color: var(--ink); }
+.chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+.pill.chip { min-height: 44px; min-width: 44px; justify-content: center; padding: 4px 14px; border-radius: var(--r-sm); font-size: var(--fs-body); font-weight: 900; color: var(--ink); }
+.goalup { margin: 8px auto 0; display: inline-block; padding: 4px 12px; border-radius: var(--r-pill); background: color-mix(in srgb, var(--legs) 14%, transparent); color: var(--legs-text); font-weight: 900; font-size: var(--fs-small); }
+.goaled .steps { margin: 10px 0; }
+.goaled .field .steps button { width: 44px; height: 44px; border-radius: var(--r-sm); }
+.ring { display: block; margin: 14px auto 0; }
+.ring text { font-family: inherit; font-variant-numeric: tabular-nums; }
+.holdcover { position: fixed; inset: 0; z-index: 12; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--bg); }
+.countdown { font-size: 7.5rem; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; color: var(--accent-text); }
+.demo { display: grid; place-items: center; min-height: 220px; margin: 12px 0; border-radius: var(--r-lg); background: #fff; border: 2px solid var(--line); }
+.histchart .grid { stroke: var(--line); stroke-width: 1; }
+.histchart .goalline { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.histchart .axis { font-size: 10px; font-weight: 800; fill: var(--ink2); font-variant-numeric: tabular-nums; }
+.histchart g { cursor: pointer; }
 
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
@@ -365,6 +368,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   /* ticks and set chips pop */
   .row .tick, .check[aria-checked='true'] .box { animation: pop 0.35s var(--spring); }
   .pill.chip.new { animation: chipin 0.9s ease-out, pop 0.35s var(--spring); }
+  @keyframes chipin { from { background: var(--accent); color: var(--on-color); } }
+  .bars i.on { animation: pop 0.35s var(--spring); }
   @keyframes pop { 0% { transform: scale(0.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
   /* rep number rolls */

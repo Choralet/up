@@ -12,8 +12,8 @@ export function DemoButton({ node }: { node: ExerciseNode }) {
       <button className="howto" onClick={() => { setFailed(false); setOpen(true) }}>How-to</button>
       {open && (
         <>
-          <div className="scrim" style={{ zIndex: 30 }} onClick={() => setOpen(false)} />
-          <div className="sheet" style={{ zIndex: 31, textAlign: 'left' }} role="dialog" aria-modal="true" aria-label={`How to do ${node.name}`}>
+          <div className="scrim top" onClick={() => setOpen(false)} />
+          <div className="sheet top left" role="dialog" aria-modal="true" aria-label={`How to do ${node.name}`}>
             <div className="head">
               <h3>How to do it</h3>
               <button className="pillbtn" aria-label="Close demo" onClick={() => setOpen(false)}>Done</button>
@@ -26,7 +26,7 @@ export function DemoButton({ node }: { node: ExerciseNode }) {
               )}
             </div>
             <p className="sub">{node.cue}</p>
-            <p className="sub" style={{ fontSize: 11 }}>{DEMO_CREDIT}</p>
+            <p className="hint">{DEMO_CREDIT}</p>
           </div>
         </>
       )}

@@ -13,6 +13,7 @@ import { HistorySheet } from './HistorySheet'
 import { HoldTimer } from './HoldTimer'
 import { LevelUpSheet } from './LevelUpSheet'
 import { SetSheet } from './SetSheet'
+import { Icon } from './Icon'
 
 /** Ignore a second Log Set this soon after the first (a double tap would log two sets). Tests set 0. */
 export const logTuning = { doubleTapMs: 600 }
@@ -80,11 +81,11 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
     <div className="log" style={nodeAccent(node)}>
       <div className="screen">
         <button className="close" onClick={leave}>Done</button>
-        <div className="eyebrow" style={{ color: node.kind === 'skill' ? 'var(--skill)' : undefined }}>
+        <div className="eyebrow accent">
           {meta.label}{node.kind === 'skill' ? ' · Skill' : ''}
         </div>
-        <h1 className="large" style={{ fontSize: 26 }}>{node.name}</h1>
-        <div className="pills" style={{ justifyContent: 'center' }}>
+        <h1 className="large title-sm">{node.name}</h1>
+        <div className="pills center">
           <span className="pill">Goal {goalText(node.goal)}</span>
           <DemoButton node={node} />
           <button className="howto histbtn" onClick={() => setShowHistory(true)}>History</button>
@@ -104,10 +105,10 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
             <div className="big" aria-live="polite"><span className={`rollnum ${dir}`} key={reps} data-testid="rep-value">{reps}</span></div>
             <div className="sub">reps{start.lastSession !== null ? ` · last session ${start.lastSession}` : ''}</div>
             <div className="steps">
-              <button aria-label="Decrease reps" onClick={() => { setDir('roll-down'); setReps((r) => Math.max(1, r - 1)) }}>−</button>
-              <button aria-label="Increase reps" onClick={() => { setDir('roll-up'); setReps((r) => r + 1) }}>+</button>
+              <button aria-label="Decrease reps" onClick={() => { setDir('roll-down'); setReps((r) => Math.max(1, r - 1)) }}><Icon name="minus" size={28} /></button>
+              <button aria-label="Increase reps" onClick={() => { setDir('roll-up'); setReps((r) => r + 1) }}><Icon name="plus" size={28} /></button>
             </div>
-            <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => record(reps)}>Log Set</button>
+            <button className="cta" onClick={() => record(reps)}>Log Set</button>
           </>
         ) : (
           <HoldTimer key={timerKey} target={node.goal.target} sound={progress.settings.holdSound} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
@@ -126,12 +127,12 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
                 </button>
               ))}
             </div>
-            <div className="sub" style={{ marginTop: 6, fontSize: 12 }}>Tap a set to fix it</div>
+            <div className="hint">Tap a set to fix it</div>
           </>
         )}
-        <p className="cue sub" style={{ marginTop: 16 }}>{node.cue}</p>
+        <p className="cue sub">{node.cue}</p>
         {/* a second, thumb-reachable way out */}
-        <button className="cta sec" style={{ marginTop: 24 }} onClick={leave}>Back to Workout</button>
+        <button className="cta sec spaced" onClick={leave}>Back to Workout</button>
       </div>
 
       {askClose && holdStart !== null && (
@@ -153,7 +154,6 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           number={editN + 1}
           unit={unit}
           initial={entries[editN].value}
-          color={meta.color}
           onSave={(v) => { editSet(entries[editN].index, v); setEditing(null) }}
           onRemove={() => { removeSet(entries[editN].index); setEditing(null) }}
           onClose={() => setEditing(null)}

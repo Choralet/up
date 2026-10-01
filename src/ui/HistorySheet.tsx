@@ -32,8 +32,8 @@ export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: (
 
   return (
     <>
-      <div className="scrim" style={{ zIndex: 30 }} onClick={onClose} />
-      <div className="sheet" style={{ zIndex: 31, textAlign: 'left' }} role="dialog" aria-modal="true" aria-label={`History: ${node.name}`}>
+      <div className="scrim top" onClick={onClose} />
+      <div className="sheet top left" role="dialog" aria-modal="true" aria-label={`History: ${node.name}`}>
         <div className="head">
           <h3>{node.name}</h3>
           <button className="pillbtn" onClick={onClose}>Done</button>
@@ -51,10 +51,10 @@ export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: (
                 </g>
               ))}
               <line x1={PAD.l} x2={W - PAD.r} y1={y(node.goal.target)} y2={y(node.goal.target)} className="goalline" />
-              <polyline className="histline" fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"
+              <polyline className="histline" fill="none" stroke={color} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round"
                 points={rows.map((r, i) => `${x(i)},${y(r.best)}`).join(' ')} />
               {rows.map((r, i) => (
-                <g key={r.date} onClick={() => setTip(tip === i ? null : i)} style={{ cursor: 'pointer' }}>
+                <g key={r.date} onClick={() => setTip(tip === i ? null : i)}>
                   <circle cx={x(i)} cy={y(r.best)} r="14" fill="transparent" />
                   <circle cx={x(i)} cy={y(r.best)} r="4.5" fill={color} stroke="var(--card)" strokeWidth="2" />
                 </g>
@@ -65,7 +65,7 @@ export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: (
             {tip !== null && rows[tip] && (
               <p className="sub" role="status">{shortDate(rows[tip].date)} · best {rows[tip].best} {unit} · {plural(rows[tip].sets, 'set')}</p>
             )}
-            <p className="sub" style={{ fontSize: 12 }}>Dashed line: your goal ({node.goal.target} {unit}).</p>
+            <p className="hint">Dashed line: your goal ({node.goal.target} {unit}).</p>
             <ul className="summary">
               {[...all].reverse().map((r) => (
                 <li key={r.date}><b>{shortDate(r.date)}</b><span className="sub">{plural(r.sets, 'set')} · best {r.best} {unit}</span></li>
