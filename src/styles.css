@@ -5,6 +5,10 @@ body {
   -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
 }
 button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
+.icon { display: block; flex: none; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.icon .solid { fill: currentColor; stroke: none; }
+.icon path[d^="M6 12h.01"] { stroke-width: 4; }
+.gear, .medal, .achmedal, .req span, .check .box { display: grid; place-items: center; }
 
 .app { max-width: 480px; margin: 0 auto; min-height: 100dvh; }
 .screen { padding: calc(env(safe-area-inset-top) + 16px) 16px calc(90px + env(safe-area-inset-bottom)); }

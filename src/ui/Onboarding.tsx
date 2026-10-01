@@ -4,6 +4,7 @@ import { TRACKS } from '../data/tracks'
 import type { DayType, ExerciseNode } from '../data/types'
 import { levelUp, type Progress } from '../engine/progress'
 import { useProgress } from '../store/ProgressContext'
+import { Icon } from './Icon'
 
 /** Ignore a second tap this soon after an answer (a double tap would otherwise answer the next question). */
 export const onboardingTuning = { answerLockMs: 350 }
@@ -120,7 +121,7 @@ export function Onboarding() {
           {WEEKDAYS.map((name, i) => (
             <button key={name} className="check pick" role="checkbox" aria-checked={days[i]} aria-label={name}
               onClick={() => setDays((d) => d.map((v, j) => (j === i ? !v : v)))}>
-              <span className="box" aria-hidden="true">{days[i] ? '✓' : ''}</span>
+              <span className="box" aria-hidden="true">{days[i] && <Icon name="check" size={14} />}</span>
               <span className="lbl">{name}</span>
               {days[i] && <span className="amount">{DAY_LABEL[plan[i]].replace(' Day', '')}</span>}
             </button>

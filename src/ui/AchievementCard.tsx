@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { achievements } from '../engine/achievements'
 import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
+import { Icon } from './Icon'
 
 /** A small, quiet card on Today for one newly earned achievement. */
 export function AchievementCard() {
@@ -19,7 +20,7 @@ export function AchievementCard() {
   if (!fresh) return null
   return (
     <div className="card achcard" role="status" aria-label="New achievement">
-      <span className="achmedal" aria-hidden="true">★</span>
+      <span className="achmedal" aria-hidden="true"><Icon name="star" size={22} /></span>
       <span className="t">
         <span className="tag extra">Achievement</span>
         <b>{fresh.name}</b>

@@ -7,6 +7,7 @@ import { useProgress } from '../store/ProgressContext'
 import { ConfirmSheet } from './ConfirmSheet'
 import { GoalEditor } from './GoalEditor'
 import { skillName } from '../data/names'
+import { Icon } from './Icon'
 
 const LABEL = { done: 'Done', training: 'Training', ready: 'Ready', locked: 'Locked' } as const
 
@@ -44,7 +45,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
                 const ok = completed.has(id)
                 return (
                   <li className="req" key={id}>
-                    <span className={ok ? 'ok' : 'nx'} aria-hidden="true">{ok ? '✓' : '…'}</span>
+                    <span className={ok ? 'ok' : 'nx'} aria-hidden="true"><Icon name={ok ? 'check' : 'dots'} size={12} /></span>
                     {byId.get(id)?.name ?? id}
                   </li>
                 )

@@ -9,6 +9,7 @@ import { GoalEditor } from './GoalEditor'
 import { trackById } from '../data/tracks'
 import { HistorySheet } from './HistorySheet'
 import { skillName } from '../data/names'
+import { Icon } from './Icon'
 
 const LABEL = { locked: 'Locked', available: 'Ready', focus: 'Training', completed: 'Done' } as const
 
@@ -38,7 +39,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
           const ok = progress.completed.includes(id)
           return (
             <div className="req" key={id}>
-              <span className={ok ? 'ok' : 'nx'} aria-hidden="true">{ok ? '✓' : '…'}</span>
+              <span className={ok ? 'ok' : 'nx'} aria-hidden="true"><Icon name={ok ? 'check' : 'dots'} size={12} /></span>
               Requires {byId.get(id)?.name ?? id}
             </div>
           )

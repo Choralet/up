@@ -7,6 +7,7 @@ import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META } from './branches'
 import { Ring } from './Ring'
+import { Icon } from './Icon'
 
 export function ProgressScreen() {
   const { nodes, byId, progress } = useProgress()
@@ -69,7 +70,7 @@ export function ProgressScreen() {
       <ul className="achgrid" aria-label="Achievements">
         {achs.map((a) => (
           <li key={a.id} className={a.earned ? 'earned' : ''} aria-label={`${a.name}, ${a.earned ? 'earned' : 'not yet'}: ${a.detail}`}>
-            <span className="achmedal" aria-hidden="true">★</span>
+            <span className="achmedal" aria-hidden="true"><Icon name="star" size={22} /></span>
             <b>{a.name}</b>
           </li>
         ))}

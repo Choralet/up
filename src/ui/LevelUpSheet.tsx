@@ -5,6 +5,7 @@ import { goalText } from '../lib/format'
 import { ROADMAP } from '../data/roadmap'
 import { SKILLS } from '../data/skills'
 import { nodeAccent } from './branches'
+import { Icon } from './Icon'
 
 /** Name what a level-up unlocks the way the Skills tab shows it: Roadmap skill names first, else the skill chain name. */
 function unlockNames(nodes: ExerciseNode[]): { roadmap: string[]; mine: string[] } {
@@ -35,7 +36,7 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
     <>
       <div className="scrim" onClick={onDismiss} />
       <div className="sheet center" role="dialog" aria-modal="true" aria-label="Level up" style={nodeAccent(node)}>
-        <div className="medal" aria-hidden="true">✓</div>
+        <div className="medal" aria-hidden="true"><Icon name="check" size={34} /></div>
         <h3>You hit {goalText(node.goal)}</h3>
         <p>{node.name} complete.{hasChoices ? ' Choose your next focus.' : ' You have finished everything unlocked here.'}</p>
         {suggestions.map((s, i) => (

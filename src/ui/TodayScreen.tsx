@@ -12,6 +12,7 @@ import { AchievementCard } from './AchievementCard'
 import { BackupNotice } from './BackupNotice'
 import { BRANCH_META } from './branches'
 import { trackById } from '../data/tracks'
+import { Icon } from './Icon'
 
 const TRAIN_ANYWAY: Exclude<DayType, 'rest'>[] = ['push', 'pull', 'legs']
 const ANYWAY_LABEL = { push: 'Push', pull: 'Pull', legs: 'Legs + Core' } as const
@@ -46,9 +47,9 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           <b>{node.name}</b>
           <span>{status}</span>
         </span>
-        {goalMet(node.goal, values) ? <span className="tick" aria-label="Goal reached">✓</span>
-          : logged >= node.goal.sets ? <span className="tick done" aria-label="Sets done">✓</span>
-          : <span className="chev" aria-hidden="true">›</span>}
+        {goalMet(node.goal, values) ? <span className="tick" role="img" aria-label="Goal reached"><Icon name="check" /></span>
+          : logged >= node.goal.sets ? <span className="tick done" role="img" aria-label="Sets done"><Icon name="check" /></span>
+          : <Icon name="chevron" className="chev" />}
       </button>
     )
   }
@@ -61,7 +62,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           <div className="sub" style={{ fontWeight: 600 }}>{heading}</div>
           <h1 className="large">{DAY_LABEL[day]}</h1>
         </div>
-        <button className="gear" aria-label="Settings" onClick={onSettings}>⚙</button>
+        <button className="gear" aria-label="Settings" onClick={onSettings}><Icon name="gear" size={22} /></button>
       </div>
       <BackupNotice refresh={settingsOpen} onOpen={onSettings} />
       <AchievementCard />
@@ -95,7 +96,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
               const on = warm.includes(key)
               return (
                 <button key={key} className="check" role="checkbox" aria-checked={on} aria-label={item.name} onClick={() => toggleWarm(key)}>
-                  <span className="box" aria-hidden="true">{on ? '✓' : ''}</span>
+                  <span className="box" aria-hidden="true">{on && <Icon name="check" size={14} />}</span>
                   <span className="lbl">{item.name}</span>
                   <span className="amount">{item.amount}</span>
                 </button>
