@@ -1,0 +1,154 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  .m-row { display:flex; gap:28px; flex-wrap:wrap; justify-content:center; margin-top:18px; }
+  .m-col { display:flex; flex-direction:column; align-items:center; gap:10px; width:310px; }
+  .m-col .option { width:100%; }
+  .ph { width:300px; height:620px; border-radius:40px; overflow:hidden; position:relative; box-shadow:0 0 0 8px #2a2a2e, 0 20px 50px rgba(0,0,0,.35); }
+  .ph svg { display:block; }
+  .tb { position:absolute; left:0; right:0; bottom:0; display:flex; justify-content:space-around; padding:8px 6px 18px; }
+  .tb div { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:10px; }
+
+  /* ---------- A: Fitness Glow ---------- */
+  .a { background:#000; color:#fff; font-family:-apple-system,'SF Pro Text',system-ui,sans-serif; padding:44px 14px 0; }
+  .a .eb { color:#ff9f0a; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+  .a h1 { font-size:32px; font-weight:800; letter-spacing:-.03em; margin:0; line-height:1.1; color:#fff; }
+  .a .hero { margin:14px 0 10px; border-radius:22px; padding:14px; background:linear-gradient(135deg,#3a1c00,#1c1c1e 60%); display:flex; gap:14px; align-items:center; }
+  .a .hero b { font-size:30px; font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+  .a .hero span { display:block; font-size:12px; color:#a1a1a6; }
+  .a .hdr { font-size:12px; font-weight:700; color:#8e8e93; text-transform:uppercase; letter-spacing:.04em; margin:12px 4px 6px; }
+  .a .grp { background:#1c1c1e; border-radius:18px; overflow:hidden; }
+  .a .r { display:flex; align-items:center; gap:10px; padding:10px 12px; }
+  .a .r + .r { border-top:.5px solid #38383a; }
+  .a .ic { width:38px; height:38px; border-radius:11px; display:grid; place-items:center; flex:none; }
+  .a .t { flex:1; min-width:0; }
+  .a .t b { display:block; font-size:15px; font-weight:600; }
+  .a .t span { font-size:12px; color:#8e8e93; }
+  .a .bar { height:4px; border-radius:2px; background:#38383a; margin-top:6px; overflow:hidden; }
+  .a .bar i { display:block; height:100%; border-radius:2px; }
+  .a .cta { margin:14px 0; border-radius:16px; padding:14px; text-align:center; font-weight:700; background:linear-gradient(90deg,#ff9f0a,#ff375f); color:#fff; }
+  .a .tb { background:rgba(20,20,22,.92); border-top:.5px solid #38383a; color:#8e8e93; }
+  .a .tb .on { color:#ff9f0a; }
+
+  /* ---------- B: Sports Block ---------- */
+  .b { background:#111827; color:#f8fafc; font-family:Barlow,system-ui,sans-serif; padding:44px 14px 0; }
+  .b .eb { font-family:'Barlow Condensed'; font-weight:600; font-size:14px; letter-spacing:.12em; text-transform:uppercase; color:#94a3b8; }
+  .b h1 { font-family:'Barlow Condensed'; font-weight:800; font-size:46px; line-height:.9; text-transform:uppercase; margin:2px 0 0; color:#f8fafc; letter-spacing:.01em; }
+  .b h1 em { color:#f97316; font-style:normal; }
+  .b .hero { margin:12px 0; border-radius:16px; background:#f97316; color:#0f172a; padding:12px 14px; position:relative; overflow:hidden; }
+  .b .hero .k { font-family:'Barlow Condensed'; font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; opacity:.75; }
+  .b .hero .n { font-family:'Barlow Condensed'; font-weight:800; font-size:24px; text-transform:uppercase; line-height:1; margin-top:2px; }
+  .b .hero .g { font-family:'Barlow Condensed'; font-weight:800; font-size:40px; position:absolute; right:14px; top:8px; }
+  .b .hero .sq { display:flex; gap:5px; margin-top:8px; }
+  .b .hero .sq i { width:22px; height:8px; border-radius:2px; background:rgba(15,23,42,.25); }
+  .b .hero .sq i.on { background:#0f172a; }
+  .b .hdr { font-family:'Barlow Condensed'; font-weight:700; font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:#94a3b8; margin:12px 2px 6px; }
+  .b .blk { background:#1f2937; border-radius:14px; padding:10px 12px; margin-bottom:6px; display:flex; align-items:center; gap:10px; border-left:5px solid var(--c); }
+  .b .t { flex:1; }
+  .b .t b { display:block; font-weight:700; font-size:16px; }
+  .b .t span { font-size:12px; color:#cbd5e1; }
+  .b .sets { display:flex; gap:4px; margin-top:6px; }
+  .b .sets i { width:18px; height:6px; border-radius:2px; background:#374151; }
+  .b .sets i.on { background:var(--c); }
+  .b .num { font-family:'Barlow Condensed'; font-weight:800; font-size:26px; line-height:1; text-align:right; }
+  .b .num small { display:block; font-size:11px; letter-spacing:.1em; color:#94a3b8; font-weight:600; }
+  .b .cta { margin:10px 0; border-radius:14px; padding:12px; text-align:center; background:#22c55e; color:#0f172a; font-family:'Barlow Condensed'; font-weight:800; font-size:20px; letter-spacing:.06em; text-transform:uppercase; }
+  .b .tb { background:#0b1220; border-top:1px solid #1f2937; color:#64748b; font-family:'Barlow Condensed'; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+  .b .tb .on { color:#f97316; }
+
+  /* ---------- C: Game Quest ---------- */
+  .c { background:#131f24; color:#f1f7fb; font-family:Nunito,system-ui,sans-serif; padding:44px 14px 0; }
+  .c .top { display:flex; align-items:center; gap:10px; }
+  .c .lv { width:44px; height:44px; border-radius:14px; background:#ffc800; color:#4a3500; font-weight:900; display:grid; place-items:center; font-size:15px; box-shadow:0 4px 0 #cc9a00; flex:none; line-height:1; text-align:center; }
+  .c .lv small { display:block; font-size:9px; }
+  .c .xp { flex:1; }
+  .c .xp b { font-size:13px; font-weight:800; }
+  .c .xp .tr { height:12px; border-radius:6px; background:#37464f; margin-top:4px; overflow:hidden; }
+  .c .xp .tr i { display:block; width:62%; height:100%; background:#58cc02; border-radius:6px; box-shadow:inset 0 -3px 0 rgba(0,0,0,.15); }
+  .c .streak { font-weight:900; color:#ff9600; display:flex; align-items:center; gap:3px; font-size:15px; }
+  .c h1 { font-size:30px; font-weight:900; margin:12px 0 2px; color:#fff; }
+  .c .sub { color:#8fa6b2; font-weight:700; font-size:13px; }
+  .c .q { border:2px solid #37464f; border-radius:18px; padding:10px 12px; margin:8px 0; display:flex; align-items:center; gap:10px; box-shadow:0 4px 0 #37464f; background:#131f24; }
+  .c .q.sk { border-color:#ce82ff; box-shadow:0 4px 0 #a05ad0; }
+  .c .q .ic { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; flex:none; box-shadow:0 3px 0 rgba(0,0,0,.25); }
+  .c .q .t { flex:1; }
+  .c .q .t b { display:block; font-weight:800; font-size:15px; }
+  .c .q .t span { font-size:12px; color:#8fa6b2; font-weight:700; }
+  .c .q .pts { font-weight:900; font-size:13px; color:#ffc800; }
+  .c .cta { margin:14px 0; border-radius:16px; padding:13px; text-align:center; background:#58cc02; color:#fff; font-weight:900; font-size:16px; letter-spacing:.06em; text-transform:uppercase; box-shadow:0 4px 0 #46a302; }
+  .c .tb { background:#131f24; border-top:2px solid #37464f; color:#8fa6b2; font-weight:800; }
+  .c .tb .on { color:#1cb0f6; }
+</style>
+
+<h2>Which direction has the energy you want?</h2>
+<p class="subtitle">Same Today screen (Push Day), three looks. All keep big tap targets, dark + light mode and Reduce Motion. Click one, then tell me what you like or don't in the terminal. Mixing is fine ("B's font with A's colours").</p>
+
+<div class="m-row">
+
+  <!-- A -->
+  <div class="m-col">
+    <div class="ph a">
+      <div class="eb">Wednesday · Week 3</div>
+      <h1>Push Day</h1>
+      <div class="hero">
+        <svg width="62" height="62" viewBox="0 0 62 62"><defs><linearGradient id="ga" x1="0" x2="1"><stop offset="0" stop-color="#ff9f0a"/><stop offset="1" stop-color="#ff375f"/></linearGradient></defs><circle cx="31" cy="31" r="25" fill="none" stroke="#3a2a1a" stroke-width="9"/><circle cx="31" cy="31" r="25" fill="none" stroke="url(#ga)" stroke-width="9" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="100" transform="rotate(-90 31 31)"/></svg>
+        <div><b>4/11</b><span>sets done · about 14 min left</span></div>
+      </div>
+      <div class="hdr">Skill</div>
+      <div class="grp">
+        <div class="r"><div class="ic" style="background:linear-gradient(135deg,#ff375f,#bf5af2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v12M8 7l4-4 4 4M7 21h10"/></svg></div><div class="t"><b>Chest-to-wall hold</b><span>4 × 20 s</span><div class="bar"><i style="width:50%;background:#ff375f"></i></div></div></div>
+      </div>
+      <div class="hdr">Strength</div>
+      <div class="grp">
+        <div class="r"><div class="ic" style="background:linear-gradient(135deg,#ff9f0a,#ff6a00)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 15h16M7 15l3-6h4l3 6"/></svg></div><div class="t"><b>Push-up</b><span>3 × 10 · best 9</span><div class="bar"><i style="width:66%;background:#ff9f0a"></i></div></div></div>
+        <div class="r"><div class="ic" style="background:linear-gradient(135deg,#ff9f0a,#ff6a00)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M5 19l7-12 7 12"/></svg></div><div class="t"><b>Pike push-up</b><span>3 × 8</span><div class="bar"><i style="width:0;background:#ff9f0a"></i></div></div></div>
+        <div class="r"><div class="ic" style="background:linear-gradient(135deg,#ff9f0a,#ff6a00)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M6 6v12M18 6v12M6 12h12"/></svg></div><div class="t"><b>Bench dip</b><span>3 × 12</span><div class="bar"><i style="width:0;background:#ff9f0a"></i></div></div></div>
+      </div>
+      <div class="cta">Finish Workout</div>
+      <div class="tb"><div class="on">●<span>Today</span></div><div>◆<span>Tree</span></div><div>★<span>Skills</span></div><div>▲<span>Progress</span></div></div>
+    </div>
+    <div class="option" data-choice="a" onclick="toggleSelect(this)"><div class="letter">A</div><div class="content"><h3>Fitness Glow</h3><p>Closest to today's app, turned up: iPhone font, true black, glowing gradient rings and icons, progress bars on every exercise. Apple Fitness energy.</p></div></div>
+  </div>
+
+  <!-- B -->
+  <div class="m-col">
+    <div class="ph b">
+      <div class="eb">Wed · Week 3 · 4/11 sets</div>
+      <h1>Push <em>Day</em></h1>
+      <div class="hero">
+        <div class="k">Skill</div>
+        <div class="n">Chest-to-wall<br>hold</div>
+        <div class="g">4×20s</div>
+        <div class="sq"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+      </div>
+      <div class="hdr">Strength</div>
+      <div class="blk" style="--c:#f97316"><div class="t"><b>Push-up</b><span>Best set 9</span><div class="sets"><i class="on"></i><i class="on"></i><i></i></div></div><div class="num">3×10<small>GOAL</small></div></div>
+      <div class="blk" style="--c:#f97316"><div class="t"><b>Pike push-up</b><span>Not started</span><div class="sets"><i></i><i></i><i></i></div></div><div class="num">3×8<small>GOAL</small></div></div>
+      <div class="blk" style="--c:#f97316"><div class="t"><b>Bench dip</b><span>Not started</span><div class="sets"><i></i><i></i><i></i></div></div><div class="num">3×12<small>GOAL</small></div></div>
+      <div class="cta">Finish Workout</div>
+      <div class="tb"><div class="on">●<span>Today</span></div><div>◆<span>Tree</span></div><div>★<span>Skills</span></div><div>▲<span>Progress</span></div></div>
+    </div>
+    <div class="option" data-choice="b" onclick="toggleSelect(this)"><div class="letter">B</div><div class="content"><h3>Sports Block <em style="font-style:normal;color:#f97316">(skill's pick)</em></h3><p>What ui-ux-pro-max recommends for fitness: condensed athletic font, slate dark, bold orange blocks, green for "go". Feels like a sports brand / Nike Training.</p></div></div>
+  </div>
+
+  <!-- C -->
+  <div class="m-col">
+    <div class="ph c">
+      <div class="top">
+        <div class="lv"><span>7<small>LVL</small></span></div>
+        <div class="xp"><b>Push 62%</b><div class="tr"><i></i></div></div>
+        <div class="streak"><svg width="16" height="16" viewBox="0 0 24 24" fill="#ff9600"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg>3</div>
+      </div>
+      <h1>Push Day</h1>
+      <div class="sub">4 of 11 sets · keep going</div>
+      <div class="q sk"><div class="ic" style="background:#ce82ff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v12M8 7l4-4 4 4M7 21h10"/></svg></div><div class="t"><b>Chest-to-wall hold</b><span>Skill · 2 of 4 holds</span></div><div class="pts">4×20s</div></div>
+      <div class="q"><div class="ic" style="background:#ff9600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M4 15h16M7 15l3-6h4l3 6"/></svg></div><div class="t"><b>Push-up</b><span>2 of 3 sets</span></div><div class="pts">3×10</div></div>
+      <div class="q"><div class="ic" style="background:#ff9600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M5 19l7-12 7 12"/></svg></div><div class="t"><b>Pike push-up</b><span>Not started</span></div><div class="pts">3×8</div></div>
+      <div class="q"><div class="ic" style="background:#ff9600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M6 6v12M18 6v12M6 12h12"/></svg></div><div class="t"><b>Bench dip</b><span>Not started</span></div><div class="pts">3×12</div></div>
+      <div class="cta">Finish Workout</div>
+      <div class="tb"><div class="on">●<span>Today</span></div><div>◆<span>Tree</span></div><div>★<span>Skills</span></div><div>▲<span>Progress</span></div></div>
+    </div>
+    <div class="option" data-choice="c" onclick="toggleSelect(this)"><div class="letter">C</div><div class="content"><h3>Game Quest</h3><p>Most game-like: rounded font, level badge and XP bar per branch, chunky "pressable" cards with a 3D edge, streak flame. Duolingo-style.</p></div></div>
+  </div>
+
+</div>

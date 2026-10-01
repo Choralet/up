@@ -135,3 +135,11 @@ User asked for an agent to find layout bugs like the stretched Goal pill. Fixed 
 - Tree: more room between rows (labels no longer hit the node below or cut the glow), slanted lines stop under labels.
 - Tab bar fits at larger text; goals never split across lines ("4 ×" / "20 s"); History chart gridlines use whole numbers with room above the goal; the selected segment is visible in dark mode; zoom % keeps its width; long names wrap.
 - Not done yet (polish, awaiting the user): see the audit's polish list (mixed accent colours on skill screens, two blues, Goal pill looking like a button, Settings footnote spacing, rest-day pills, Today icon abbreviations, light-mode contrast on icons, Progress streak wording, node sheet covering the tapped node).
+
+## Redesign: Game Quest (2026-10-01)
+
+User: "Redesign my app following ui-ux-pro-max skill." Reason given: **more energy and game feel** (the quiet look was too quiet). From three mockups (Fitness Glow, Sports Block = the skill's own pick, Game Quest) the user chose **Game Quest** (Duolingo-like: rounded Nunito font, chunky pressable cards with a bottom edge, level badge + bar, streak flame), then approved four screens (`docs/mockups/game-quest.html`). Supersedes: Apple-like look with the system font, the "quiet" game feel and "no confetti".
+- **Levels and XP show existing progress only:** branch level = exercises finished in that branch, bar = finished / total. No new points system, no new saved data.
+- **Reward moments: bigger but short** (about 1.5 s level-up card with bouncing badge, shape burst and bar fill; Finish Workout counts up). No confetti, no sound. Static under Reduce Motion.
+- **Build approach:** restyle in place with plain CSS tokens (no Tailwind/shadcn, no theme switch back to the old look); Nunito bundled for offline; dark text on bright fills for contrast; each screen keeps its branch colour; Skills pink, Core purple.
+- Work on branch `redesign-game-quest`, shipped to `main` only when complete. Spec: `docs/superpowers/specs/2026-10-01-game-quest-redesign-design.md`.

@@ -1,0 +1,153 @@
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  .g-row { display:flex; gap:26px; flex-wrap:wrap; justify-content:center; margin-top:16px; }
+  .g-col { display:flex; flex-direction:column; align-items:center; gap:8px; width:290px; }
+  .g-cap { font-size:13px; text-align:center; opacity:.8; }
+  .ph { width:280px; height:590px; border-radius:38px; overflow:hidden; position:relative; box-shadow:0 0 0 7px #2a2a2e, 0 18px 44px rgba(0,0,0,.35);
+        font-family:Nunito,system-ui,sans-serif; padding:40px 14px 0; }
+  .ph * { box-sizing:border-box; }
+  /* tokens */
+  .dk { --bg:#131f24; --ink:#f1f7fb; --ink2:#8fa6b2; --line:#37464f; --card:#131f24; --fill:#202f36; }
+  .lt { --bg:#ffffff; --ink:#3c3c3c; --ink2:#6f6f6f; --line:#e5e5e5; --card:#ffffff; --fill:#f2f2f2; }
+  .ph { background:var(--bg); color:var(--ink); --push:#ff9600; --push-d:#cc7800; --pull:#1cb0f6; --pull-d:#1899d6; --legs:#58cc02; --legs-d:#46a302; --core:#ce82ff; --core-d:#a568cc; --skill:#ff4b8b; --skill-d:#d63a70; --onc:#2b1a00; }
+  .eb { font-size:12px; font-weight:900; letter-spacing:.06em; text-transform:uppercase; color:var(--ink2); }
+  .btn { display:block; border-radius:16px; padding:13px; text-align:center; font-weight:900; font-size:15px; letter-spacing:.05em; text-transform:uppercase; background:var(--c); color:var(--onc); box-shadow:0 4px 0 var(--cd); }
+  .btn.ghost { background:transparent; color:var(--ink2); box-shadow:0 4px 0 var(--line); border:2px solid var(--line); }
+  .tb { position:absolute; left:0; right:0; bottom:0; display:flex; justify-content:space-around; padding:8px 6px 16px; border-top:2px solid var(--line); background:var(--bg); color:var(--ink2); font-weight:800; }
+  .tb div { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:10px; }
+  .tb .on { color:var(--push); }
+  .tb svg { width:20px; height:20px; }
+
+  /* log */
+  .log .pill { display:inline-block; border:2px solid var(--line); border-radius:999px; padding:3px 10px; font-size:12px; font-weight:800; color:var(--ink2); margin:0 2px; }
+  .log .sets { display:flex; gap:6px; justify-content:center; margin:14px 0 4px; }
+  .log .sets i { width:44px; height:12px; border-radius:6px; background:var(--fill); }
+  .log .sets i.on { background:var(--push); box-shadow:inset 0 -3px 0 rgba(0,0,0,.15); }
+  .log .big { font-size:96px; font-weight:900; line-height:1; margin:12px 0 0; font-variant-numeric:tabular-nums; }
+  .log .step { display:flex; justify-content:center; gap:26px; margin:14px 0 18px; }
+  .log .step div { width:64px; height:64px; border-radius:20px; border:2px solid var(--line); box-shadow:0 4px 0 var(--line); display:grid; place-items:center; font-size:34px; font-weight:800; color:var(--ink); }
+  .log .chips { display:flex; gap:6px; justify-content:center; margin-top:14px; }
+  .log .chips span { border-radius:12px; padding:5px 10px; font-weight:900; font-size:14px; background:var(--fill); }
+
+  /* tree */
+  .tree .seg { display:flex; gap:6px; margin:8px 0 6px; }
+  .tree .seg span { flex:1; text-align:center; padding:6px 0; border-radius:12px; border:2px solid var(--line); font-size:12px; font-weight:900; color:var(--ink2); }
+  .tree .seg span.on { border-color:var(--push); color:var(--push); background:rgba(255,150,0,.12); }
+  .tree .lvbar { display:flex; align-items:center; gap:8px; margin:6px 0 4px; }
+  .tree .lv { width:36px; height:36px; border-radius:12px; background:var(--push); color:var(--onc); font-weight:900; display:grid; place-items:center; box-shadow:0 3px 0 var(--push-d); font-size:15px; }
+  .tree .tr { flex:1; height:12px; border-radius:6px; background:var(--fill); overflow:hidden; }
+  .tree .tr i { display:block; height:100%; width:58%; background:var(--push); }
+  .tree svg.t { display:block; margin:0 auto; }
+  .tree .lb, .tree svg text { font-family:Nunito; font-size:10px; font-weight:800; fill:var(--ink2); text-anchor:middle; paint-order:stroke; stroke:var(--bg); stroke-width:5px; stroke-linejoin:round; }
+
+  /* level up */
+  .lvl { display:flex; flex-direction:column; align-items:center; text-align:center; background:radial-gradient(circle at 50% 30%, rgba(255,150,0,.28), transparent 60%), var(--bg); }
+  .lvl .burst { position:relative; width:150px; height:150px; margin-top:26px; }
+  .lvl .burst i { position:absolute; width:10px; height:10px; border-radius:3px; background:var(--push); }
+  .lvl .badge { position:absolute; inset:25px; border-radius:32px; background:var(--push); box-shadow:0 7px 0 var(--push-d); display:grid; place-items:center; transform:rotate(-6deg); }
+  .lvl .badge b { font-size:44px; font-weight:900; color:var(--onc); line-height:.9; }
+  .lvl .badge small { display:block; font-size:12px; font-weight:900; letter-spacing:.1em; }
+  .lvl h2 { font-size:28px; font-weight:900; margin:22px 0 4px; color:var(--ink); }
+  .lvl p { color:var(--ink2); font-weight:700; font-size:14px; margin:0 0 14px; }
+  .lvl .xp { width:100%; height:14px; border-radius:7px; background:var(--fill); overflow:hidden; margin-bottom:6px; }
+  .lvl .xp i { display:block; height:100%; width:66%; background:var(--push); }
+  .lvl .next { width:100%; border:2px solid var(--push); border-radius:18px; padding:10px 12px; text-align:left; margin:12px 0; box-shadow:0 4px 0 var(--push-d); }
+  .lvl .next b { display:block; font-weight:900; } .lvl .next span { font-size:12px; color:var(--ink2); font-weight:700; }
+
+  /* today (light) */
+  .top { display:flex; align-items:center; gap:10px; }
+  .top .lv { width:42px; height:42px; border-radius:14px; background:var(--push); color:var(--onc); font-weight:900; display:grid; place-items:center; font-size:15px; box-shadow:0 4px 0 var(--push-d); line-height:1; text-align:center; }
+  .top .lv small { display:block; font-size:9px; }
+  .top .xp { flex:1; } .top .xp b { font-size:13px; font-weight:900; }
+  .top .xp .trk { height:12px; border-radius:6px; background:var(--fill); margin-top:4px; overflow:hidden; }
+  .top .xp .trk i { display:block; width:62%; height:100%; background:var(--push); }
+  .top .st { font-weight:900; color:#e07b00; display:flex; align-items:center; gap:3px; }
+  .td h1 { font-size:30px; font-weight:900; margin:12px 0 2px; }
+  .td .sub { color:var(--ink2); font-weight:700; font-size:13px; }
+  .q { border:2px solid var(--line); border-radius:18px; padding:9px 12px; margin:8px 0; display:flex; align-items:center; gap:10px; box-shadow:0 4px 0 var(--line); background:var(--card); }
+  .q.sk { border-color:var(--skill); box-shadow:0 4px 0 var(--skill-d); }
+  .q .ic { width:38px; height:38px; border-radius:50%; display:grid; place-items:center; flex:none; box-shadow:0 3px 0 rgba(0,0,0,.18); }
+  .q .t { flex:1; } .q .t b { display:block; font-weight:900; font-size:15px; } .q .t span { font-size:12px; color:var(--ink2); font-weight:700; }
+  .q .g { font-weight:900; font-size:13px; }
+  .q.done { opacity:.75; } .q.done .g { color:#3f8f00; }
+</style>
+
+<h2>Game Quest across the app</h2>
+<p class="subtitle">Four key screens. Branch colour leads each screen (orange = Push). Button text is dark on bright colour so it passes contrast (the skill's 4.5:1 rule). Tell me what to change.</p>
+
+<div class="g-row">
+
+  <!-- 1: Log a set -->
+  <div class="g-col">
+    <div class="ph dk log" style="text-align:center">
+      <div style="text-align:right;font-weight:900;color:var(--pull)">DONE</div>
+      <div class="eb" style="color:var(--push)">Push · Push-ups track</div>
+      <div style="font-size:26px;font-weight:900;margin:2px 0 8px">Push-up</div>
+      <span class="pill">Goal 3 × 10</span><span class="pill">How-to</span><span class="pill">History</span>
+      <div class="sets"><i class="on"></i><i class="on"></i><i></i></div>
+      <div class="eb" style="text-transform:none;letter-spacing:0">2 of 3 sets at goal</div>
+      <div class="big">10</div>
+      <div class="eb" style="text-transform:none;letter-spacing:0">reps · last session 9</div>
+      <div class="step"><div>−</div><div>+</div></div>
+      <div class="btn" style="--c:var(--push);--cd:var(--push-d)">Log Set</div>
+      <div class="chips"><span>10</span><span>10</span></div>
+    </div>
+    <div class="g-cap">Log a set: chunky stepper, set bars that fill like an XP bar, bouncing number on change.</div>
+  </div>
+
+  <!-- 2: Tree -->
+  <div class="g-col">
+    <div class="ph dk tree">
+      <div style="font-size:28px;font-weight:900">Tree</div>
+      <div class="seg"><span class="on">PUSH</span><span>PULL</span><span>LEGS</span><span>CORE</span></div>
+      <div class="lvbar"><div class="lv">7</div><div class="tr"><i></i></div><b style="font-size:12px;color:var(--ink2)">7/12</b></div>
+      <svg class="t" width="252" height="420" viewBox="0 0 252 420"><g fill="none" stroke-width="6" stroke-linecap="round">
+<path d="M126 385 V305" stroke="#ff9600"/><path d="M126 305 V215" stroke="#ff9600"/>
+<path d="M126 175 V150" stroke="#ff9600" stroke-dasharray="1 12"/>
+<path d="M114 181 Q60 165 56 150" stroke="#ff9600" stroke-dasharray="1 12"/>
+<path d="M138 181 Q192 165 196 150" stroke="#37464f" stroke-dasharray="1 12"/>
+<path d="M126 92 V81" stroke="#37464f" stroke-dasharray="1 12"/><path d="M56 92 V81" stroke="#37464f" stroke-dasharray="1 12"/></g><circle cx="126" cy="391" r="24" fill="#cc7800"/><circle cx="126" cy="385" r="24" fill="#ff9600"/><path d="M115 385l7 7 13-13" stroke="#2b1a00" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text class="lb" x="126" y="426">Knee push-up</text><circle cx="126" cy="311" r="24" fill="#cc7800"/><circle cx="126" cy="305" r="24" fill="#ff9600"/><path d="M115 305l7 7 13-13" stroke="#2b1a00" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text class="lb" x="126" y="346">Push-up</text><circle cx="126" cy="215" r="37" fill="none" stroke="#ff9600" stroke-width="4" opacity=".35"/><circle cx="126" cy="221" r="28" fill="#cc7800"/><circle cx="126" cy="215" r="28" fill="#ff9600"/><path d="M114 223h24M118 223l5-10h6l5 10" stroke="#2b1a00" stroke-width="3.5" fill="none" stroke-linecap="round"/><text x="126" y="266" text-anchor="middle" style="font:900 11px Nunito;fill:#ff9600;letter-spacing:.08em">TRAINING</text><circle cx="56" cy="126" r="24" fill="#37464f"/><circle cx="56" cy="120" r="24" fill="#131f24" stroke="#ff9600" stroke-width="4"/><path d="M48 120h16M56 112v16" stroke="#ff9600" stroke-width="3.5" stroke-linecap="round"/><text class="lb" x="56" y="161">Diamond</text><circle cx="126" cy="126" r="24" fill="#37464f"/><circle cx="126" cy="120" r="24" fill="#131f24" stroke="#ff9600" stroke-width="4"/><path d="M118 120h16M126 112v16" stroke="#ff9600" stroke-width="3.5" stroke-linecap="round"/><text class="lb" x="126" y="161">Decline</text><circle cx="196" cy="126" r="24" fill="#2a3940"/><circle cx="196" cy="120" r="24" fill="#37464f"/><rect x="189" y="118" width="14" height="10" rx="2" fill="#8fa6b2"/><path d="M191 118v-4a5 5 0 0 1 10 0v4" stroke="#8fa6b2" stroke-width="2.5" fill="none"/><text class="lb" x="196" y="161">Pseudo planche</text><circle cx="56" cy="41" r="24" fill="#2a3940"/><circle cx="56" cy="35" r="24" fill="#37464f"/><rect x="49" y="33" width="14" height="10" rx="2" fill="#8fa6b2"/><path d="M51 33v-4a5 5 0 0 1 10 0v4" stroke="#8fa6b2" stroke-width="2.5" fill="none"/><text class="lb" x="56" y="76">One-arm</text><circle cx="126" cy="41" r="24" fill="#2a3940"/><circle cx="126" cy="35" r="24" fill="#37464f"/><rect x="119" y="33" width="14" height="10" rx="2" fill="#8fa6b2"/><path d="M121 33v-4a5 5 0 0 1 10 0v4" stroke="#8fa6b2" stroke-width="2.5" fill="none"/><text class="lb" x="126" y="76">Archer</text></svg>
+      <div class="tb"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 11l8-7 8 7v9H4z"/></svg>Today</div><div class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M12 8v4M12 12l-5 5M12 12l5 5"/></svg>Tree</div><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Skills</div><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>Progress</div></div>
+    </div>
+    <div class="g-cap">Tree: still a real branching tree, but nodes are chunky "game buttons" with a 3D edge. Branch level + bar on top.</div>
+  </div>
+
+  <!-- 3: Level up -->
+  <div class="g-col">
+    <div class="ph dk lvl">
+      <div class="burst">
+        <i style="left:4px;top:30px;transform:rotate(20deg)"></i><i style="right:0;top:18px;background:#ffc800"></i><i style="left:20px;bottom:6px;background:#ffc800;border-radius:50%"></i><i style="right:12px;bottom:20px;transform:rotate(45deg)"></i><i style="left:70px;top:-4px;border-radius:50%"></i>
+        <div class="badge"><div><small style="color:#2b1a00">PUSH</small><b>8</b><small style="color:#2b1a00">LEVEL</small></div></div>
+      </div>
+      <h2>Level up!</h2>
+      <p>You hit 3 × 10 on Push-up.</p>
+      <div class="xp"><i></i></div>
+      <div class="eb" style="text-transform:none;letter-spacing:0;align-self:stretch;text-align:left">Push: 8 of 12 done</div>
+      <div class="next"><b>Next: Diamond push-up</b><span>Suggested · 3 × 10</span></div>
+      <div class="btn" style="--c:var(--push);--cd:var(--push-d);width:100%">Level Up</div>
+      <div class="btn ghost" style="width:100%;margin-top:12px">Not Yet</div>
+    </div>
+    <div class="g-cap">Level-up: badge drops in and bounces, a short burst of shapes, the bar fills. About 1.5 s, then it sits still.</div>
+  </div>
+
+  <!-- 4: Today light -->
+  <div class="g-col">
+    <div class="ph lt td">
+      <div class="top">
+        <div class="lv"><span>7<small>LVL</small></span></div>
+        <div class="xp"><b>Push · 7 of 12</b><div class="trk"><i></i></div></div>
+        <div class="st"><svg width="16" height="16" viewBox="0 0 24 24" fill="#ff9600"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg>3 wk</div>
+      </div>
+      <h1>Push Day</h1>
+      <div class="sub">Wednesday · 4 of 11 sets</div>
+      <div class="q sk"><div class="ic" style="background:var(--skill)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2b1a00" stroke-width="2.8" stroke-linecap="round"><path d="M12 3v12M8 7l4-4 4 4M7 21h10"/></svg></div><div class="t"><b>Chest-to-wall hold</b><span>Skill · 2 of 4 holds</span></div><div class="g">4×20s</div></div>
+      <div class="q done"><div class="ic" style="background:var(--push)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2b1a00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12l4 4 8-8"/></svg></div><div class="t"><b>Push-up</b><span>Goal reached</span></div><div class="g">3×10</div></div>
+      <div class="q"><div class="ic" style="background:var(--push)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2b1a00" stroke-width="2.8" stroke-linecap="round"><path d="M5 19l7-12 7 12"/></svg></div><div class="t"><b>Pike push-up</b><span>Not started</span></div><div class="g">3×8</div></div>
+      <div class="q"><div class="ic" style="background:var(--push)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2b1a00" stroke-width="2.8" stroke-linecap="round"><path d="M6 6v12M18 6v12M6 12h12"/></svg></div><div class="t"><b>Bench dip</b><span>Not started</span></div><div class="g">3×12</div></div>
+      <div class="btn" style="--c:var(--push);--cd:var(--push-d);margin-top:12px">Finish Workout</div>
+      <div class="tb"><div class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 11l8-7 8 7v9H4z"/></svg>Today</div><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M12 8v4M12 12l-5 5M12 12l5 5"/></svg>Tree</div><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Skills</div><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>Progress</div></div>
+    </div>
+    <div class="g-cap">Today in light mode. Skill = pink (Core keeps purple). Real line icons in the tab bar.</div>
+  </div>
+
+</div>
