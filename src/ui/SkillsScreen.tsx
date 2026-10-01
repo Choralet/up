@@ -9,6 +9,7 @@ import { goalText, plural } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { ConfirmSheet } from './ConfirmSheet'
 import { RoadmapView } from './RoadmapView'
+import { accentStyle } from './branches'
 
 export type SkillsView = 'now' | 'roadmap'
 
@@ -32,7 +33,7 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
     .sort((a, b) => roadmapOrder(a.step.id) - roadmapOrder(b.step.id))
 
   return (
-    <div className="screen">
+    <div className="screen" style={accentStyle('skill')}>
       <h1 className="large">Skills</h1>
       <div className="seg" role="tablist" aria-label="Skills view">
         <button role="tab" aria-selected={view === 'now'} className={view === 'now' ? 'on' : ''} onClick={() => onView('now')}>Now</button>
@@ -69,7 +70,7 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
           </ul>
 
           <div className="hdr">Ready to Start</div>
-          {full && ready.length > 0 && <p className="sub" style={{ margin: '12px 4px 0' }}>Both skill slots are in use. Replace one to start another.</p>}
+          {full && ready.length > 0 && <p className="note">Both skill slots are in use. Replace one to start another.</p>}
           <ul className="group list">
             {ready.length === 0 && (
               <li className="row"><span className="t"><span>Nothing ready yet. Keep training your main exercises to unlock skills.</span></span></li>
@@ -88,7 +89,7 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
               </li>
             ))}
           </ul>
-          <p className="sub" style={{ margin: '12px 4px' }}>
+          <p className="note">
             Locked skills are in the Roadmap, with what each one needs.{' '}
             <button className="linkbtn inline" onClick={() => onView('roadmap')}>Open Roadmap</button>
           </p>

@@ -8,6 +8,7 @@ import { ConfirmSheet } from './ConfirmSheet'
 import { GoalEditor } from './GoalEditor'
 import { skillName } from '../data/names'
 import { Icon } from './Icon'
+import { accentStyle } from './branches'
 
 const LABEL = { done: 'Done', training: 'Training', ready: 'Ready', locked: 'Locked' } as const
 
@@ -31,13 +32,13 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
   return (
     <>
       <div className="scrim" onClick={onClose} />
-      <div className="sheet roadmap-sheet" role="dialog" aria-modal="true" aria-label={item.name}>
-        <div className="eyebrow">Year {item.year} · {LABEL[s.status]}</div>
+      <div className="sheet roadmap-sheet" role="dialog" aria-modal="true" aria-label={item.name} style={accentStyle('skill')}>
+        <div className="eyebrow accent">Year {item.year} · {LABEL[s.status]}</div>
         <h2>{item.name}</h2>
         {item.video && <div className="sub">In the video: {item.video}</div>}
         {first && (
           <>
-            <div className="hdr" style={{ margin: '12px 0 4px' }}>Needs</div>
+            <div className="hdr inset">Needs</div>
             {/* the skill's real prerequisites (its first step's), never its own earlier steps */}
             <ul className="needs" aria-label="Needs">
               {first.requires.length === 0 && <li className="req">Nothing, start any time</li>}
@@ -53,7 +54,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
             </ul>
           </>
         )}
-        <div className="hdr" style={{ margin: '12px 0 4px' }}>Steps</div>
+        <div className="hdr inset">Steps</div>
         <ol className="steplist">
           {item.steps.map((id) => {
             const n = byId.get(id)!

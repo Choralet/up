@@ -172,7 +172,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .check.pick[aria-checked='true'] .lbl { color: var(--label); text-decoration: none; }
 
 .list { list-style: none; padding: 0; }
-.skillrow { align-items: flex-start; }
 .goaled .field { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
 .goaled .field b { font-size: 24px; font-variant-numeric: tabular-nums; min-width: 56px; text-align: center; }
 .goaled .field .steps { margin: 0; gap: 12px; align-items: center; }
@@ -189,19 +188,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .notice { display: block; width: 100%; text-align: left; margin: 12px 0 0; }
 .notice b { display: block; color: var(--skill); }
 
-.rmrow .rmnum { width: 28px; flex: none; color: var(--label2); font-variant-numeric: tabular-nums; font-weight: 600; }
-.rmrow.done b { color: var(--label2); }
-.rmrow.locked b { color: var(--label2); }
-.rmrow .rmicon { width: 22px; text-align: center; }
 .roadmap-sheet { max-height: 85dvh; overflow: auto; }
 .steplist { margin: 4px 0 8px 20px; padding: 0; }
 .steplist li { margin: 4px 0; }
-.steplist li.stepdone b { text-decoration: line-through; color: var(--label2); }
 .videolink { text-decoration: none; }
 
 .needs { list-style: none; padding: 0; margin: 0; }
-.rmrow.done b { color: var(--label); }
-.rmrow.done .rmicon { color: var(--legs); }
 
 .summary { list-style: none; padding: 0; margin: 8px 0; }
 .summary li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 8px 0; border-top: 0.5px solid var(--sep); }
@@ -211,11 +203,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .rollnum, .cdnum { display: inline-block; }
 .switchrow { justify-content: space-between; }
 
-.yearbtn { font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; padding: 8px 0; min-height: 44px; width: 100%; text-align: left; }
-.rmicon { flex: none; color: var(--label3); }
-.rmicon.done { color: var(--legs); }
-.rmicon.training { color: var(--skill); }
-.rmicon.ready { color: var(--blue); }
 
 .weekstrip { list-style: none; padding: 0; margin: 12px 0 0; display: flex; justify-content: space-between; }
 .weekstrip li { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 36px; }
@@ -334,6 +321,20 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: var(--r-md); background: var(--bg); border: 2px solid var(--line); box-shadow: 0 var(--edge) 0 var(--line); }
 .zoombar .pillbtn { margin: 0; min-height: 40px; min-width: 40px; padding: 0 8px; border: 0; box-shadow: none; font-size: var(--fs-small); }
 .zoombar .pillbtn:nth-child(2) { min-width: 56px; font-variant-numeric: tabular-nums; }
+
+/* ============ Skills and Roadmap ============ */
+.hdr.flush { margin-bottom: 8px; }
+.hdr.inset { margin: 14px 0 4px; }
+.hint.inset { margin: 0 4px 8px; }
+.skillrow { align-items: flex-start; }
+.rmrow .rmnum { width: 28px; flex: none; color: var(--ink2); font-variant-numeric: tabular-nums; font-weight: 900; }
+.rmrow.locked b { color: var(--ink2); }
+.rmicon { flex: none; width: 22px; color: var(--ink2); }
+.rmicon.done { color: var(--legs-text); }
+.rmicon.training { color: var(--skill-text); }
+.rmicon.ready { color: var(--accent-text, var(--primary-text)); }
+.steplist li.stepdone b { text-decoration: line-through; color: var(--ink2); }
+.yearbtn { font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; padding: 8px 0; min-height: 44px; width: 100%; text-align: left; }
 
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {

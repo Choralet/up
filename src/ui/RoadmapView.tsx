@@ -45,13 +45,13 @@ export function RoadmapView({ onLog }: { onLog: (id: string) => void }) {
 
   return (
     <>
-      <p className="sub" style={{ marginTop: 8 }}>
+      <p className="note">
         Every skill in order. Order from STRIQfit's videos. Steps and prerequisites are standard progressions, not from the videos.
       </p>
 
       {readyNow.length > 0 && (
         <>
-          <h2 className="hdr" style={{ marginBottom: 8 }}>Ready Now</h2>
+          <h2 className="hdr flush">Ready Now</h2>
           <ul className="group list" aria-label="Ready now">
             {readyNow.map(({ item, s }) => (
               <li key={item.id}>
@@ -72,14 +72,14 @@ export function RoadmapView({ onLog }: { onLog: (id: string) => void }) {
         const isOpen = expanded.has(year)
         return (
           <section key={year}>
-            <h2 className="hdr" style={{ marginBottom: 8 }}>
+            <h2 className="hdr flush">
               <button className="yearbtn" aria-expanded={isOpen} onClick={() => toggle(year)}>
                 Year {year} · {doneCount} of {yearRows.length} done <span aria-hidden="true">{isOpen ? '▾' : '▸'}</span>
               </button>
             </h2>
             {isOpen && (
               <>
-                <div className="sub" style={{ margin: '0 4px 8px', fontSize: 12 }}>{VIDEOS[year].title}</div>
+                <div className="hint inset">{VIDEOS[year].title}</div>
                 <div className="group">
                   {yearRows.map(({ item, s }, i) => (
                     <button

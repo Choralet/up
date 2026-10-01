@@ -26,7 +26,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
     <>
       <div className="scrim" onClick={onClose} />
       <div className="sheet" role="dialog" aria-modal="true" aria-label={node.name} style={nodeAccent(node)}>
-        <div className="eyebrow">{meta.label} · {LABEL[state]}</div>
+        <div className="eyebrow accent">{meta.label} · {LABEL[state]}</div>
         <h2>{node.name}</h2>
         {node.track && <div className="sub">Track: {trackById(node.track)?.name}</div>}
         <div className="pills">
