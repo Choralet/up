@@ -14,8 +14,7 @@ export function ConfirmSheet({ title, message, actions, onCancel }: { title: str
         {actions.map((a) => (
           <button
             key={a.label}
-            className={a.tone === 'primary' ? 'cta' : 'cta sec'}
-            style={a.tone === 'danger' ? { color: 'var(--skill)' } : undefined}
+            className={a.tone === 'primary' ? 'cta' : a.tone === 'danger' ? 'cta sec danger' : 'cta sec'}
             onClick={a.onClick}
           >
             {a.label}

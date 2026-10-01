@@ -69,7 +69,7 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress, after: (
           <b>Connected to {cfg.owner}/{cfg.repo}</b>
           {cfg.paused ? (
             <>
-              <div className="sub" style={{ marginTop: 4 }}>
+              <div className="sub">
                 This repository already has a backup. Restore it to this phone, or replace it with this phone's progress. Automatic backup waits until you choose.
               </div>
               <button className="cta" disabled={busy} onClick={restore}>Restore It</button>
@@ -77,19 +77,19 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress, after: (
             </>
           ) : (
             <>
-              <div className="sub" style={{ marginTop: 4 }}>
+              <div className="sub">
                 {cfg.lastBackupAt ? `Last backup: ${new Date(cfg.lastBackupAt).toLocaleString()}.` : 'No backup yet.'} Backs up automatically when you leave the app.
               </div>
-              {cfg.lastError && <div className="sub" style={{ color: 'var(--skill)', marginTop: 4 }}>Last automatic backup failed: {cfg.lastError}</div>}
+              {cfg.lastError && <div className="sub error">Last automatic backup failed: {cfg.lastError}</div>}
               <button className="cta" disabled={busy} onClick={backUp}>Back Up Now</button>
               <button className="cta sec" disabled={busy} onClick={restore}>Restore from GitHub</button>
             </>
           )}
-          <button className="cta sec" style={{ color: 'var(--skill)' }} disabled={busy} onClick={() => setAskDisconnect(true)}>Disconnect</button>
+          <button className="cta sec danger" disabled={busy} onClick={() => setAskDisconnect(true)}>Disconnect</button>
         </div>
       ) : (
         <div className="card form">
-          <p className="sub" style={{ marginTop: 0 }}>Saves a copy of your progress to a private GitHub repository, automatically when you leave the app.</p>
+          <p className="sub">Saves a copy of your progress to a private GitHub repository, automatically when you leave the app.</p>
           <details className="howtoken">
             <summary>How to Make a Token</summary>
             <ol>
@@ -105,7 +105,7 @@ export function GithubSection({ onRestore }: { onRestore: (p: Progress, after: (
           <button className="cta" disabled={busy || !form.owner || !form.repo || !form.token} onClick={connect}>Connect</button>
         </div>
       )}
-      {error && <p className="sub" role="alert" style={{ color: 'var(--skill)' }}>{error}</p>}
+      {error && <p className="sub error" role="alert">{error}</p>}
       {askDisconnect && (
         <ConfirmSheet
           title="Disconnect GitHub backup?"

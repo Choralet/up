@@ -24,7 +24,7 @@ export function SetSheet({ number, unit, initial, color, onSave, onRemove, onClo
           <button aria-label="Increase set value" onClick={() => setValue((v) => v + 1)}>+</button>
         </div>
         <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => onSave(value)}>Save</button>
-        <button className="cta sec" style={{ color: 'var(--skill)' }} onClick={onRemove}>Remove Set</button>
+        <button className="cta sec danger" onClick={onRemove}>Remove Set</button>
         <button className="cta sec" onClick={onClose}>Cancel</button>
       </div>
     </>
