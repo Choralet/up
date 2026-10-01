@@ -1,6 +1,6 @@
 import type { ExerciseNode } from '../data/types'
 import { initialProgress, type Progress, type SetLog } from './progress'
-import { afterLevel, branchLevel, branchProgress, history, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
+import { afterLevel, branchLevel, branchProgress, history, personalBests, recentSessions, sessionMinutes, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
 
 const L = (date: string, nodeId = 'a', value = 10, at = 0): SetLog => ({ nodeId, value, date, at })
 const three = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] as const
@@ -125,5 +125,16 @@ describe('afterLevel', () => {
   it('never passes the total or a full bar', () => {
     expect(afterLevel({ level: 4, done: 4, total: 4, ratio: 1 })).toEqual({ level: 4, done: 4, total: 4, ratio: 1 })
     expect(afterLevel({ level: 0, done: 0, total: 0, ratio: 0 })).toEqual({ level: 0, done: 0, total: 0, ratio: 0 })
+  })
+})
+
+describe('sessionMinutes', () => {
+  it('is the whole minutes from the first to the last set of that day', () => {
+    const logs = [L('2026-09-21', 'a', 10, 1_000_000), L('2026-09-21', 'b', 10, 1_000_000 + 14.6 * 60_000), L('2026-09-20', 'a', 10, 0)]
+    expect(sessionMinutes(logs, '2026-09-21')).toBe(15)
+  })
+  it('is 0 with one set or none', () => {
+    expect(sessionMinutes([L('2026-09-21')], '2026-09-21')).toBe(0)
+    expect(sessionMinutes([], '2026-09-21')).toBe(0)
   })
 })

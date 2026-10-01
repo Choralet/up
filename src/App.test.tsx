@@ -193,6 +193,17 @@ describe('Logging and level-up', () => {
     expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument() // Volume variations only on Full length
   })
 
+  it('the level-up card names the branch level you reach', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['push-wall'] })} />)
+    await user.click(await screen.findByRole('button', { name: /Incline push-up/ }))
+    const log = screen.getByRole('button', { name: 'Log Set' })
+    await user.click(log); await user.click(log); await user.click(log)
+    const dialog = await screen.findByRole('dialog', { name: 'Level up' })
+    expect(dialog).toHaveTextContent('Push level 2')
+    expect(within(dialog).getByRole('img', { name: 'Push: 2 of 23 steps' })).toBeInTheDocument()
+  })
+
   it('"Not yet" keeps the same focus, and a 4th set does not re-open the sheet', async () => {
     const user = userEvent.setup()
     render(<App storage={seed()} />)

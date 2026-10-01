@@ -140,7 +140,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           {anyLogged && <button className="cta" style={accentStyle(DAY_BRANCHES[day][0])} onClick={() => setFinishing(true)}>Finish Workout</button>}
         </>
       )}
-      {finishing && <FinishSheet today={today} onClose={() => setFinishing(false)} />}
+      {finishing && <div className="contents" style={day !== 'rest' ? accentStyle(DAY_BRANCHES[day][0]) : undefined}><FinishSheet today={today} onClose={() => setFinishing(false)} /></div>}
     </div>
   )
 }

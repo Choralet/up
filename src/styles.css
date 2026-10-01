@@ -345,6 +345,18 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .howtoken summary { color: var(--primary-text); font-weight: 900; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
 .howtoken ol { padding-left: 20px; color: var(--ink2); }
 
+/* ============ Reward moments ============ */
+.levelup { background: radial-gradient(circle at 50% 22%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 62%), var(--bg); }
+.levelup .xpbar { margin: 12px 0 4px; }
+.burst { position: relative; width: 150px; height: 150px; margin: 4px auto 18px; display: grid; place-items: center; }
+.burst i { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 3px; background: var(--accent); opacity: 0; }
+.burst i:nth-child(even) { background: var(--gold); border-radius: 50%; }
+.contents { display: contents; }
+.totals { display: flex; justify-content: center; gap: 12px; margin: 14px 0 6px; }
+.total { flex: 1; max-width: 120px; padding: 10px 6px; text-align: center; border: 2px solid var(--line); border-radius: var(--r-md); box-shadow: 0 var(--edge) 0 var(--line); }
+.total b { display: block; font-size: 2rem; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--accent-text, var(--primary-text)); }
+.total span { font-size: var(--fs-label); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink2); }
+
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
   /* entrance animations fill backwards only: a transform kept after the end would trap fixed sheets inside the screen */
@@ -395,10 +407,17 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   @keyframes rollUp { from { transform: translateY(18px); opacity: 0.2; } }
   @keyframes rollDown { from { transform: translateY(-18px); opacity: 0.2; } }
 
-  /* level-up medal pops with a ring burst */
-  .medal { position: relative; animation: pop 0.5s var(--spring) backwards; }
-  .medal::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 3px solid var(--accent); animation: burst 0.8s 0.15s var(--ease) both; }
-  @keyframes burst { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(1.8); opacity: 0; } }
+  /* level-up: the badge drops in and bounces, shapes burst out, the bar fills; about 1.5 s, then still */
+  .levelup .lvbadge.lg { animation: dropIn 0.55s var(--spring) 0.1s backwards; }
+  @keyframes dropIn { from { transform: translateY(-60px) rotate(-18deg) scale(0.6); opacity: 0; } }
+  .burst i { animation: shoot 0.7s var(--ease) calc(0.35s + var(--i) * 0.02s) both; }
+  @keyframes shoot {
+    0% { opacity: 1; transform: rotate(calc(var(--i) * 45deg)) translateY(0) scale(0.6); }
+    100% { opacity: 0; transform: rotate(calc(var(--i) * 45deg)) translateY(-78px) scale(1); }
+  }
+  .xpbar.grow i { animation: xpGrow 0.6s var(--ease) 0.6s backwards; }
+  @keyframes xpGrow { from { clip-path: inset(0 calc(100% - var(--from) * 100%) 0 0 round var(--r-pill)); } }
+  .total b { animation: pop 0.4s var(--spring) 0.75s backwards; }
   .choice { transition: border-color 0.2s, background-color 0.2s; }
   .goalup { animation: pop 0.4s var(--spring); }
 

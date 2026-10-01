@@ -129,3 +129,9 @@ export function history(logs: SetLog[], nodeId: string): { date: string; best: n
   }
   return [...byDate.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([date, d]) => ({ date, ...d }))
 }
+
+/** Whole minutes between the first and the last set logged on `date`. */
+export function sessionMinutes(logs: SetLog[], date: string): number {
+  const at = logs.filter((l) => l.date === date).map((l) => l.at)
+  return at.length < 2 ? 0 : Math.round((Math.max(...at) - Math.min(...at)) / 60_000)
+}
