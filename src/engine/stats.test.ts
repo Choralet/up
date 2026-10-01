@@ -1,6 +1,6 @@
 import type { ExerciseNode } from '../data/types'
 import { initialProgress, type Progress, type SetLog } from './progress'
-import { branchProgress, history, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
+import { afterLevel, branchLevel, branchProgress, history, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from './stats'
 
 const L = (date: string, nodeId = 'a', value = 10, at = 0): SetLog => ({ nodeId, value, date, at })
 const three = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] as const
@@ -104,5 +104,26 @@ describe('history', () => {
       { date: '2026-09-21', best: 8, sets: 2 },
     ])
     expect(history(logs, 'zzz')).toEqual([])
+  })
+})
+
+describe('branchLevel', () => {
+  const nodes = [N('a'), N('b', { requires: ['a'] }), N('c', { branch: 'pull' })]
+  it('level is the number of finished exercises; the bar is finished over total', () => {
+    const p: Progress = { ...initialProgress(nodes), completed: ['a'] }
+    expect(branchLevel(nodes, p, 'push')).toEqual({ level: 1, done: 1, total: 2, ratio: 0.5 })
+  })
+  it('an empty branch has level 0 and an empty bar (never NaN)', () => {
+    expect(branchLevel(nodes, initialProgress(nodes), 'legs')).toEqual({ level: 0, done: 0, total: 0, ratio: 0 })
+  })
+})
+
+describe('afterLevel', () => {
+  it('adds one finished exercise', () => {
+    expect(afterLevel({ level: 1, done: 1, total: 4, ratio: 0.25 })).toEqual({ level: 2, done: 2, total: 4, ratio: 0.5 })
+  })
+  it('never passes the total or a full bar', () => {
+    expect(afterLevel({ level: 4, done: 4, total: 4, ratio: 1 })).toEqual({ level: 4, done: 4, total: 4, ratio: 1 })
+    expect(afterLevel({ level: 0, done: 0, total: 0, ratio: 0 })).toEqual({ level: 0, done: 0, total: 0, ratio: 0 })
   })
 })

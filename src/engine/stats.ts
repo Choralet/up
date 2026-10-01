@@ -55,6 +55,25 @@ export function branchProgress(nodes: ExerciseNode[], progress: Progress, branch
   return { done, total: inBranch.length }
 }
 
+export interface Level {
+  level: number
+  done: number
+  total: number
+  ratio: number
+}
+
+/** A branch's level is how many of its exercises you have finished; the bar is finished out of all of them. */
+export function branchLevel(nodes: ExerciseNode[], progress: Progress, branch: Branch): Level {
+  const { done, total } = branchProgress(nodes, progress, branch)
+  return { level: done, done, total, ratio: total ? done / total : 0 }
+}
+
+/** The level after one more exercise is finished (what a level-up gives you). */
+export function afterLevel(l: Level): Level {
+  const done = Math.min(l.done + 1, l.total)
+  return { level: done, done, total: l.total, ratio: l.total ? done / l.total : 0 }
+}
+
 export interface StripDay {
   date: string
   planned: DayType
