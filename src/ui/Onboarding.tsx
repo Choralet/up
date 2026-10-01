@@ -81,7 +81,7 @@ export function Onboarding() {
     body = (
       <>
         <h1 className="large">Find your level</h1>
-        <p className="sub" style={{ margin: '8px 0 24px' }}>
+        <p className="sub intro">
           A few quick questions so Up starts each movement (push-ups, pull-ups, squats…) at the right exercise. It takes about a minute, and nothing changes until you finish.
         </p>
         <button className="cta" onClick={() => setStep(0)}>Start</button>
@@ -92,10 +92,10 @@ export function Onboarding() {
     body = (
       <>
         <div className="eyebrow">{track.name} · {s + 1} of {TRACKS.length}</div>
-        <h1 className="large" style={{ fontSize: 26, margin: '8px 0' }}>{node.name}</h1>
-        <p style={{ fontSize: 17, margin: '8px 0' }}>{question(node)}</p>
+        <h1 className="large title-sm intro-title">{node.name}</h1>
+        <p className="question">{question(node)}</p>
         <p className="sub">{node.cue}</p>
-        <button className="cta" style={{ marginTop: 24 }} onClick={answer(() => setDraft((d) => levelUp(nodes, d, node.id, null)))}>Yes</button>
+        <button className="cta spaced" onClick={answer(() => setDraft((d) => levelUp(nodes, d, node.id, null)))}>Yes</button>
         <button className="cta sec" onClick={answer(() => setStep(s + 1))}>Not Yet</button>
       </>
     )
@@ -116,7 +116,7 @@ export function Onboarding() {
           })}
         </div>
         <h2 className="hdr">Training days</h2>
-        <p className="sub" style={{ margin: '12px 4px 0' }}>Each day you pick gets a workout; days you already train keep theirs. Change any day later in Settings.</p>
+        <p className="note">Each day you pick gets a workout; days you already train keep theirs. Change any day later in Settings.</p>
         <div className="group">
           {WEEKDAYS.map((name, i) => (
             <button key={name} className="check pick" role="checkbox" aria-checked={days[i]} aria-label={name}
@@ -128,15 +128,15 @@ export function Onboarding() {
           ))}
         </div>
         <button className="cta" onClick={apply}>Start Training</button>
-        {picked === 0 && <p className="sub">No days picked: every day will be a rest day until you set some in Settings.</p>}
-        {picked > 0 && picked < 3 && <p className="sub">With {picked === 1 ? 'one day' : 'two days'}, some muscle groups wait until you add more days.</p>}
+        {picked === 0 && <p className="note">No days picked: every day will be a rest day until you set some in Settings.</p>}
+        {picked > 0 && picked < 3 && <p className="note">With {picked === 1 ? 'one day' : 'two days'}, some muscle groups wait until you add more days.</p>}
       </>
     )
   }
 
   return (
     <div className="log onboarding" role="dialog" aria-modal="true" aria-label="Find your level">
-      <div className="screen" style={{ textAlign: 'left' }}>
+      <div className="screen left">
         <div className="obnav">
           {s >= 0 ? <button className="close" onClick={back}>Back</button> : <span />}
           <button className="close" onClick={finishOnboarding}>Close</button>

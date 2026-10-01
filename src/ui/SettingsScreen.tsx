@@ -60,7 +60,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
   }
   return (
     <div className="log">
-      <div className="screen" style={{ textAlign: 'left' }}>
+      <div className="screen left">
         <button className="close" onClick={onClose}>Done</button>
         <h1 className="large">Settings</h1>
 
@@ -75,7 +75,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
             </label>
           ))}
         </div>
-        <p className="sub">Default is Monday Push, Wednesday Pull, Friday Legs + Core. Change any day you like.</p>
+        <p className="note">Default is Monday Push, Wednesday Pull, Friday Legs + Core. Change any day you like.</p>
 
         <div className="hdr">Workout Length</div>
         <div className="seg" role="radiogroup" aria-label="Workout Length">
@@ -85,7 +85,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
             </button>
           ))}
         </div>
-        <p className="sub" style={{ margin: '0 4px' }}>{LENGTH_HINT[progress.settings.length]}</p>
+        <p className="note">{LENGTH_HINT[progress.settings.length]}</p>
 
         <div className="hdr">Reminders</div>
         <div className="group">
@@ -95,7 +95,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
           </label>
         </div>
         <button className="cta sec" onClick={addReminders}>Add Reminders to Calendar</button>
-        <p className="sub" style={{ margin: '0 4px' }}>Opens a calendar file: add it to Apple Calendar to get an alert each training day. Add it again after you change your schedule.</p>
+        <p className="note">Opens a calendar file: add it to Apple Calendar to get an alert each training day. Add it again after you change your schedule.</p>
 
         <div className="hdr">Hold Timer</div>
         <div className="group">
@@ -111,7 +111,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <button className="cta sec" onClick={() => fileInput.current?.click()}>Import Backup File</button>
         <input ref={fileInput} type="file" accept="application/json,.json" aria-label="Import backup file" hidden onChange={(e) => importFile(e.target.files?.[0])} />
         {message && <p className="sub status" role="status">{message}</p>}
-        <p className="sub">Your progress lives on this phone. Export a file now and then, or connect GitHub below.</p>
+        <p className="note">Your progress lives on this phone. Export a file now and then, or connect GitHub below.</p>
         <GithubSection onRestore={(p, after) => setPending({ progress: p, after })} />
         <div className="hdr">Level</div>
         <button className="cta sec" onClick={() => setAskRedo(true)}>Find Your Level Again</button>

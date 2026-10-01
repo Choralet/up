@@ -20,7 +20,7 @@ export function GoalEditor({ node, def, onSave, onReset, onCancel }: Props) {
 
   return (
     <div className="goaled">
-      <p className="sub" style={{ margin: '4px 0' }}>Default: {def.goal.sets} sets × {def.goal.target} {unit}</p>
+      <p className="sub">Default: {def.goal.sets} sets × {def.goal.target} {unit}</p>
       <div className="field">
         <span>Sets</span>
         <span className="steps">

@@ -1,12 +1,12 @@
 import { BRANCHES } from '../engine/graph'
-import { branchProgress, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from '../engine/stats'
+import { branchLevel, personalBests, recentSessions, streakDaysNeeded, weekStrip, weeklyGain, weeklyStreak } from '../engine/stats'
 import { DAY_LABEL } from '../data/schedule'
 import { achievements } from '../engine/achievements'
 import { goalText, plural } from '../lib/format'
 import { localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META } from './branches'
-import { Ring } from './Ring'
+import { accentStyle, BRANCH_META } from './branches'
+import { LevelBadge, XpBar } from './Level'
 import { Icon } from './Icon'
 
 export function ProgressScreen() {
@@ -24,7 +24,7 @@ export function ProgressScreen() {
   return (
     <div className="screen">
       <h1 className="large">Progress</h1>
-      <div className="card" style={{ marginTop: 12 }}>
+      <div className="card">
         <b>{trainedDays > planned ? `${trainedDays} days this week · ${planned} planned` : `${trainedDays} of ${planned} days this week`}</b>
         <ul className="weekstrip" aria-label="This week">
           {strip.map((d) => (
@@ -38,19 +38,20 @@ export function ProgressScreen() {
       </div>
       <div className="card">
         <b>{streak > 0 ? `${streak} week streak` : 'No streak yet'}</b>
-        <div className="sub" style={{ marginTop: 4 }}>
+        <div className="sub">
           {`Train on ${plural(streakDaysNeeded(progress.schedule), 'day')} in a week to keep it going.`} Rest weeks are fine, and an unfinished week never breaks it.
         </div>
       </div>
 
-      <div className="rings">
+      <div className="levels">
         {BRANCHES.map((b) => {
-          const { done, total } = branchProgress(nodes, progress, b)
+          const l = branchLevel(nodes, progress, b)
           return (
-            <div className="ringcard" key={b}>
-              <Ring value={total ? done / total : 0} color={BRANCH_META[b].color} label={`${BRANCH_META[b].label}: ${done} of ${total} steps`} />
+            <div className="lvcard" key={b} style={accentStyle(b)}>
+              <LevelBadge branch={b} level={l.level} />
               <b>{BRANCH_META[b].label}</b>
-              <span className="sub">{done} of {plural(total, 'step')}</span>
+              <XpBar ratio={l.ratio} label={`${BRANCH_META[b].label}: ${l.done} of ${l.total} steps`} />
+              <span className="sub">{l.done} of {plural(l.total, 'step')}</span>
             </div>
           )
         })}

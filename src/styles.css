@@ -152,7 +152,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 
 
-.medal { width: 68px; height: 68px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; color: #fff; font-size: 30px; background: var(--accent, var(--push)); }
 .center { text-align: center; }
 
 
@@ -179,14 +178,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .onboarding { z-index: 40; }
 
 
-.rings { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.ringcard { background: var(--card); border-radius: 16px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
 
 .demo img { width: 200px; height: 200px; image-rendering: auto; }
 
-.notice { display: block; width: 100%; text-align: left; margin: 12px 0 0; }
-.notice b { display: block; color: var(--skill); }
 
 .roadmap-sheet { max-height: 85dvh; overflow: auto; }
 .steplist { margin: 4px 0 8px 20px; padding: 0; }
@@ -195,44 +190,19 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .needs { list-style: none; padding: 0; margin: 0; }
 
-.summary { list-style: none; padding: 0; margin: 8px 0; }
-.summary li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 8px 0; border-top: 0.5px solid var(--sep); }
-.summary li b { flex: 1 1 100%; }
-.newbest { font-size: 11px; font-weight: 700; color: var(--legs); text-transform: uppercase; letter-spacing: 0.04em; }
 
 .rollnum, .cdnum { display: inline-block; }
 .switchrow { justify-content: space-between; }
 
 
-.weekstrip { list-style: none; padding: 0; margin: 12px 0 0; display: flex; justify-content: space-between; }
-.weekstrip li { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 36px; }
-.wsdot { width: 22px; height: 22px; border-radius: 50%; }
-.weekstrip li.trained .wsdot { background: var(--legs); }
-.weekstrip li.planned .wsdot { border: 2px solid var(--label3); }
-.weekstrip li.rest .wsdot { width: 6px; height: 6px; margin: 8px; background: var(--label3); }
-.weekstrip li.today .wslabel { color: var(--label); font-weight: 700; }
-.wslabel { font-size: 11px; color: var(--label2); }
-.gain { color: var(--legs); font-weight: 600; }
 .obnav { display: flex; justify-content: space-between; }
 .obnav .close { margin: 0 0 8px; }
 
-.status { margin: 8px 4px 12px; }
-.howtoken { margin: 8px 0; font-size: 14px; }
-.howtoken summary { color: var(--blue); font-weight: 600; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
-.howtoken ol { padding-left: 20px; color: var(--label2); }
 
 
 /* the row under an exercise name: Goal, Skill, How-to, History, Watch in Video all share one capsule size */
 .histchart { width: 100%; height: auto; display: block; margin: 8px 0; overflow: visible; }
 
-.achcard { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-.achcard .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.achcard .t .sub { margin: 0; }
-.achmedal { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 20px; color: #fff; background: linear-gradient(160deg, #ffd60a, #ff9f0a); }
-.achgrid { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.achgrid li { background: var(--card); border-radius: 14px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; }
-.achgrid li:not(.earned) .achmedal { background: var(--fill); color: var(--label3); }
-.achgrid li:not(.earned) b { color: var(--label2); font-weight: 500; }
 
 .tree-scroll { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 .tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
@@ -336,6 +306,45 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .steplist li.stepdone b { text-decoration: line-through; color: var(--ink2); }
 .yearbtn { font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; padding: 8px 0; min-height: 44px; width: 100%; text-align: left; }
 
+/* ============ Progress ============ */
+.levels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.lvcard { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px; text-align: center; background: var(--card); border: 2px solid var(--line); border-radius: var(--r-lg); box-shadow: 0 var(--edge) 0 var(--line); }
+.lvcard .xpbar { align-self: stretch; }
+.weekstrip { list-style: none; padding: 0; margin: 12px 0 0; display: flex; justify-content: space-between; }
+.weekstrip li { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 36px; }
+.wsdot { width: 26px; height: 26px; border-radius: 9px; }
+.weekstrip li.trained .wsdot { background: var(--legs); box-shadow: 0 3px 0 var(--legs-edge); }
+.weekstrip li.planned .wsdot { border: 2px solid var(--line); }
+.weekstrip li.rest .wsdot { width: 8px; height: 8px; margin: 9px; border-radius: 50%; background: var(--line); }
+.wslabel { font-size: 0.6875rem; font-weight: 800; color: var(--ink2); }
+.weekstrip li.today .wslabel { color: var(--ink); font-weight: 900; }
+.gain { color: var(--legs-text); font-weight: 900; }
+.achmedal { width: 44px; height: 44px; border-radius: 14px; flex: none; color: var(--on-color); background: var(--gold); box-shadow: 0 3px 0 var(--gold-edge); }
+.achcard { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.achcard .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.achcard .t .sub { margin: 0; }
+.achgrid { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.achgrid li { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px; text-align: center; font-size: var(--fs-label); background: var(--card); border: 2px solid var(--line); border-radius: var(--r-md); }
+.achgrid li:not(.earned) .achmedal { background: var(--fill); color: var(--ink2); box-shadow: none; }
+.achgrid li:not(.earned) b { color: var(--ink2); font-weight: 700; }
+.summary { list-style: none; padding: 0; margin: 8px 0; }
+.summary li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 8px 0; border-top: 2px solid var(--line); }
+.summary li b { flex: 1 1 100%; }
+.newbest { font-size: 0.6875rem; font-weight: 900; color: var(--legs-text); text-transform: uppercase; letter-spacing: 0.06em; }
+.medal { width: 68px; height: 68px; border-radius: 22px; margin: 0 auto 10px; color: var(--on-color); background: var(--accent); box-shadow: 0 var(--edge) 0 var(--accent-edge); }
+
+/* ============ Settings, onboarding, backup ============ */
+.screen.left { text-align: left; }
+.intro { margin: 8px 0 24px; }
+.intro-title { margin: 8px 0; }
+.question { font-size: 1.0625rem; margin: 8px 0; }
+.notice { display: block; width: 100%; text-align: left; margin: 12px 0 0; }
+.notice b { display: block; color: var(--danger-text); }
+.status { margin: 8px 4px 12px; }
+.howtoken { margin: 8px 0; font-size: 0.875rem; }
+.howtoken summary { color: var(--primary-text); font-weight: 900; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
+.howtoken ol { padding-left: 20px; color: var(--ink2); }
+
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
   /* entrance animations fill backwards only: a transform kept after the end would trap fixed sheets inside the screen */
@@ -394,8 +403,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   .goalup { animation: pop 0.4s var(--spring); }
 
   /* progress rings and week dots fill in */
-  .ringcard svg circle:nth-child(2) { animation: ringFill 0.9s var(--ease) backwards; }
-  @keyframes ringFill { from { stroke-dashoffset: 201; } }
+  .lvcard .xpbar i { animation: xpFill 0.9s var(--ease) backwards; }
+  @keyframes xpFill { from { clip-path: inset(0 100% 0 0 round var(--r-pill)); } }
   .weekstrip li.trained .wsdot { animation: pop 0.4s var(--spring) backwards; }
   .histline { stroke-dasharray: 1000; animation: draw 0.9s var(--ease) backwards; }
   @keyframes draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }

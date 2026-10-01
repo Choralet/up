@@ -487,7 +487,7 @@ describe('Settings', () => {
 describe('Progress tab', () => {
   const log = (date: string, nodeId: string, value: number, at: number) => ({ nodeId, value, date, at })
 
-  it('shows a ring per branch, the weekly streak and personal bests', async () => {
+  it('shows a level per branch, the weekly streak and personal bests', async () => {
     const user = userEvent.setup()
     const logs = [
       log('2026-09-14', 'push-wall', 10, 1), log('2026-09-16', 'push-wall', 12, 2),
