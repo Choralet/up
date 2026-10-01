@@ -14,6 +14,7 @@ Goal: an **Apple-like** app: calm, clear, native-feeling, with game moments that
 
 | App | Study it for |
 |---|---|
+| **Duolingo** (main look reference since the Game Quest redesign) | Rounded type, chunky pressable buttons, level and streak framing |
 | **Apple Fitness** (built in) | Rings, big numbers, dark cards, celebratory award moments |
 | **[Gentler Streak](https://developer.apple.com/news/?id=3m0ht22s)** (Apple Design Award 2024) | Soft palette, friendly copy, rest days that don't punish; [Sketch blog write-up](https://www.sketch.com/blog/gentler-streak/), [UX teardown](https://pixso.net/articles/gentler/) |
 | **Duolingo** | The path/tree of nodes, the level-up celebration, streak framing (borrow structure, not the loudness) |
@@ -25,11 +26,11 @@ More reading: [Fitness App UI principles (Stormotion)](https://stormotion.io/blo
 
 ## Design principles for this app
 
-1. **Native first.** System font (SF Pro), SF Symbols, standard sheets, tab bar and navigation. Don't fight the platform.
+1. **Game Quest look.** Rounded Nunito (bundled), chunky cards and buttons with a solid bottom edge, dark text on bright fills. Tokens in `src/tokens.css`.
 2. **Big and thumb-friendly.** Logging must work one-handed, mid-workout, with sweaty hands.
 3. **Numbers are the hero.** Large rounded numerals for reps and goals.
 4. **Color = branch.** One accent per branch (Push, Pull, Legs, Core), used sparingly on a neutral background.
-5. **Celebrate quietly.** Level-up gets a spring animation + haptic + one short line, not confetti spam. Respect Reduce Motion.
+5. **Celebrate, briefly.** Level-up card with a bouncing badge, a short burst and a filling bar (about 1.5 s). No confetti, no sound. Respect Reduce Motion.
 6. **Dark and light mode**, Dynamic Type and VoiceOver from day one.
 7. **Forgiving tone.** Copy like "Not yet, keep going", never guilt.
 

@@ -33,5 +33,12 @@ Open https://choralet.github.io/up/ in **Safari** → Share → **Add to Home Sc
 - [ ] Turn on Airplane Mode, close Up fully, reopen: it still opens and your data is there.
 - [ ] Leave Up in the background overnight: next morning Today shows the new day.
 
-## 7. VoiceOver (optional)
+## 7. Game Quest redesign
+- [ ] Open Up online once, then turn on Airplane Mode and reopen: the rounded font still shows.
+- [ ] Log the last set of an exercise: the level-up card shows the badge bounce and the bar filling. Finish Workout counts its totals up.
+- [ ] Settings → Accessibility → Motion → Reduce Motion on: the same screens show their final state with no movement.
+- [ ] Switch the phone between light and dark mode: every screen is readable in both.
+- [ ] Settings → Display & Brightness → Text Size larger: Legs + Core day header still fits.
+
+## 8. VoiceOver (optional)
 - [ ] Settings → Accessibility → VoiceOver on: swipe through Today and a log screen; buttons and numbers are read sensibly.

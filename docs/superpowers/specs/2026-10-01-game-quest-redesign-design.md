@@ -77,12 +77,12 @@ Text on a bright fill is always `--on-color` (dark), never white. White on these
 
 | Block | What it is | Notes |
 |---|---|---|
-| Button (`.btn`) | Chunky primary button, branch fill, `--on-color` text, bottom edge | Replaces `.cta`. Variants: ghost (outline, `--line` edge), destructive |
+| Button (restyled `.cta` in place, no new `.btn` class) | Chunky primary button, branch fill, `--on-color` text, bottom edge | Variants: `.cta.sec` (outline, `--line` edge), `.cta.danger` |
 | Quest card (`.quest`) | One exercise row: round icon tile, name, status line, goal on the right | Replaces `.row` inside workout lists. Skill rows have a pink border and edge |
 | Level badge | Rounded square in branch fill, level number, small "LVL" | Sizes: small (Today header, Tree), large (level-up card) |
 | XP bar | Rounded track in `--fill`, branch-coloured fill with a slight inner edge | Also used for set bars on Log a Set |
 | Icon | One `Icon` component rendering inline SVG line icons (2.5 px stroke, round caps) | Replaces every emoji/character icon: ⚙ ✓ ★ › → and the lock. Decorative icons get `aria-hidden`; icon-only buttons keep their `aria-label` |
-| Tab bar | Four tabs with line icons (Today house, Tree branching, Skills star, Progress bars), active tab in branch colour | 2px top border, keeps safe-area padding |
+| Tab bar | Four tabs with line icons (Today house, Tree branching, Skills star, Progress bars), active tab in the primary blue | 2px top border, keeps safe-area padding |
 | Segmented tabs | Push / Pull / Legs / Core as outlined chips, active one tinted in its branch colour | Used on Tree and Skills |
 | Sheet | Bottom sheet with 28 px radius, chunky buttons | Existing rules stay: render outside fixed containers, centred header |
 | Chip | Rounded set value chips, pills for Goal / How-to / History | Goal pill must not look like a button (audit item) |
