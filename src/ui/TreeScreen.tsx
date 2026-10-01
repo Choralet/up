@@ -3,7 +3,9 @@ import { TRACKS } from '../data/tracks'
 import type { Branch } from '../data/types'
 import { BRANCHES } from '../engine/graph'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META } from './branches'
+import { accentStyle, BRANCH_META } from './branches'
+import { BranchLevel } from './Level'
+import { Icon } from './Icon'
 import { NodeSheet } from './NodeSheet'
 import { TreeView } from './TreeView'
 
@@ -72,14 +74,23 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
   useEffect(() => {
     if (scroller.current) scroller.current.scrollTop = scroller.current.scrollHeight
   }, [branch])
+  // keep a tapped node visible above the sheet: move it into the top third of the tree area
+  useEffect(() => {
+    const el = scroller.current
+    const target = selected ? el?.querySelector<SVGGElement>(`[data-id="${selected}"]`) : null
+    if (!el || !target) return
+    const box = el.getBoundingClientRect()
+    const r = target.getBoundingClientRect()
+    if (r.bottom > box.top + box.height * 0.45) el.scrollTop += r.top - box.top - box.height * 0.25
+  }, [selected])
   const node = selected ? byId.get(selected) : undefined
 
   return (
     <>
       <div className="tree-screen">
-        <div className="tree-head">
+        <div className="tree-head" style={accentStyle(branch)}>
           <h1 className="navt">Skill Tree</h1>
-          <p className="sub center" style={{ margin: '0 0 6px' }}>Your main exercises. Tap one to see what it needs and unlocks.</p>
+          <p className="sub center treehint">Your main exercises. Tap one to see what it needs and unlocks.</p>
           <div className="seg" role="tablist" aria-label="Branch">
             {BRANCHES.map((b) => (
               <button
@@ -87,12 +98,14 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
                 role="tab"
                 aria-selected={b === branch}
                 className={b === branch ? 'on' : ''}
+                style={accentStyle(b)}
                 onClick={() => { setBranch(b); setSelected(null) }}
               >
                 {BRANCH_META[b].label}
               </button>
             ))}
           </div>
+          <BranchLevel branch={branch} />
           <div className="trackchips">
             {TRACKS.filter((t) => t.branch === branch).map((t) => {
               const id = progress.focus[t.id]
@@ -109,9 +122,9 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
           <TreeView branch={branch} selectedId={selected} onSelect={setSelected} zoom={zoom} />
         </div>
         <div className="zoombar" aria-label="Zoom">
-          <button className="pillbtn" aria-label="Zoom Out" onClick={() => setZoom((z) => clampZoom(z - 0.25))}>−</button>
+          <button className="pillbtn" aria-label="Zoom Out" onClick={() => setZoom((z) => clampZoom(z - 0.25))}><Icon name="minus" size={18} /></button>
           <button className="pillbtn" aria-label="Reset Zoom" onClick={() => setZoom(1)}>{Math.round(zoom * 100)}%</button>
-          <button className="pillbtn" aria-label="Zoom In" onClick={() => setZoom((z) => clampZoom(z + 0.25))}>+</button>
+          <button className="pillbtn" aria-label="Zoom In" onClick={() => setZoom((z) => clampZoom(z + 0.25))}><Icon name="plus" size={18} /></button>
         </div>
       </div>
       {/* outside the fixed container, otherwise the tab bar paints over the sheet */}

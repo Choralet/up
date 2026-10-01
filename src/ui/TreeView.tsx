@@ -8,7 +8,7 @@ import { accentStyle, BRANCH_META } from './branches'
 
 // the same words as everywhere else in the app (Locked / Ready / Training / Done)
 /** A label's first line sits this far below the node's edge; each further line adds 10. */
-export const LABEL_Y = 16
+export const LABEL_Y = 20
 
 /** A line from a node up to the one it unlocks. A slanted line stops under the upper node's label so it never crosses the text. */
 export function edgePath(a: { x: number; y: number }, b: { x: number; y: number }, bLines: number): string {
@@ -65,6 +65,7 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
         return (
           <g
             key={node.id}
+            data-id={node.id}
             className={`n ${state} ${isSkill ? 'sk' : 'st'}${justUnlocked.includes(node.id) ? ' just-unlocked' : ''}`}
             transform={`translate(${x} ${y})`}
             role="button"
@@ -81,10 +82,17 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
             {state === 'focus' && <circle className="glow" r={R + 7} />}
             {selectedId === node.id && <circle className="sel" r={R + 8} />}
             {isSkill ? (
-              <rect className="sh" x={-(R - 2)} y={-(R - 2)} width={2 * (R - 2)} height={2 * (R - 2)} rx={6} transform="rotate(45)" />
+              <>
+                <rect className="edge" x={-(R - 2)} y={-(R - 2)} width={2 * (R - 2)} height={2 * (R - 2)} rx={6} transform="translate(0 3) rotate(45)" />
+                <rect className="sh" x={-(R - 2)} y={-(R - 2)} width={2 * (R - 2)} height={2 * (R - 2)} rx={6} transform="rotate(45)" />
+              </>
             ) : (
-              <circle className="sh" r={R} />
+              <>
+                <circle className="edge" cy={3} r={R} />
+                <circle className="sh" r={R} />
+              </>
             )}
+            {state === 'available' && <path className="plus" d="M-5 0 H5 M0 -5 V5" />}
             {state === 'completed' && <path className="ic" d="M-5 0 L-1.5 3.5 L5 -4" />}
             {state === 'focus' && <circle className="dotc" r={4.5} />}
             {state === 'locked' && (

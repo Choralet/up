@@ -2,10 +2,10 @@ import type { Branch, ExerciseNode } from '../data/types'
 import { indexNodes } from './graph'
 
 export const COL_W = 66
-export const ROW_H = 78
+export const ROW_H = 86
 export const PAD_X = 42
 export const PAD_Y = 28
-export const NODE_R = 17
+export const NODE_R = 19
 export const COLS = 4
 
 export interface Placed {

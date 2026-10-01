@@ -155,27 +155,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .medal { width: 68px; height: 68px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; color: #fff; font-size: 30px; background: var(--accent, var(--push)); }
 .center { text-align: center; }
 
-.tsvg { display: block; width: 100%; height: auto; margin: 0 auto; }
-.tsvg .e { fill: none; stroke-width: 3; stroke-linecap: round; }
-.tsvg .e.done { stroke: var(--accent); }
-.tsvg .e.avail { stroke: var(--accent); opacity: 0.55; stroke-dasharray: 2 6; }
-.tsvg .e.lock { stroke: var(--label3); opacity: 0.6; stroke-dasharray: 2 6; }
-.tsvg .n { cursor: pointer; outline: none; }
-.tsvg .n .sh { fill: var(--card); stroke-width: 3; }
-.tsvg .n.st.completed .sh { fill: var(--accent); stroke: var(--accent); }
-.tsvg .n.st.focus .sh, .tsvg .n.st.available .sh { stroke: var(--accent); }
-.tsvg .n.sk .sh { stroke: var(--skill); }
-.tsvg .n.sk.completed .sh { fill: var(--skill); }
-.tsvg .n.locked .sh { stroke: var(--label3); }
-.tsvg .glow { fill: var(--accent); opacity: 0.22; }
-.tsvg .sel { fill: none; stroke: var(--label); stroke-width: 2; stroke-dasharray: 4 4; }
-.tsvg .ic { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.tsvg .dotc { fill: var(--accent); }
-.tsvg .lk rect { fill: var(--label3); }
-.tsvg .lk path { fill: none; stroke: var(--label3); stroke-width: 2; }
-.tsvg .lb { font-size: 8.5px; font-weight: 600; text-anchor: middle; fill: var(--label2); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
-.tsvg .n.locked .lb { fill: var(--label2); opacity: 0.75; }
-.tsvg .n:focus-visible .sh { stroke-width: 5; }
 
 .log { position: fixed; inset: 0; z-index: 10; background: var(--bg); overflow: auto; }
 .log .screen { padding-bottom: 32px; text-align: center; }
@@ -183,8 +162,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .banner { position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding: calc(env(safe-area-inset-top) + 8px) 12px 8px; background: var(--skill); color: #fff; text-align: center; font-size: 13px; font-weight: 600; }
 
 .tree-screen { position: fixed; inset: 0; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; }
-.tree-head { flex: none; padding: calc(env(safe-area-inset-top) + 16px) 16px 6px; background: var(--bg); }
-.tree-head .seg { margin: 4px 0 0; }
 .tree-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 8px 16px calc(96px + env(safe-area-inset-bottom)); }
 
 /* hide scrollbars everywhere; scrolling still works */
@@ -252,7 +229,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .obnav { display: flex; justify-content: space-between; }
 .obnav .close { margin: 0 0 8px; }
 
-.tsvg .n.locked .lb { fill: var(--label2); opacity: 1; }
 .status { margin: 8px 4px 12px; }
 .howtoken { margin: 8px 0; font-size: 14px; }
 .howtoken summary { color: var(--blue); font-weight: 600; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
@@ -271,15 +247,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .achgrid li:not(.earned) .achmedal { background: var(--fill); color: var(--label3); }
 .achgrid li:not(.earned) b { color: var(--label2); font-weight: 500; }
 
-.trackchips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; }
-.chipbtn { white-space: nowrap; font-size: 13px; color: var(--label); margin: 0; flex: none; }
-.chipbtn .chiptrack { color: var(--label2); font-weight: 600; }
-.zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: 999px; background: var(--card); box-shadow: 0 2px 10px rgb(0 0 0 / 0.25); }
-.zoombar .pillbtn:nth-child(2) { min-width: 56px; font-variant-numeric: tabular-nums; }
-.zoombar .pillbtn { margin: 0; min-height: 32px; min-width: 32px; padding: 0 8px; font-size: 13px; background: none; }
 .tree-scroll { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 .tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
-.tsvg { max-width: none; }
 
 /* ============ Today ============ */
 .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
@@ -327,6 +296,44 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .histchart .goalline { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 4 4; }
 .histchart .axis { font-size: 10px; font-weight: 800; fill: var(--ink2); font-variant-numeric: tabular-nums; }
 .histchart g { cursor: pointer; }
+
+/* ============ Tree ============ */
+.tree-head { flex: none; padding: calc(env(safe-area-inset-top) + 16px) 16px 8px; background: var(--bg); border-bottom: 2px solid var(--line); }
+.tree-head .seg { margin: 4px 0 8px; }
+.treehint { margin: 0 0 4px; }
+.tsvg { display: block; width: 100%; max-width: none; height: auto; margin: 0 auto; }
+.tsvg .e { fill: none; stroke-width: 4; stroke-linecap: round; }
+.tsvg .e.done { stroke: var(--accent); }
+.tsvg .e.avail { stroke: var(--accent); stroke-dasharray: 1 9; }
+.tsvg .e.lock { stroke: var(--line); stroke-dasharray: 1 9; }
+.tsvg .n { cursor: pointer; outline: none; }
+.tsvg .n .edge { fill: var(--line); }
+.tsvg .n .sh { fill: var(--bg); stroke: var(--line); stroke-width: 3; }
+.tsvg .n.available .sh { stroke: var(--accent); }
+.tsvg .n.available .edge { fill: var(--accent-edge); }
+.tsvg .n.st.completed .sh, .tsvg .n.st.focus .sh { fill: var(--accent); stroke: var(--accent); }
+.tsvg .n.st.completed .edge, .tsvg .n.st.focus .edge { fill: var(--accent-edge); }
+.tsvg .n.sk .sh { stroke: var(--skill); }
+.tsvg .n.sk.completed .sh, .tsvg .n.sk.focus .sh { fill: var(--skill); }
+.tsvg .n.sk .edge { fill: var(--skill-edge); }
+.tsvg .n.locked .sh { fill: var(--line); stroke: var(--line); }
+.tsvg .n.locked .edge { fill: var(--fill); }
+.tsvg .plus { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.tsvg .glow { fill: var(--accent); opacity: 0.25; }
+.tsvg .sel { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 4 4; }
+.tsvg .ic { fill: none; stroke: var(--on-color); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.tsvg .dotc { fill: var(--on-color); }
+.tsvg .lk rect { fill: var(--ink2); }
+.tsvg .lk path { fill: none; stroke: var(--ink2); stroke-width: 2; }
+.tsvg .lb { font-size: 9px; font-weight: 800; text-anchor: middle; fill: var(--ink2); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+.tsvg .n.focus .lb { fill: var(--accent-text); font-weight: 900; }
+.tsvg .n:focus-visible .sh { stroke: var(--primary); stroke-width: 5; }
+.trackchips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 6px; }
+.chipbtn { gap: 6px; white-space: nowrap; font-size: var(--fs-small); color: var(--ink); margin: 0; flex: none; text-transform: none; letter-spacing: 0; box-shadow: 0 3px 0 var(--line); }
+.chipbtn .chiptrack { color: var(--accent-text); font-weight: 900; }
+.zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: var(--r-md); background: var(--bg); border: 2px solid var(--line); box-shadow: 0 var(--edge) 0 var(--line); }
+.zoombar .pillbtn { margin: 0; min-height: 40px; min-width: 40px; padding: 0 8px; border: 0; box-shadow: none; font-size: var(--fs-small); }
+.zoombar .pillbtn:nth-child(2) { min-width: 56px; font-variant-numeric: tabular-nums; }
 
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
