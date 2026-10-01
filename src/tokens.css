@@ -66,9 +66,3 @@
     --danger-text: var(--p-red-glow);
   }
 }
-
-/* legacy names still used in styles.css; removed in the final task */
-:root {
-  --label: var(--ink); --label2: var(--ink2); --label3: var(--ink2); --sep: var(--line);
-  --blue: var(--primary-text); --blue-text: var(--primary-text);
-}

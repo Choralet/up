@@ -1,5 +1,5 @@
 * { box-sizing: border-box; margin: 0; }
-html, body { background: var(--bg); color: var(--label); }
+html, body { background: var(--bg); color: var(--ink); }
 body {
   font: 700 var(--fs-body)/1.45 var(--font);
   -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
@@ -8,7 +8,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .icon { display: block; flex: none; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .icon .solid { fill: currentColor; stroke: none; }
 .icon path[d^="M6 12h.01"] { stroke-width: 4; }
-.gear, .medal, .achmedal, .req span, .check .box { display: grid; place-items: center; }
+.gear, .achmedal, .req span, .check .box { display: grid; place-items: center; }
 
 /* ============ Base ============ */
 :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
@@ -148,7 +148,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .screen { padding: calc(env(safe-area-inset-top) + 16px) 16px calc(90px + env(safe-area-inset-bottom)); }
 
 
-.dot { width: 36px; height: 36px; border-radius: 10px; flex: none; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; }
 
 
 
@@ -167,8 +166,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }
 
-.check[aria-checked='true'] .lbl { color: var(--label2); text-decoration: line-through; }
-.check.pick[aria-checked='true'] .lbl { color: var(--label); text-decoration: none; }
+.check[aria-checked='true'] .lbl { color: var(--ink2); text-decoration: line-through; }
+.check.pick[aria-checked='true'] .lbl { color: var(--ink); text-decoration: none; }
 
 .list { list-style: none; padding: 0; }
 .goaled .field { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
@@ -331,7 +330,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .summary li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 8px 0; border-top: 2px solid var(--line); }
 .summary li b { flex: 1 1 100%; }
 .newbest { font-size: 0.6875rem; font-weight: 900; color: var(--legs-text); text-transform: uppercase; letter-spacing: 0.06em; }
-.medal { width: 68px; height: 68px; border-radius: 22px; margin: 0 auto 10px; color: var(--on-color); background: var(--accent); box-shadow: 0 var(--edge) 0 var(--accent-edge); }
 
 /* ============ Settings, onboarding, backup ============ */
 .screen.left { text-align: left; }
@@ -357,7 +355,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .total b { display: block; font-size: 2rem; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--accent-text, var(--primary-text)); }
 .total span { font-size: var(--fs-label); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink2); }
 
-/* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
+/* ============ Motion: short and springy; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
   /* entrance animations fill backwards only: a transform kept after the end would trap fixed sheets inside the screen */
   :root { --spring: cubic-bezier(0.2, 0.9, 0.3, 1.15); --ease: cubic-bezier(0.25, 0.8, 0.25, 1); }

@@ -2,7 +2,7 @@
 // Phone-size screenshots of the built app, driven over the Chrome DevTools Protocol, plus a quick layout check.
 // Usage: npm run build && npx vite preview --port 4173 --strictPort   (leave running), then
 //        npm run shots -- <outDir> [scenario ...]
-// Env: UP_URL, CHROME, LARGE=1 (125% text), REDUCE=1 (prefers-reduced-motion: reduce)
+// Env: UP_URL, CHROME, LARGE=1 (125% text), REDUCE=1 (prefers-reduced-motion: reduce), WIDTH/HEIGHT (default 390×844)
 import { spawn } from 'node:child_process'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -12,6 +12,7 @@ const CHROME = process.env.CHROME ?? '/Applications/Google Chrome.app/Contents/M
 const BASE = process.env.UP_URL ?? 'http://localhost:4173/up/'
 const LARGE = process.env.LARGE === '1'
 const REDUCE = process.env.REDUCE === '1'
+const WIDTH = Number(process.env.WIDTH ?? 390), HEIGHT = Number(process.env.HEIGHT ?? 844)
 const PORT = 9333
 const [outDir = 'shots', ...only] = process.argv.slice(2)
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -136,7 +137,7 @@ async function main() {
     const page = list.find((t) => t.type === 'page')
     const c = await cdp(page.webSocketDebuggerUrl)
     await c.send('Page.enable')
-    await c.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true })
+    await c.send('Emulation.setDeviceMetricsOverride', { width: WIDTH, height: HEIGHT, deviceScaleFactor: 2, mobile: true })
     const evalJs = async (expression) => (await c.send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true })).result.value
     const names = only.length ? only : Object.keys(SCENARIOS)
     for (const scheme of ['dark', 'light']) {
@@ -154,7 +155,7 @@ async function main() {
           await sleep(900)
         }
         await sleep(600)
-        const file = join(outDir, `${nameKey}-${scheme}${LARGE ? '-large' : ''}${REDUCE ? '-reduce' : ''}.png`)
+        const file = join(outDir, `${nameKey}-${scheme}${LARGE ? '-large' : ''}${REDUCE ? '-reduce' : ''}${WIDTH !== 390 ? `-${WIDTH}` : ''}.png`)
         writeFileSync(file, Buffer.from((await c.send('Page.captureScreenshot', { format: 'png' })).data, 'base64'))
         const issues = await evalJs(`(${layoutCheck.toString()})()`)
         console.log(`${file}${issues.length ? '' : '  ok'}`)
