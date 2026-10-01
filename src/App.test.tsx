@@ -51,6 +51,26 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     expect(screen.getByRole('button', { name: /Dead bug/ })).toBeInTheDocument()
   })
 
+  it('shows the day’s branch level and the streak in the header', async () => {
+    render(<App storage={seed({ completed: ['push-wall', 'push-incline'] })} />)
+    expect(await screen.findByRole('img', { name: 'Push: 2 of 23 steps' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'No streak yet' })).toBeInTheDocument()
+  })
+
+  it('Legs + Core day shows both branch levels', async () => {
+    vi.setSystemTime(FRIDAY)
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('img', { name: /^Legs: 0 of \d+ steps$/ })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /^Core: 0 of \d+ steps$/ })).toBeInTheDocument()
+  })
+
+  it('a rest day shows the streak but no branch level', async () => {
+    vi.setSystemTime(SATURDAY)
+    render(<App storage={seed()} />)
+    expect(await screen.findByRole('img', { name: 'No streak yet' })).toBeInTheDocument()
+    expect(screen.queryByRole('img', { name: /steps$/ })).not.toBeInTheDocument()
+  })
+
   it('shows the warm-up for the day', async () => {
     render(<App storage={seed()} />)
     expect(await screen.findByRole('checkbox', { name: 'Wrist circles' })).toBeInTheDocument()

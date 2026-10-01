@@ -62,6 +62,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .head .pillbtn, .achcard .pillbtn { margin: 0; }
 .linkbtn { display: block; text-align: left; color: var(--accent-text, var(--primary-text)); font-weight: 800; font-size: 0.875rem; padding: 6px 0; min-height: 44px; }
 .linkbtn.inline { display: inline; padding: 0; min-height: 0; }
+.gear .icon { stroke-width: 2; }
 .gear { min-width: 44px; min-height: 44px; border-radius: var(--r-md); border: 2px solid var(--line); box-shadow: 0 var(--edge) 0 var(--line); color: var(--ink2); }
 .cta:active:not(:disabled), .pillbtn:active:not(:disabled), .gear:active, .quest:active, .steps button:active, .choice:active, .howto:active {
   transform: translateY(var(--edge)); box-shadow: none;
@@ -201,11 +202,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }
 
-.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .check[aria-checked='true'] .lbl { color: var(--label2); text-decoration: line-through; }
 .check.pick[aria-checked='true'] .lbl { color: var(--label); text-decoration: none; }
-.done-banner { text-align: center; color: var(--legs); font-weight: 700; margin: 8px 0; }
-.row .tick { color: var(--legs); font-weight: 700; }
 
 .list { list-style: none; padding: 0; }
 .skillrow { align-items: flex-start; }
@@ -245,7 +243,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .rmrow.done b { color: var(--label); }
 .rmrow.done .rmicon { color: var(--legs); }
 
-.row .tick.done { color: var(--label2); }
 .summary { list-style: none; padding: 0; margin: 8px 0; }
 .summary li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 8px 0; border-top: 0.5px solid var(--sep); }
 .summary li b { flex: 1 1 100%; }
@@ -308,6 +305,26 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .tree-scroll { overflow-x: auto; touch-action: pan-x pan-y; }
 .tsvg { max-width: none; }
 
+/* ============ Today ============ */
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.todaytop { display: flex; align-items: center; gap: 12px; min-height: 48px; }
+.todaytop > .spacer { flex: 1; }
+.stack { margin-top: 16px; }
+.quests { display: flex; flex-direction: column; gap: 12px; margin: 16px 0 24px; }
+.quest {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 10px 14px; text-align: left;
+  background: var(--card); border: 2px solid var(--line); border-radius: var(--r-lg); box-shadow: 0 var(--edge) 0 var(--line);
+}
+.quest.skill { border-color: var(--skill); box-shadow: 0 var(--edge) 0 var(--skill-edge); }
+.quest.flat { box-shadow: none; }
+.quest .qicon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--accent); color: var(--on-color); box-shadow: 0 3px 0 var(--accent-edge); }
+.quest .t { flex: 1; min-width: 0; }
+.quest .t b { display: block; font-size: var(--fs-body); font-weight: 900; overflow-wrap: anywhere; }
+.quest .t > span:last-child { font-size: var(--fs-small); color: var(--ink2); }
+.quest .tick { color: var(--legs-text); }
+.quest .tick.done, .quest .chev { color: var(--ink2); }
+.done-banner { text-align: center; color: var(--legs-text); font-weight: 900; margin: 8px 0; }
+
 /* ============ Plan 7 motion: quiet, Apple-like; all off with Reduce Motion ============ */
 @media (prefers-reduced-motion: no-preference) {
   /* entrance animations fill backwards only: a transform kept after the end would trap fixed sheets inside the screen */
@@ -328,13 +345,13 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   @keyframes tabIn { from { opacity: 0; transform: translateY(6px); } }
 
   /* lists: first rows fade up one after another */
-  .group > .row, .group > li, .summary > li, .achgrid > li { animation: rowIn 0.32s var(--ease) backwards; }
-  .group > :nth-child(2), .summary > :nth-child(2), .achgrid > :nth-child(2) { animation-delay: 0.03s; }
-  .group > :nth-child(3), .summary > :nth-child(3), .achgrid > :nth-child(3) { animation-delay: 0.06s; }
-  .group > :nth-child(4), .summary > :nth-child(4), .achgrid > :nth-child(4) { animation-delay: 0.09s; }
-  .group > :nth-child(5), .summary > :nth-child(5), .achgrid > :nth-child(5) { animation-delay: 0.12s; }
-  .group > :nth-child(6), .summary > :nth-child(6), .achgrid > :nth-child(6) { animation-delay: 0.15s; }
-  .group > :nth-child(n+7), .summary > :nth-child(n+7), .achgrid > :nth-child(n+7) { animation-delay: 0.18s; }
+  .group > .row, .group > li, .quests > *, .summary > li, .achgrid > li { animation: rowIn 0.32s var(--ease) backwards; }
+  .group > :nth-child(2), .quests > :nth-child(2), .summary > :nth-child(2), .achgrid > :nth-child(2) { animation-delay: 0.03s; }
+  .group > :nth-child(3), .quests > :nth-child(3), .summary > :nth-child(3), .achgrid > :nth-child(3) { animation-delay: 0.06s; }
+  .group > :nth-child(4), .quests > :nth-child(4), .summary > :nth-child(4), .achgrid > :nth-child(4) { animation-delay: 0.09s; }
+  .group > :nth-child(5), .quests > :nth-child(5), .summary > :nth-child(5), .achgrid > :nth-child(5) { animation-delay: 0.12s; }
+  .group > :nth-child(6), .quests > :nth-child(6), .summary > :nth-child(6), .achgrid > :nth-child(6) { animation-delay: 0.15s; }
+  .group > :nth-child(n+7), .quests > :nth-child(n+7), .summary > :nth-child(n+7), .achgrid > :nth-child(n+7) { animation-delay: 0.18s; }
   @keyframes rowIn { from { opacity: 0; transform: translateY(8px); } }
 
   /* buttons press in */
