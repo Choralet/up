@@ -1,10 +1,10 @@
-import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useReducer, useRef, useState } from 'react'
 import { effectiveGoal, goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { stepperStart } from '../engine/workout'
 import { formatClock, localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META, SKILL_STRONG } from './branches'
+import { BRANCH_META, nodeAccent } from './branches'
 import { ConfirmSheet } from './ConfirmSheet'
 import { DemoButton } from './DemoButton'
 import { demoUrl } from '../data/demos'
@@ -77,7 +77,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   }
 
   return (
-    <div className="log" style={{ '--accent': meta.color, '--accent-strong': node.kind === 'skill' ? SKILL_STRONG : meta.strong } as CSSProperties}>
+    <div className="log" style={nodeAccent(node)}>
       <div className="screen">
         <button className="close" onClick={leave}>Done</button>
         <div className="eyebrow" style={{ color: node.kind === 'skill' ? 'var(--skill)' : undefined }}>
@@ -107,7 +107,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
               <button aria-label="Decrease reps" onClick={() => { setDir('roll-down'); setReps((r) => Math.max(1, r - 1)) }}>−</button>
               <button aria-label="Increase reps" onClick={() => { setDir('roll-up'); setReps((r) => r + 1) }}>+</button>
             </div>
-            <button className="cta" style={{ background: 'var(--accent-strong, var(--accent))' }} onClick={() => record(reps)}>Log Set</button>
+            <button className="cta" style={{ background: 'var(--accent)' }} onClick={() => record(reps)}>Log Set</button>
           </>
         ) : (
           <HoldTimer key={timerKey} target={node.goal.target} sound={progress.settings.holdSound} onStop={(s) => record(s)} onRunningChange={setHoldStart} />

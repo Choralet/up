@@ -1,9 +1,9 @@
-import { useState, type CSSProperties } from 'react'
+import { useState } from 'react'
 import type { ExerciseNode } from '../data/types'
 import { nodeState } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META, SKILL_STRONG } from './branches'
+import { BRANCH_META, nodeAccent } from './branches'
 import { DemoButton } from './DemoButton'
 import { GoalEditor } from './GoalEditor'
 import { trackById } from '../data/tracks'
@@ -24,7 +24,7 @@ export function NodeSheet({ node, onClose, onLog }: { node: ExerciseNode; onClos
   return (
     <>
       <div className="scrim" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={node.name} style={{ '--accent': meta.color, '--accent-strong': node.kind === 'skill' ? SKILL_STRONG : meta.strong } as CSSProperties}>
+      <div className="sheet" role="dialog" aria-modal="true" aria-label={node.name} style={nodeAccent(node)}>
         <div className="eyebrow">{meta.label} · {LABEL[state]}</div>
         <h2>{node.name}</h2>
         {node.track && <div className="sub">Track: {trackById(node.track)?.name}</div>}

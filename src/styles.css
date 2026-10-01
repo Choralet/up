@@ -209,7 +209,7 @@ a.howto { text-decoration: none; }
 .howto { min-height: 44px; }
 .choice b { color: var(--label); }
 .tsvg .n.locked .lb { fill: var(--label2); opacity: 1; }
-.medal, .choice em { background: var(--accent-strong, var(--accent, var(--push))); }
+.medal, .choice em { background: var(--accent); }
 .check .amount { margin-left: auto; font-size: 13px; color: var(--label2); }
 .status { margin: 8px 4px 12px; }
 .howtoken { margin: 8px 0; font-size: 14px; }
@@ -305,7 +305,7 @@ a.howto { text-decoration: none; }
 
   /* level-up medal pops with a ring burst */
   .medal { position: relative; animation: pop 0.5s var(--spring) backwards; }
-  .medal::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 3px solid var(--accent-strong, var(--accent, var(--push))); animation: burst 0.8s 0.15s var(--ease) both; }
+  .medal::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 3px solid var(--accent); animation: burst 0.8s 0.15s var(--ease) both; }
   @keyframes burst { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(1.8); opacity: 0; } }
   .choice { transition: border-color 0.2s, background-color 0.2s; }
   .goalup { animation: pop 0.4s var(--spring); }

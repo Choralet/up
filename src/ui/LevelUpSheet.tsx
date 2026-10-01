@@ -1,10 +1,10 @@
-import { useState, type CSSProperties } from 'react'
+import { useState } from 'react'
 import type { ExerciseNode } from '../data/types'
 import type { Suggestion } from '../engine/progress'
 import { goalText } from '../lib/format'
 import { ROADMAP } from '../data/roadmap'
 import { SKILLS } from '../data/skills'
-import { BRANCH_META } from './branches'
+import { nodeAccent } from './branches'
 
 /** Name what a level-up unlocks the way the Skills tab shows it: Roadmap skill names first, else the skill chain name. */
 function unlockNames(nodes: ExerciseNode[]): { roadmap: string[]; mine: string[] } {
@@ -34,7 +34,7 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
   return (
     <>
       <div className="scrim" onClick={onDismiss} />
-      <div className="sheet center" role="dialog" aria-modal="true" aria-label="Level up" style={{ '--accent': BRANCH_META[node.branch].color, '--accent-strong': BRANCH_META[node.branch].strong } as CSSProperties}>
+      <div className="sheet center" role="dialog" aria-modal="true" aria-label="Level up" style={nodeAccent(node)}>
         <div className="medal" aria-hidden="true">✓</div>
         <h3>You hit {goalText(node.goal)}</h3>
         <p>{node.name} complete.{hasChoices ? ' Choose your next focus.' : ' You have finished everything unlocked here.'}</p>
@@ -49,7 +49,7 @@ export function LevelUpSheet({ node, suggestions, unlockedSkills = [], onPick, o
         ))}
         {unlocks.roadmap.length > 0 && <p className="sub">Unlocks in Roadmap: {unlocks.roadmap.join(', ')}.</p>}
         {unlocks.mine.length > 0 && <p className="sub">Unlocks in Skills: {unlocks.mine.join(', ')}.</p>}
-        <button className="cta" style={{ background: 'var(--accent-strong, var(--accent))' }} onClick={() => onPick(choice)}>
+        <button className="cta" onClick={() => onPick(choice)}>
           {hasChoices ? 'Level Up' : 'Complete'}
         </button>
         <button className="cta sec" onClick={onDismiss}>Not Yet</button>

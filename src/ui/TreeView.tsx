@@ -1,10 +1,10 @@
-import { useMemo, type CSSProperties } from 'react'
+import { useMemo } from 'react'
 import type { Branch } from '../data/types'
 import { layoutBranch, NODE_R } from '../engine/layout'
 import { nodeState, type NodeState } from '../engine/progress'
 import { wrapLabel } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
-import { BRANCH_META } from './branches'
+import { accentStyle, BRANCH_META } from './branches'
 
 // the same words as everywhere else in the app (Locked / Ready / Training / Done)
 /** A label's first line sits this far below the node's edge; each further line adds 10. */
@@ -40,7 +40,7 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
       viewBox={`0 0 ${layout.width} ${layout.height}`}
       role="group"
       aria-label={`${BRANCH_META[branch].label} skill tree`}
-      style={{ '--accent': BRANCH_META[branch].color, width: `${Math.round(zoom * 100)}%` } as CSSProperties}
+      style={{ ...accentStyle(branch), width: `${Math.round(zoom * 100)}%` }}
     >
       {layout.edges.map(({ from, to }) => {
         const a = pos.get(from)!
