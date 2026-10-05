@@ -215,7 +215,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .todaytop > .spacer { flex: 1; }
 .lvbadges { flex: 1; display: flex; gap: 10px; min-width: 0; }
 .lvmini { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.lvmini small { font-size: var(--fs-label); font-weight: 900; color: var(--ink2); }
+.lvmini > small { font-size: var(--fs-label); font-weight: 900; color: var(--ink2); }
 .card.offer { display: flex; flex-direction: column; gap: 8px; }
 .rest { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0 0; padding: 8px 8px 8px 16px; border-radius: var(--r-pill); background: var(--fill); font-weight: 800; font-variant-numeric: tabular-nums; }
 .rest b { color: var(--accent-text); }

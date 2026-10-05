@@ -47,5 +47,11 @@ Open https://choralet.github.io/up/ in **Safari** → Share → **Add to Home Sc
 - [ ] Tap an exercise: Move on when, Equipment, Muscles, Source and How-to links open in Safari.
 - [ ] Workout Length **Full** adds an Accessory (a different one next week).
 
-## 9. VoiceOver (optional)
+## 9. Full body and rest (Plan 9)
+- [ ] Today on a training day says "Full Body Day", Session A or B, about how many minutes, and shows Pair 1–3 plus Core.
+- [ ] Log a set: a rest countdown appears under Log Set; Skip hides it. Settings → Rest Timer off stops it.
+- [ ] With only a band and a bar ticked, Dips says what it needs instead of showing a too-hard dip.
+- [ ] Settings → Weekly Plan switches to Push / Pull / Legs and back, keeping your days.
+
+## 10. VoiceOver (optional)
 - [ ] Settings → Accessibility → VoiceOver on: swipe through Today and a log screen; buttons and numbers are read sensibly.

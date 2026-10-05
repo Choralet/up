@@ -1,6 +1,6 @@
 # Up: Plan 9: Programming that works for months
 
-> **Status: decisions taken; awaiting the user's approval of the whole plan.** No code until approved (CLAUDE.md gate).
+> **Status: approved ("yes, build Plan 9") and built on branch `claude/beautiful-carson-9h5eok`, 2026-10-05.** Not on `main` until the user has seen it. What changed while building: end of this file. No code until approved (CLAUDE.md gate).
 > Evidence: two simulated 12-week testers (a calisthenics coach and a beginner with a band + doorway bar), 2026-10-05. Their bug list is already fixed (commit "fix: tester findings").
 
 **Goal:** Turn the day-by-day exercise picker into a real program: every muscle trained often enough, push and pull balanced, safe first steps, goals a beginner can hit, and no exercise that silently disappears.
@@ -121,3 +121,13 @@ Weighted exercises with a kg field; plateau help ("stuck 4 sessions: try an easi
 | Q2 | Rest timer | **Add it, optional** (reverses the round-1 "No rest timer") |
 | Q3 | Exercises added by Up | **Yes**, marked "Added by Up" |
 | Q4 | Goal caps | **Yes**: reps ≤ 20, holds ≤ 3 × 30 s or 1 × 60 s; source standard stays as "Move on when" |
+
+## 13. Built (2026-10-05): what changed from the plan
+
+- **Safe skipping** is "at most one exercise you can't do in a row": the exercise below a skipped one must be really done. Every focus picker also checks equipment. A skill whose next step needs missing gear leaves the active list.
+- **Keep building:** any finished exercise you log and hit raises its goal next time (+2 reps or +5 s), once a day, undone if you remove the set (`keepStep`, `keepRaisedOn`).
+- **A/B order** follows a running session count (`sessionIndex`); a rest day shows the next session's letter.
+- **Wrist prep** (Handstand and Grip ladders) is now a warm-up item while Handstand, Planche or Elbow lever is active; those ladders start at the next step.
+- **Find your level** asks about the full goal (placement), while the exercise then starts at 60%.
+- A finished exercise drops its ramp stage, so its sheet shows the full goal again.
+- **Push/Pull/Legs** keeps working as before plus the third Pull exercise and the rotating core finisher; older saves on the old default moved to full body, custom splits got a one-time card.

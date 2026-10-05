@@ -59,6 +59,12 @@ const SCENARIOS = {
   'settings-gear': { seed: { settings: { holdSound: true, length: 'standard', equipment: ['band', 'bar'] } }, steps: [['sel', '[aria-label="Settings"]'], ['scroll', '.log', 1150]] },
   'onboarding-gear': { seed: { onboarded: false }, steps: [['text', 'Start']] },
   full: { seed: { settings: { holdSound: true, length: 'full' } }, steps: [['scroll', '.screen', 2000]] },
+  // Plan 9: full body (the SEED has no plan, so it migrates to full body), the Push/Pull/Legs option, rest timer
+  ppl: { seed: { schedule: ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'], settings: { holdSound: true, length: 'standard', plan: 'ppl', restTimer: true } }, steps: [] },
+  'today-scroll': { steps: [['scroll', 'html', 1300]] },
+  'log-rest': { steps: [['text', 'Pike push-up'], ['text', 'Log Set']] },
+  'settings-plan': { steps: [['sel', '[aria-label="Settings"]']] },
+  'tree-rows': { seed: { settings: { holdSound: true, length: 'standard', equipment: ['band', 'bar', 'wall'] } }, steps: [['text', 'Tree'], ['text', 'Pull'], ['text', 'Rows']] },
   'fri-high': { date: FRI, seed: { completed: ["legs-assisted", "legs-squat", "legs-split", "legs-bulgarian", "legs-shrimp", "legs-assisted-pistol", "legs-pistol", "core-deadbug", "core-plank", "core-hollow", "core-knee-raise", "core-tuck-lsit", "core-leg-raise", "core-lsit", "core-dragon", "core-dragon-full", "legs-bridge", "legs-sl-bridge", "legs-nordic-neg", "core-lying-raise"] }, steps: [] },
 }
 
