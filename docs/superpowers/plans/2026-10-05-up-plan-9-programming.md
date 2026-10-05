@@ -1,6 +1,6 @@
 # Up: Plan 9: Programming that works for months
 
-> **Status: DRAFT, awaiting the user's approval.** No code until approved (CLAUDE.md gate).
+> **Status: decisions taken; awaiting the user's approval of the whole plan.** No code until approved (CLAUDE.md gate).
 > Evidence: two simulated 12-week testers (a calisthenics coach and a beginner with a band + doorway bar), 2026-10-05. Their bug list is already fixed (commit "fix: tester findings").
 
 **Goal:** Turn the day-by-day exercise picker into a real program: every muscle trained often enough, push and pull balanced, safe first steps, goals a beginner can hit, and no exercise that silently disappears.
@@ -113,9 +113,11 @@ Weighted exercises with a kg field; plateau help ("stuck 4 sessions: try an easi
 | 6 | Small items (wrist prep, Move on when, below-goal text, History reps) |
 | 7 | Visual check, docs, preview for you, then `main` when you say so |
 
-## 12. Decisions needed (my recommendation first)
+## 12. Decisions (user, 2026-10-05)
 
-- **Q1 Default week:** **Full body 3×** (PPL as an option) · or keep Push/Pull/Legs default with the balance fixes.
-- **Q2 Rest timer:** **add it, optional** (reverses your round-1 choice) · or keep no rest timer.
-- **Q3 Exercises added by Up** (band row, band good morning): **yes, marked "Added by Up"** · or only use your export.
-- **Q4 Goal caps** (3×50 rows → 3×20, keeping the source standard as "Move on when"): **yes** · or keep the source numbers.
+| # | Question | Answer |
+|---|---|---|
+| Q1 | Default week | **Full body 3×**; Push/Pull/Legs stays as a Settings option |
+| Q2 | Rest timer | **Add it, optional** (reverses the round-1 "No rest timer") |
+| Q3 | Exercises added by Up | **Yes**, marked "Added by Up" |
+| Q4 | Goal caps | **Yes**: reps ≤ 20, holds ≤ 3 × 30 s or 1 × 60 s; source standard stays as "Move on when" |
