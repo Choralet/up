@@ -144,3 +144,12 @@ User: "Redesign my app following ui-ux-pro-max skill." Reason given: **more ener
 - **Build approach:** restyle in place with plain CSS tokens (no Tailwind/shadcn, no theme switch back to the old look); Nunito bundled for offline; dark text on bright fills for contrast; each screen keeps its branch colour; Skills pink, Core purple.
 - Work on branch `redesign-game-quest`, shipped to `main` only when complete. Spec: `docs/superpowers/specs/2026-10-01-game-quest-redesign-design.md`.
 - Built on `redesign-game-quest`, finished 2026-10-01. Decided while building: level caption reads "Push 4/23" (the long form did not fit Legs + Core day at large text); rest-day header shows only the streak; Roadmap "ready" icons and the Finish sheet take the screen's colour; tree nodes are bigger (`NODE_R` 19, `ROW_H` 86, `LABEL_Y` 20); tree track chips and zoom buttons restyled; screenshot script `scripts/shots.mjs` added.
+
+## Plan 8: new tree data (2026-10-05, plan awaiting approval)
+
+User: "Implement this new tree data to the app. Show me the plan first." Source export copied to `docs/data/calisthenics-trees.md` (34 trees, 229 exercises). Plan: `docs/superpowers/plans/2026-10-05-up-plan-8-tree-data.md`. Answers:
+- **Muscle-specific trees:** in the Tree and in **Full** workouts (one per day, rotating).
+- **Goal ranges:** the **top** of a range is the Level Up goal (3×8–12 → 3×12); the goal ramp still starts at 60%.
+- **Equipment:** a **My equipment** filter (set in Find your level and Settings); exercises you can't do are greyed and stepped over, never blocking a ladder.
+- **Skill ladders:** keep a **lock** on each ladder's first rung from one main exercise (agent picks from the source notes).
+- Agent recommendations in the plan, open to the user's veto: one ladder drawn at a time; exercises repeated across trees are linked twins; branch level counts main + skill trees only; old progress migrates by an id map, never going backwards.
