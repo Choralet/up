@@ -3,7 +3,7 @@ import { BackupError, exportBackup, parseBackup, progressHash } from './backup'
 import { initialProgress, logSet } from './progress'
 
 describe('backup file', () => {
-  const progress = logSet({ ...initialProgress(NODES), completed: ['push-wall'], onboarded: true }, 'push-incline', 10, '2026-09-21', 1)
+  const progress = logSet({ ...initialProgress(NODES), completed: ['hpush:w'], onboarded: true }, 'hpush:i', 10, '2026-09-21', 1)
 
   it('round-trips progress through the text format', () => {
     const text = exportBackup(progress, new Date('2026-09-21T10:00:00Z'))
@@ -12,7 +12,7 @@ describe('backup file', () => {
     expect(data.version).toBe(1)
     expect(data.exportedAt).toBe('2026-09-21T10:00:00.000Z')
     const back = parseBackup(text, NODES)
-    expect(back.completed).toEqual(['push-wall'])
+    expect(back.completed).toEqual(['hpush:w'])
     expect(back.logs).toHaveLength(1)
     expect(back.onboarded).toBe(true)
   })
@@ -25,8 +25,16 @@ describe('backup file', () => {
   })
 
   it('cleans what it imports (unknown ids dropped)', () => {
-    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed: ['push-wall', 'ghost'] } })
-    expect(parseBackup(text, NODES).completed).toEqual(['push-wall'])
+    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed: ['hpush:w', 'ghost'] } })
+    expect(parseBackup(text, NODES).completed).toEqual(['hpush:w'])
+  })
+
+  it('restores a backup made before the new trees into the new ids', () => {
+    const text = JSON.stringify({ app: 'up', version: 1, progress: { completed: ['push-wall', 'push-incline'], logs: [{ nodeId: 'push-knee', value: 7, date: '2026-09-21', at: 1 }] } })
+    const back = parseBackup(text, NODES)
+    expect(back.completed).toEqual(['hpush:w', 'hpush:i'])
+    expect(back.logs[0].nodeId).toBe('hpush:k')
+    expect(back.focus.hpush).toBe('hpush:k')
   })
 
   it('never includes anything but progress', () => {
@@ -39,7 +47,7 @@ describe('progressHash', () => {
   it('is stable for equal progress and changes when progress changes', () => {
     const a = initialProgress(NODES)
     expect(progressHash(a)).toBe(progressHash(initialProgress(NODES)))
-    expect(progressHash(logSet(a, 'push-wall', 10, '2026-09-21', 1))).not.toBe(progressHash(a))
+    expect(progressHash(logSet(a, 'hpush:w', 10, '2026-09-21', 1))).not.toBe(progressHash(a))
   })
 })
 

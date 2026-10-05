@@ -1,23 +1,34 @@
 import type { DayType, ExerciseNode, SkillChain } from '../data/types'
-import { DAY_TRACKS, FINISHER_TRACKS, SHORT_TRACKS } from '../data/tracks'
+import { ACCESSORY_TRACKS, DAY_TRACKS, FINISHER_TRACKS, SHORT_TRACKS } from '../data/tracks'
 import { indexNodes } from './graph'
+import { weekStart } from '../lib/time'
 import { todaysValues, trackOf, type Progress, type WorkoutLength } from './progress'
 
 export interface Workout {
   day: DayType
   /** current step of each active skill trained on this day type */
   skill: ExerciseNode[]
-  /** focus exercise of each track trained today (null = track finished), and `prev`: the variation just finished below it */
+  /**
+   * focus exercise of each track trained today (null = track finished), and `prev`: the variation just finished below it.
+   * A track whose remaining exercises all need equipment you don't have is left out.
+   */
   main: { track: string; node: ExerciseNode | null; prev?: ExerciseNode }[]
-  /** "Also today": a Volume variation (Full length) and a core finisher on Push and Pull days */
-  extra: { node: ExerciseNode; role: 'volume' | 'core'; of?: string; prev?: ExerciseNode }[]
+  /** "Also today": a Volume variation and an accessory (Full length), and a core finisher on Push and Pull days */
+  extra: { node: ExerciseNode; role: 'volume' | 'core' | 'accessory'; of?: string; prev?: ExerciseNode; track?: string }[]
+}
+
+/** Weeks since 1970 counted from Mondays: the accessory rotation turns once a week. */
+const weekNumber = (date: string) => {
+  const [y, m, d] = weekStart(date).split('-').map(Number)
+  return Math.floor(Date.UTC(y, m - 1, d) / (7 * 86_400_000))
 }
 
 /**
  * The day's workout. Short = the first two tracks; Standard = every track of the day plus a core finisher on
- * Push/Pull days; Full = Standard plus the finished variation of each main exercise for extra volume.
+ * Push/Pull days; Full = Standard plus the finished variation of each main exercise for extra volume, and one
+ * accessory (muscle-specific tree) of the day, a different one each week (`date` picks the week).
  */
-export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: DayType, chains: SkillChain[], length: WorkoutLength = 'standard'): Workout {
+export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: DayType, chains: SkillChain[], length: WorkoutLength = 'standard', date?: string): Workout {
   const byId = indexNodes(nodes)
   const skill = Object.entries(progress.skillFocus).flatMap(([chain, id]) => {
     const node = id ? byId.get(id) : undefined
@@ -28,15 +39,22 @@ export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: Day
   // the variation you just finished below an exercise (none below a track's first exercise)
   const prevOf = (node: ExerciseNode | null, track: string) =>
     node?.requires.map((r) => byId.get(r)).find((p): p is ExerciseNode => !!p && !p.skill && trackOf(p) === track && done.has(p.id))
-  const main = tracks.map((track) => {
+  const finished = (track: string) => nodes.every((n) => n.skill || trackOf(n) !== track || done.has(n.id))
+  const main = tracks.flatMap((track) => {
     const id = progress.focus[track]
     const node = id ? byId.get(id) ?? null : null
+    if (!node && !finished(track)) return [] // the rest needs equipment you don't have
     const prev = prevOf(node, track)
-    return prev ? { track, node, prev } : { track, node }
+    return [prev ? { track, node, prev } : { track, node }]
   })
   const extra: Workout['extra'] = []
   if (length === 'full') {
     for (const m of main) if (m.node && m.prev) extra.push({ node: m.prev, role: 'volume', of: m.node.id })
+    const open = ACCESSORY_TRACKS[day].filter((t) => progress.focus[t] && byId.has(progress.focus[t]!))
+    if (open.length) {
+      const track = open[date ? weekNumber(date) % open.length : 0]
+      extra.push({ node: byId.get(progress.focus[track]!)!, role: 'accessory', track })
+    }
   }
   const finisherTrack = FINISHER_TRACKS.find((t) => progress.focus[t])
   const core = finisherTrack ? byId.get(progress.focus[finisherTrack]!) : undefined

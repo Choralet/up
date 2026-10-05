@@ -1,5 +1,6 @@
 import type { Branch, DayType, ExerciseNode } from '../data/types'
 import type { Progress, SetLog } from './progress'
+import { trackById } from '../data/tracks'
 import { addDays, weekStart } from '../lib/time'
 
 /** Logged days a week needs to count toward the streak: 2, or 1 if fewer than 2 days are planned. */
@@ -49,8 +50,9 @@ export function personalBests(logs: SetLog[], byId: Map<string, ExerciseNode>, l
     .map(([id, v]) => ({ node: byId.get(id)!, best: v.best }))
 }
 
+/** Main and skill exercises of a branch (muscle-specific accessories don't count toward the level). */
 export function branchProgress(nodes: ExerciseNode[], progress: Progress, branch: Branch): { done: number; total: number } {
-  const inBranch = nodes.filter((n) => n.branch === branch && !n.roadmapOnly)
+  const inBranch = nodes.filter((n) => n.branch === branch && !n.roadmapOnly && !(n.track && trackById(n.track)?.accessory))
   const done = inBranch.filter((n) => progress.completed.includes(n.id)).length
   return { done, total: inBranch.length }
 }

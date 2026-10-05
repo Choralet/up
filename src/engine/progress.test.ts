@@ -4,13 +4,14 @@ import {
   goalMet, initialProgress, isUnlocked, levelUp, logSet, newlyUnlockedSkills, nodeState,
   removeSet, restartOnboarding, sanitizeProgress, setDayType, setFocus, setGoalOverride,
   suggestNext, todaysValues, setDayPick, toggleWarm, todayState, effectiveGoal, advanceStage, applyStages, unlockedBy,
+  passedFor, setEquipment,
   type Progress,
 } from './progress'
 import { DEFAULT_SCHEDULE } from '../data/schedule'
 import { NODES } from '../data/nodes'
 
 const N = (id: string, requires: string[] = [], over: Partial<ExerciseNode> = {}): ExerciseNode => ({
-  id, name: id, branch: 'push', kind: 'strength', requires, col: 1,
+  id, name: id, branch: 'push', kind: 'strength', requires,
   goal: { type: 'reps', sets: 3, target: 10 }, cue: 'cue', ...over,
 })
 // a -> b -> d(skill);  a -> c
@@ -464,28 +465,21 @@ describe('movement tracks (real data)', () => {
   it('every track starts at its own first exercise', () => {
     const f = initialProgress(NODES).focus
     expect(f).toMatchObject({
-      'push-h': 'push-wall', 'push-v': 'push-pike-hold', 'push-d': 'push-bench-dip',
-      'pull-v': 'pull-hang', 'pull-r': 'pull-row-high',
-      'legs-s': 'legs-assisted', 'legs-h': 'legs-bridge',
-      'core-a': 'core-deadbug', 'core-l': 'core-lying-raise',
+      hpush: 'hpush:w', vpush: 'vpush:pk', dip: 'dip:sh', vpull: 'vpull:dh', hpull: 'hpull:vr',
+      squat: 'squat:as', hinge: 'hinge:gb', antiext: 'antiext:db', compress: 'compress:llr', lateral: 'lateral:sp',
+      calf: 'calf:c1', neck: 'neck:n1',
     })
-  })
-  it('an old save keyed by branch moves into the right track', () => {
-    const p = real({ completed: ['push-wall', 'push-incline'], focus: { push: 'push-knee', pull: 'pull-hang' } })
-    expect(p.focus['push-h']).toBe('push-knee')
-    expect(p.focus['push-v']).toBe('push-pike-hold')
-    expect(p.focus['pull-v']).toBe('pull-hang')
+    expect(Object.keys(f)).toHaveLength(21)
   })
   it('levelling up moves only that track', () => {
-    const p = levelUp(NODES, real(), 'push-pike-hold', null)
-    expect(p.focus['push-v']).toBe('push-pike')
-    expect(p.focus['push-h']).toBe('push-wall')
+    const p = levelUp(NODES, real(), 'vpush:pk', null)
+    expect(p.focus.vpush).toBe('vpush:epk')
+    expect(p.focus.hpush).toBe('hpush:w')
   })
-  it('suggestions stay in the same track', () => {
-    const p = real({ completed: ['push-wall', 'push-incline', 'push-knee'] })
-    const ids = suggestNext(NODES, p, 'push-standard').map((s) => s.node.id)
-    expect(ids).toEqual(expect.arrayContaining(['push-diamond', 'push-decline']))
-    expect(ids).not.toContain('push-pike')
+  it('suggestions stay in the same track and list every branch of it', () => {
+    const p = real({ completed: ['hpush:w', 'hpush:i', 'hpush:k'], focus: { hpush: 'hpush:p' } })
+    const ids = suggestNext(NODES, p, 'hpush:p').map((s) => s.node.id)
+    expect(ids).toEqual(['hpush:d', 'hpush:dp', 'hpush:rp', 'hpush:wp'])
   })
   it('workout length setting defaults to standard and is kept when valid', () => {
     expect(initialProgress(NODES).settings.length).toBe('standard')
@@ -494,37 +488,114 @@ describe('movement tracks (real data)', () => {
   })
 })
 
-describe('Plan 6 review fixes: tracks never dead-end, migrations keep your level', () => {
+describe('Plan 8: twins, ladder gates, equipment', () => {
   const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
-  it('Pull-ups continue after Scapular pull-up without any Rows exercise', () => {
-    let p = real()
-    p = levelUp(NODES, p, 'pull-hang', null)
-    p = levelUp(NODES, p, 'pull-scap', null)
-    expect(p.focus['pull-v']).toBe('pull-negative')
+  it('finishing an exercise finishes its twin in the other tree, and that tree moves on', () => {
+    const p = levelUp(NODES, real({ completed: ['vpush:pk'], focus: { vpush: 'vpush:epk' } }), 'vpush:epk', null)
+    expect(p.completed).toEqual(expect.arrayContaining(['vpush:epk', 'hspu:epk', 'hspu:pk']))
   })
-  it('a finished track refills when something in it becomes trainable', () => {
-    const p = { ...real(), focus: { ...real().focus, 'push-h': null } }
-    expect(levelUp(NODES, p, 'push-pike-hold', null).focus['push-h']).toBe('push-wall')
+  it('a twin finished elsewhere moves an active skill off that step', () => {
+    let p = real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p'] })
+    p = activateSkill(NODES, p, 'hspu')
+    expect(p.skillFocus.hspu).toBe('hspu:pk')
+    p = levelUp(NODES, p, 'vpush:pk', null)
+    expect(p.skillFocus.hspu).toBe('hspu:epk')
   })
-  it('old saves keep their level: new easier steps below done work count as done', () => {
-    const rows = real({ completed: ['pull-hang', 'pull-scap', 'pull-row'] })
-    expect(rows.completed).toContain('pull-row-high')
-    expect(rows.focus['pull-r']).toBe('pull-row-elevated')
-    const dips = real({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'rm-dip'] })
-    expect(dips.completed).toEqual(expect.arrayContaining(['push-bench-dip', 'push-dip-neg']))
-    expect(dips.focus['push-d']).toBeNull()
-    const pike = real({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'], focus: { push: 'push-pike' } })
-    expect(pike.completed).toContain('push-pike-hold')
-    expect(pike.focus['push-v']).toBe('push-pike')
-    const legs = real({ completed: ['core-deadbug', 'core-plank', 'core-hollow', 'core-knee-raise'] })
-    expect(legs.completed).toContain('core-lying-raise')
-    expect(legs.focus['core-l']).toBe('core-leg-raise')
+  it('a skill ladder opens only after its gate exercise', () => {
+    const before = real()
+    expect(activateSkill(NODES, before, 'planche')).toBe(before)
+    const after = activateSkill(NODES, real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p'] }), 'planche')
+    expect(after.skillFocus.planche).toBe('planche:ln')
   })
-  it('an old Parallel bar dip skill moves into the Dips track and frees its slot', () => {
-    const p = real({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'], skillFocus: { 'bulgarian-dip': 'rm-dip' } })
+  it('equipment you lack is stepped over: the next exercise unlocks and training skips it', () => {
+    let p = setEquipment(NODES, real(), ['band', 'bar', 'wall'])
+    expect(p.settings.equipment).toEqual(['band', 'bar', 'wall'])
+    expect(nodeState(NODES.find((n) => n.id === 'hpush:i')!, p, passedFor(NODES, p))).toBe('gear')
+    p = levelUp(NODES, p, 'hpush:w', null)
+    expect(p.focus.hpush).toBe('hpush:k') // Incline push-up needs a bench or a table
+    expect(p.completed).not.toContain('hpush:i')
+    expect(p.focus.vpull).toBe('vpull:dh')
+    // every easier dip needs dip bars, rings or parallettes: with a bar, Dips starts at the straight-bar dip
+    expect(p.focus.dip).toBe('dip:sbd')
+    expect(setEquipment(NODES, p, ['band']).focus.dip).toBeNull()
+  })
+  it('changing equipment moves training off what you can no longer do, and never removes progress', () => {
+    let p = real({ completed: ['dip:sh'], focus: { dip: 'dip:nd' } })
+    p = setEquipment(NODES, p, ['band'])
+    expect(p.focus.dip).toBeNull()
+    expect(p.completed).toContain('dip:sh')
+    p = setEquipment(NODES, p, null)
+    expect(p.settings.equipment).toBeUndefined()
+    expect(p.focus.dip).toBe('dip:bd')
+  })
+  it('no equipment set = everything counts as owned; the floor is always there', () => {
+    const p = real()
+    expect(passedFor(NODES, p)).toEqual(new Set())
+    expect(nodeState(NODES.find((n) => n.id === 'dip:sh')!, p, passedFor(NODES, p))).toBe('focus')
+    expect(real({ settings: { holdSound: true, length: 'standard', equipment: ['floor', 'bar', 7] } }).settings.equipment).toEqual(['bar'])
+  })
+  it('a skill whose remaining steps all need missing equipment leaves the active list', () => {
+    let p = real({ completed: ['vpush:pk', 'vpush:epk', 'vpush:whn'], settings: { holdSound: true, length: 'standard', equipment: ['bar', 'pole'] } })
+    p = activateSkill(NODES, p, 'flag')
+    expect(p.skillFocus.flag).toBe('flag:vf')
+    p = setEquipment(NODES, p, ['bar'])
     expect(p.skillFocus).toEqual({})
-    expect(p.focus['push-d']).toBe('rm-dip')
-    expect(p.completed).toEqual(expect.arrayContaining(['push-bench-dip', 'push-dip-neg']))
+  })
+})
+
+describe('Plan 8 migration: saves from before the new trees keep their level', () => {
+  const old = (raw: object) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  it('maps completed, focus (keyed by old tracks), logs, goals and stages to the new ids', () => {
+    const p = old({
+      completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'pull-hang', 'pull-scap'],
+      focus: { 'push-h': 'push-diamond', 'pull-v': 'pull-negative', 'core-a': 'core-plank' },
+      logs: [{ nodeId: 'push-standard', value: 8, date: '2026-09-28', at: 1 }, { nodeId: 'push-decline', value: 5, date: '2026-09-28', at: 2 }],
+      goalOverrides: { 'push-diamond': { sets: 4, target: 6 } },
+      goalStage: { 'push-diamond': 1 },
+      stageRaisedOn: { 'push-diamond': '2026-09-28' },
+    })
+    expect(p.completed).toEqual(expect.arrayContaining(['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p', 'vpull:dh', 'vpull:sp', 'grip:g1', 'scap:s3']))
+    expect(p.focus).toMatchObject({ hpush: 'hpush:d', vpull: 'vpull:np', antiext: 'antiext:pl' })
+    expect(p.logs).toEqual([{ nodeId: 'hpush:p', value: 8, date: '2026-09-28', at: 1 }]) // decline push-up logs are dropped
+    expect(p.goalOverrides).toEqual({ 'hpush:d': { sets: 4, target: 6 } })
+    expect(p.goalStage).toEqual({ 'hpush:d': 1 })
+    expect(p.stageRaisedOn).toEqual({ 'hpush:d': '2026-09-28' })
+  })
+  it('easier exercises the new tree adds below your work count as done', () => {
+    const rows = old({ completed: ['pull-row-high', 'pull-row'], focus: { 'pull-r': 'pull-row-elevated' } })
+    expect(rows.completed).toEqual(expect.arrayContaining(['hpull:vr', 'hpull:ir', 'hpull:hr']))
+    expect(rows.focus.hpull).toBe('hpull:fe')
+    const negatives = old({ completed: ['pull-hang', 'pull-scap'], focus: { 'pull-v': 'pull-negative' } })
+    expect(negatives.completed).toContain('vpull:ah') // the new Arch hang sits below Negative pull-up
+    expect(negatives.focus.vpull).toBe('vpull:np')
+  })
+  it('an exercise with no exact match maps to the nearest easier one', () => {
+    const p = old({ completed: ['push-hs-chest', 'push-hs-back'], skillFocus: { handstand: 'push-hs-back' } })
+    expect(p.completed).toEqual(expect.arrayContaining(['hs:cw', 'hs:pk', 'hs:w']))
+    expect(p.skillFocus).toEqual({ hs: 'hs:ku' })
+  })
+  it('the step you were training keeps its easier steps done (Freestanding handstand needs the new Wall heel pulls)', () => {
+    const p = old({ completed: ['push-hs-chest', 'push-hs-back'], skillFocus: { handstand: 'push-hs-free' } })
+    expect(p.completed).toContain('hs:hp')
+    expect(p.skillFocus).toEqual({ hs: 'hs:fs' })
+  })
+  it('active skills keep their place under the new chain names', () => {
+    const p = old({ completed: ['pull-pullup', 'pull-negative', 'pull-scap', 'pull-hang'], skillFocus: { 'front-lever': 'pull-fl-tuck', 'muscle-up': null } })
+    expect(p.skillFocus).toEqual({ fl: 'fl:tf', bmu: 'bmu:cb' })
+  })
+  it('a One-arm push-up skill becomes the Push-ups track focus', () => {
+    const p = old({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-diamond', 'push-archer'], skillFocus: { 'one-arm-push': 'push-oneam' } })
+    expect(p.skillFocus).toEqual({})
+    expect(p.completed).toContain('hpush:oai') // the new One-arm incline sits below it
+    expect(p.focus.hpush).toBe('hpush:oa')
+  })
+  it('Roadmap moves now in the trees keep their progress; Roadmap-only ones keep their ids', () => {
+    const p = old({ completed: ['pull-hang', 'rm-hollow-hang-1', 'rm-german-1', 'rm-german-2', 'rm-butcher'] })
+    expect(p.completed).toEqual(expect.arrayContaining(['rm-hollow-hang-1', 'bl:gh', 'bl:stc', 'rm-butcher']))
+  })
+  it('is idempotent: loading a migrated save again changes nothing', () => {
+    const once = old({ completed: ['push-standard', 'legs-pistol'], focus: { 'push-h': 'push-diamond' }, skillFocus: { pistol: 'legs-pistol' } })
+    expect(sanitizeProgress(NODES, once)).toEqual(once)
   })
 })
 

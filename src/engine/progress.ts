@@ -1,9 +1,11 @@
 import type { DayType, ExerciseNode, Goal, GoalOverride } from '../data/types'
 import { DAY_TYPES, DEFAULT_SCHEDULE } from '../data/schedule'
-import { ADDED_BELOW } from '../data/tracks'
+import { currentId, LEGACY_CHAINS, LEGACY_DROP_LOGS } from '../data/legacy'
+import { canDo, type Kit } from './equipment'
 import { indexNodes } from './graph'
 
-export type NodeState = 'locked' | 'available' | 'focus' | 'completed'
+/** `gear`: needs equipment you don't have (it is stepped over, see `passedSet`). */
+export type NodeState = 'locked' | 'available' | 'focus' | 'completed' | 'gear'
 
 export interface SetLog {
   nodeId: string
@@ -32,6 +34,8 @@ export interface Settings {
   /** how many exercises a day's workout has */
   length: WorkoutLength
   lastExportAt?: number
+  /** equipment codes you own (the floor is implied); not set = everything counts as owned */
+  equipment?: string[]
 }
 
 export interface Progress {
@@ -70,10 +74,48 @@ export function isUnlocked(node: ExerciseNode, completed: Set<string>): boolean 
   return node.requires.every((r) => completed.has(r))
 }
 
-export function nodeState(node: ExerciseNode, progress: Progress): NodeState {
+export const kitOf = (progress: Pick<Progress, 'settings'>): Kit => progress.settings.equipment
+
+/**
+ * Completed exercises plus the ones you step over: an exercise you can't do with your equipment counts as
+ * passed once everything it needs is passed, so it never blocks the rest of its ladder. Unlock checks use this set.
+ */
+export function passedSet(nodes: ExerciseNode[], completed: Iterable<string>, kit: Kit): Set<string> {
+  const done = new Set(completed)
+  if (!kit) return done
+  for (let grew = true; grew; ) {
+    grew = false
+    for (const n of nodes) {
+      if (!done.has(n.id) && !canDo(n, kit) && isUnlocked(n, done)) {
+        done.add(n.id)
+        grew = true
+      }
+    }
+  }
+  return done
+}
+
+const passedCache = new WeakMap<Progress, WeakMap<ExerciseNode[], Set<string>>>()
+/** `passedSet` for a progress object (cached: progress is never changed in place). */
+export function passedFor(nodes: ExerciseNode[], progress: Progress): Set<string> {
+  let byNodes = passedCache.get(progress)
+  if (!byNodes) passedCache.set(progress, (byNodes = new WeakMap()))
+  let set = byNodes.get(nodes)
+  if (!set) byNodes.set(nodes, (set = passedSet(nodes, progress.completed, kitOf(progress))))
+  return set
+}
+
+/** `ids` plus the same exercises in other trees. */
+export function withTwins(byId: Map<string, ExerciseNode>, ids: string[]): string[] {
+  return [...new Set(ids.flatMap((id) => [id, ...(byId.get(id)?.twins ?? [])]))]
+}
+
+/** `passed` (from `passedFor`) tells stepped-over exercises apart; without it only completed ones count. */
+export function nodeState(node: ExerciseNode, progress: Progress, passed?: Set<string>): NodeState {
   if (progress.completed.includes(node.id)) return 'completed'
   if (Object.values(progress.focus).includes(node.id) || Object.values(progress.skillFocus).includes(node.id)) return 'focus'
-  return isUnlocked(node, new Set(progress.completed)) ? 'available' : 'locked'
+  if (!canDo(node, kitOf(progress))) return 'gear'
+  return isUnlocked(node, passed ?? new Set(progress.completed)) ? 'available' : 'locked'
 }
 
 export function goalMet(goal: Goal, values: number[]): boolean {
@@ -114,10 +156,11 @@ const kindRank = (n: ExerciseNode) => (n.kind === 'skill' ? 1 : 0)
  * For a skill step: the other steps of the same chain. New unlocks first among equals.
  */
 export function suggestNext(nodes: ExerciseNode[], progress: Progress, fromId: string): Suggestion[] {
-  const from = indexNodes(nodes).get(fromId)
+  const byId = indexNodes(nodes)
+  const from = byId.get(fromId)
   if (!from) return []
-  const before = new Set(progress.completed)
-  const after = new Set([...progress.completed, fromId])
+  const before = passedFor(nodes, progress)
+  const after = passedSet(nodes, withTwins(byId, [...progress.completed, fromId]), kitOf(progress))
   const score = (s: Suggestion) => kindRank(s.node) * 2 + (s.isNew ? 0 : 1)
   return nodes
     .filter((n) => !after.has(n.id) && isUnlocked(n, after) && (from.skill ? n.skill === from.skill : !n.skill && trackOf(n) === trackOf(from)))
@@ -127,22 +170,41 @@ export function suggestNext(nodes: ExerciseNode[], progress: Progress, fromId: s
 
 /** Skill steps that completing `fromId` newly opens (so the app can point at the Skills tab). */
 export function newlyUnlockedSkills(nodes: ExerciseNode[], progress: Progress, fromId: string): ExerciseNode[] {
-  const own = indexNodes(nodes).get(fromId)?.skill // the next step of the chain you are already on is not "a new skill"
-  const before = new Set(progress.completed)
-  const after = new Set([...progress.completed, fromId])
+  const byId = indexNodes(nodes)
+  const own = byId.get(fromId)?.skill // the next step of the chain you are already on is not "a new skill"
+  const before = passedFor(nodes, progress)
+  const after = passedSet(nodes, withTwins(byId, [...progress.completed, fromId]), kitOf(progress))
   return nodes.filter((n) => n.skill && n.skill !== own && !after.has(n.id) && isUnlocked(n, after) && !isUnlocked(n, before))
 }
 
-/** First step of a chain that is not done and whose requirements are done, or null. */
+/** First step of a chain that is not passed and whose requirements are passed (`done` from `passedSet`), or null. */
 export function firstStep(nodes: ExerciseNode[], done: Set<string>, chain: string): string | null {
   return nodes.find((n) => n.skill === chain && !done.has(n.id) && isUnlocked(n, done))?.id ?? null
 }
 
-/** Give every empty track its first trainable exercise (a level-up elsewhere can unlock one). */
-function refill(nodes: ExerciseNode[], focus: Record<string, string | null>, done: Set<string>): Record<string, string | null> {
-  const next = { ...focus }
-  for (const t of trackKeys(nodes)) if (!next[t]) next[t] = pickFocus(nodes, done, t)
-  return next
+const trainable = (n: ExerciseNode | undefined, track: string, done: Set<string>) =>
+  !!n && !n.skill && trackOf(n) === track && !done.has(n.id) && isUnlocked(n, done)
+
+/**
+ * After completions or equipment change: every track and active skill keeps its exercise when it is still
+ * trainable, else gets the first trainable one. A skill whose steps are all passed leaves the active list.
+ */
+export function settleFocus(nodes: ExerciseNode[], progress: Progress): Progress {
+  const byId = indexNodes(nodes)
+  const done = passedSet(nodes, progress.completed, kitOf(progress))
+  const focus: Record<string, string | null> = {}
+  for (const t of trackKeys(nodes)) {
+    const id = progress.focus[t]
+    focus[t] = id && trainable(byId.get(id), t, done) ? id : pickFocus(nodes, done, t)
+  }
+  const skillFocus: Record<string, string | null> = {}
+  for (const [chain, id] of Object.entries(progress.skillFocus)) {
+    const steps = nodes.filter((n) => n.skill === chain)
+    if (steps.length === 0 || steps.every((n) => done.has(n.id))) continue
+    const n = id ? byId.get(id) : undefined
+    skillFocus[chain] = n && n.skill === chain && !done.has(n.id) && isUnlocked(n, done) ? n.id : firstStep(nodes, done, chain)
+  }
+  return { ...progress, focus, skillFocus }
 }
 
 /** A strength exercise's movement track (falls back to its branch for data without tracks). */
@@ -153,27 +215,23 @@ export function trackKeys(nodes: ExerciseNode[]): string[] {
   return [...new Set(nodes.filter((n) => !n.skill).map(trackOf))]
 }
 
-/** The first strength exercise of a track that is not done and is unlocked. */
+/** The first strength exercise of a track that is not passed and is unlocked. */
 function pickFocus(nodes: ExerciseNode[], done: Set<string>, track: string): string | null {
-  return nodes.find((n) => !n.skill && trackOf(n) === track && !done.has(n.id) && isUnlocked(n, done))?.id ?? null
+  return nodes.find((n) => trainable(n, track, done))?.id ?? null
 }
 
 function levelUpSkill(nodes: ExerciseNode[], progress: Progress, from: ExerciseNode, toId: string | null): Progress {
   const chain = from.skill!
   if (progress.skillFocus[chain] !== from.id) return progress
-  const completed = [...new Set([...progress.completed, from.id])]
-  const done = new Set(completed)
-  const to = toId ? indexNodes(nodes).get(toId) : undefined
+  const byId = indexNodes(nodes)
+  const completed = withTwins(byId, [...progress.completed, from.id])
+  const done = passedSet(nodes, completed, kitOf(progress))
+  const to = toId ? byId.get(toId) : undefined
   const valid = !!to && to.skill === chain && !done.has(to.id) && isUnlocked(to, done)
-  // a chain whose steps are all done leaves the active list, freeing its slot
-  if (nodes.filter((n) => n.skill === chain).every((n) => done.has(n.id))) {
-    const skillFocus = { ...progress.skillFocus }
-    delete skillFocus[chain]
-    return { ...progress, completed, skillFocus }
-  }
+  // a chain whose steps are all passed leaves the active list (settleFocus), freeing its slot
   const next = valid ? to!.id : firstStep(nodes, done, chain)
   const goalStage = next ? { ...progress.goalStage, [next]: 0 } : progress.goalStage
-  return { ...progress, completed, goalStage, skillFocus: { ...progress.skillFocus, [chain]: next } }
+  return settleFocus(nodes, { ...progress, completed, goalStage, skillFocus: { ...progress.skillFocus, [chain]: next } })
 }
 
 /** Complete the current focus (branch or skill chain) and choose the next one. Returns the same object if `fromId` is not a focus. */
@@ -184,13 +242,12 @@ export function levelUp(nodes: ExerciseNode[], progress: Progress, fromId: strin
   if (from.skill) return levelUpSkill(nodes, progress, from, toId)
   const track = trackOf(from)
   if (progress.focus[track] !== fromId) return progress
-  const completed = [...new Set([...progress.completed, fromId])]
-  const done = new Set(completed)
+  const completed = withTwins(byId, [...progress.completed, fromId])
+  const done = passedSet(nodes, completed, kitOf(progress))
   const to = toId ? byId.get(toId) : undefined
-  const valid = !!to && !to.skill && trackOf(to) === track && !done.has(to.id) && isUnlocked(to, done)
-  const focusId = valid ? to!.id : pickFocus(nodes, done, track)
+  const focusId = to && trainable(to, track, done) ? to.id : pickFocus(nodes, done, track)
   const goalStage = focusId ? { ...progress.goalStage, [focusId]: 0 } : progress.goalStage
-  return { ...progress, completed, goalStage, focus: refill(nodes, { ...progress.focus, [track]: focusId }, done) }
+  return settleFocus(nodes, { ...progress, completed, goalStage, focus: { ...progress.focus, [track]: focusId } })
 }
 
 const RAMP = [0.6, 0.8, 1]
@@ -247,27 +304,35 @@ export function settleStage(progress: Progress, nodeId: string, final: Goal, tod
 export function setFocus(nodes: ExerciseNode[], progress: Progress, nodeId: string): Progress {
   const node = indexNodes(nodes).get(nodeId)
   if (!node || node.skill) return progress
-  if (nodeState(node, progress) !== 'available') return progress
+  if (nodeState(node, progress, passedFor(nodes, progress)) !== 'available') return progress
   return { ...progress, focus: { ...progress.focus, [trackOf(node)]: nodeId } }
 }
 
-/** "I can already do this": complete the steps in order, each only if its requirements are met by then. */
+/** "I can already do this": complete the steps in order, each only if its requirements are met (passed) by then. */
 export function completeSteps(nodes: ExerciseNode[], progress: Progress, ids: string[]): Progress {
   const byId = indexNodes(nodes)
-  const done = new Set(progress.completed)
+  let completed = progress.completed
   for (const id of ids) {
     const n = byId.get(id)
-    if (n && !done.has(id) && isUnlocked(n, done)) done.add(id)
+    if (n && !completed.includes(id) && isUnlocked(n, passedSet(nodes, completed, kitOf(progress)))) completed = withTwins(byId, [...completed, id])
   }
-  if (done.size === progress.completed.length) return progress
-  return sanitizeProgress(nodes, { ...progress, completed: [...done] })
+  if (completed === progress.completed) return progress
+  return sanitizeProgress(nodes, { ...progress, completed })
+}
+
+/** What you own (null = not set: everything counts). Training moves off anything you can no longer do; progress stays. */
+export function setEquipment(nodes: ExerciseNode[], progress: Progress, kit: string[] | null): Progress {
+  const settings = { ...progress.settings }
+  if (kit) settings.equipment = [...new Set(kit)].filter((e) => e !== 'floor').sort()
+  else delete settings.equipment
+  return settleFocus(nodes, { ...progress, settings })
 }
 
 /** Start training a skill chain at its first trainable step. Refuses unknown, active, locked, finished chains and a 3rd skill. */
 export function activateSkill(nodes: ExerciseNode[], progress: Progress, chainId: string): Progress {
   if (chainId in progress.skillFocus) return progress
   if (Object.keys(progress.skillFocus).length >= MAX_ACTIVE_SKILLS) return progress
-  const step = firstStep(nodes, new Set(progress.completed), chainId)
+  const step = firstStep(nodes, passedFor(nodes, progress), chainId)
   if (!step) return progress
   return { ...progress, skillFocus: { ...progress.skillFocus, [chainId]: step } }
 }
@@ -329,10 +394,10 @@ export function toggleWarm(progress: Progress, date: string, key: string): Progr
   return { ...progress, day: { ...d, warm } }
 }
 
-/** Nodes that were locked before a change and are unlocked (not done) after it: the unlock moment. */
+/** Nodes that were locked before a change and are unlocked (not passed) after it: the unlock moment. */
 export function unlockedBy(nodes: ExerciseNode[], before: Progress, after: Progress): string[] {
-  const b = new Set(before.completed)
-  const a = new Set(after.completed)
+  const b = passedFor(nodes, before)
+  const a = passedFor(nodes, after)
   return nodes.filter((n) => !a.has(n.id) && !isUnlocked(n, b) && isUnlocked(n, a)).map((n) => n.id)
 }
 
@@ -348,60 +413,81 @@ export function setSettings(progress: Progress, patch: Partial<Settings>): Progr
 export const finishOnboarding = (progress: Progress): Progress => ({ ...progress, onboarded: true })
 export const restartOnboarding = (progress: Progress): Progress => ({ ...progress, onboarded: false })
 
-/** Turn anything read from storage (including Plan 1 saves) into valid progress for the current graph. */
+/** Turn anything read from storage (including Plan 1 saves and pre-Plan 8 ids) into valid progress for the current graph. */
 export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress {
   const base = initialProgress(nodes)
   if (!raw || typeof raw !== 'object') return base
   const r = raw as Record<string, unknown>
   const byId = indexNodes(nodes)
+  const str = (x: unknown): x is string => typeof x === 'string'
+  // ids from before Plan 8 move to the new trees; record which ones came from an old id
+  const moved = new Set<string>()
+  const cur = (id: string) => {
+    const c = currentId(id)
+    if (c !== id) moved.add(c)
+    return c
+  }
+  const rekey = <T>(obj: unknown): Record<string, T> =>
+    obj && typeof obj === 'object' ? Object.fromEntries(Object.entries(obj as Record<string, T>).map(([k, v]) => [currentId(k), v])) : {}
 
-  const completed = Array.isArray(r.completed)
-    ? [...new Set(r.completed.filter((x): x is string => typeof x === 'string' && byId.has(x)))]
-    : []
+  const rs = r.settings as Partial<Settings> | undefined
+  const settings: Settings = {
+    holdSound: rs && typeof rs === 'object' && typeof rs.holdSound === 'boolean' ? rs.holdSound : true,
+    length: rs && typeof rs === 'object' && WORKOUT_LENGTHS.includes(rs.length as WorkoutLength) ? (rs.length as WorkoutLength) : 'standard',
+  }
+  if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
+  if (rs && typeof rs === 'object' && Array.isArray(rs.equipment)) settings.equipment = [...new Set(rs.equipment.filter(str))].filter((e) => e !== 'floor').sort()
+  const kit = settings.equipment
+
+  const completed = Array.isArray(r.completed) ? [...new Set(r.completed.filter(str).map(cur).filter((x) => byId.has(x)))] : []
   const logs: SetLog[] = Array.isArray(r.logs)
     ? r.logs
         .filter(
           (l): l is SetLog =>
             !!l && typeof l === 'object' &&
-            typeof (l as SetLog).nodeId === 'string' && byId.has((l as SetLog).nodeId) &&
+            str((l as SetLog).nodeId) && !LEGACY_DROP_LOGS.has((l as SetLog).nodeId) && byId.has(currentId((l as SetLog).nodeId)) &&
             Number.isFinite((l as SetLog).value) &&
-            typeof (l as SetLog).date === 'string' && typeof (l as SetLog).at === 'number',
+            str((l as SetLog).date) && typeof (l as SetLog).at === 'number',
         )
-        .map((l) => ({ nodeId: l.nodeId, value: Math.floor(l.value), date: l.date, at: l.at }))
+        .map((l) => ({ nodeId: currentId(l.nodeId), value: Math.floor(l.value), date: l.date, at: l.at }))
         .filter((l) => l.value >= 1)
     : []
-  const rawFocus = r.focus && typeof r.focus === 'object' ? (r.focus as Record<string, unknown>) : {}
-  const rawSkill = r.skillFocus && typeof r.skillFocus === 'object' ? (r.skillFocus as Record<string, unknown>) : {}
-  // Exercises that were a skill step before and are a track exercise now (Parallel bar dip → Dip)
-  const converted = Object.values(rawSkill).map((id) => (typeof id === 'string' ? byId.get(id) : undefined)).filter((n): n is ExerciseNode => !!n && !n.skill)
+  const rawFocus: Record<string, unknown> = Object.fromEntries(Object.entries(rekey<unknown>(r.focus)).map(([k, v]) => [k, str(v) ? cur(v) : v]))
+  // an active skill keeps its place in its (possibly renamed) chain
+  const rawSkill: Record<string, unknown> = {}
+  for (const [chain, v] of Object.entries(r.skillFocus && typeof r.skillFocus === 'object' ? (r.skillFocus as Record<string, unknown>) : {})) {
+    const id = str(v) ? cur(v) : null
+    const key = (id && byId.get(id)?.skill) || LEGACY_CHAINS[chain] || chain
+    if (!(key in rawSkill) || rawSkill[key] === null) rawSkill[key] = id
+  }
+  // Exercises that were a skill step before and are a track exercise now (Parallel bar dip → Dip, One-arm push-up)
+  const converted = Object.values(rawSkill).map((id) => (str(id) ? byId.get(id) : undefined)).filter((n): n is ExerciseNode => !!n && !n.skill)
 
-  // Catch-up for older saves: the easier steps added in Plan 6 below work you already did (or were training)
-  // count as done, so no one is sent back to a beginner move. Nothing else is ever filled in.
-  const done = new Set(completed)
-  const legacyFocus = [...Object.values(rawFocus), ...converted.map((n) => n.id)]
-    .map((id) => (typeof id === 'string' ? byId.get(id) : undefined))
-    .filter((n): n is ExerciseNode => !!n && !n.skill)
-  const queue = [...completed.map((id) => byId.get(id)!), ...legacyFocus]
+  // Older saves: the easier steps of the same tree below work you did (or were training) under an old id count
+  // as done, so no one is sent back to a beginner move. New saves are never filled in.
+  const legacyFocus = [...Object.values(rawFocus), ...Object.values(rawSkill)].filter(str).filter((id) => moved.has(id))
+  const queue = [...completed.filter((id) => moved.has(id)), ...legacyFocus].map((id) => byId.get(id)).filter((n): n is ExerciseNode => !!n)
+  const filled = new Set(completed)
   while (queue.length) {
     const n = queue.pop()!
-    if (n.skill) continue
-    for (const r of n.requires) {
-      const p = byId.get(r)
-      if (p && ADDED_BELOW.has(p.id) && trackOf(p) === trackOf(n) && !done.has(p.id)) {
-        done.add(p.id)
+    for (const req of n.requires) {
+      const p = byId.get(req)
+      if (p && p.tree && p.tree === n.tree && !filled.has(p.id)) {
+        filled.add(p.id)
         completed.push(p.id)
         queue.push(p)
       }
     }
   }
+  const allDone = withTwins(byId, completed)
+  const done = passedSet(nodes, allDone, kit)
 
-  const trainable = (n: ExerciseNode | undefined, t: string) => !!n && !n.skill && trackOf(n) === t && !done.has(n.id) && isUnlocked(n, done)
-  const stored = [...Object.values(rawFocus), ...converted.map((n) => n.id)].filter((v): v is string => typeof v === 'string').map((id) => byId.get(id))
+  const stored = [...Object.values(rawFocus), ...converted.map((n) => n.id)].filter(str).map((id) => byId.get(id))
   const focus: Record<string, string | null> = {}
   for (const t of trackKeys(nodes)) {
-    const own = typeof rawFocus[t] === 'string' ? byId.get(rawFocus[t] as string) : undefined
-    // older saves keyed focus by branch: take any stored exercise that belongs to this track
-    const pick = trainable(own, t) ? own : stored.find((n) => trainable(n, t))
+    const own = str(rawFocus[t]) ? byId.get(rawFocus[t] as string) : undefined
+    // older saves keyed focus by branch or by an old track id: take any stored exercise that belongs to this track
+    const pick = trainable(own, t, done) ? own : stored.find((n) => trainable(n, t, done))
     focus[t] = pick ? pick.id : pickFocus(nodes, done, t)
   }
 
@@ -411,14 +497,14 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
     if (!nodes.some((n) => n.skill === chain)) continue
     if (converted.some((n) => n.id === rawSkill[chain])) continue // its step is a track exercise now (see above)
     if (nodes.filter((n) => n.skill === chain).every((n) => done.has(n.id))) continue // finished chains are not active
-    const stored = typeof rawSkill[chain] === 'string' ? byId.get(rawSkill[chain] as string) : undefined
-    const ok = !!stored && stored.skill === chain && !done.has(stored.id) && isUnlocked(stored, done)
-    skillFocus[chain] = ok ? stored!.id : firstStep(nodes, done, chain)
+    const st = str(rawSkill[chain]) ? byId.get(rawSkill[chain] as string) : undefined
+    const ok = !!st && st.skill === chain && !done.has(st.id) && isUnlocked(st, done)
+    skillFocus[chain] = ok ? st!.id : firstStep(nodes, done, chain)
   }
 
   // Plan 1 saves could hold a skill step as a branch focus: carry it over as an active skill when there is room
   for (const id of Object.values(rawFocus)) {
-    const n = typeof id === 'string' ? byId.get(id) : undefined
+    const n = str(id) ? byId.get(id) : undefined
     if (!n?.skill || n.skill in skillFocus || Object.keys(skillFocus).length >= MAX_ACTIVE_SKILLS) continue
     const step = !done.has(n.id) && isUnlocked(n, done) ? n.id : firstStep(nodes, done, n.skill)
     if (step) skillFocus[n.skill] = step
@@ -430,37 +516,25 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
       : base.schedule
 
   const goalOverrides: Record<string, GoalOverride> = {}
-  if (r.goalOverrides && typeof r.goalOverrides === 'object') {
-    for (const [id, g] of Object.entries(r.goalOverrides as Record<string, unknown>)) {
-      if (byId.has(id) && okOverride(g)) goalOverrides[id] = { sets: g.sets, target: g.target }
-    }
+  for (const [id, g] of Object.entries(rekey<unknown>(r.goalOverrides))) {
+    if (byId.has(id) && okOverride(g)) goalOverrides[id] = { sets: g.sets, target: g.target }
   }
 
   const goalStage: Record<string, number> = {}
-  if (r.goalStage && typeof r.goalStage === 'object') {
-    for (const [id, st] of Object.entries(r.goalStage as Record<string, unknown>)) {
-      if (byId.has(id) && Number.isInteger(st) && (st as number) >= 0 && (st as number) <= FINAL_STAGE) goalStage[id] = st as number
-    }
+  for (const [id, st] of Object.entries(rekey<unknown>(r.goalStage))) {
+    if (byId.has(id) && Number.isInteger(st) && (st as number) >= 0 && (st as number) <= FINAL_STAGE) goalStage[id] = st as number
   }
   const stageRaisedOn: Record<string, string> = {}
-  if (r.stageRaisedOn && typeof r.stageRaisedOn === 'object') {
-    for (const [id, on] of Object.entries(r.stageRaisedOn as Record<string, unknown>)) {
-      if ((goalStage[id] ?? 0) >= 1 && typeof on === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(on)) stageRaisedOn[id] = on
-    }
+  for (const [id, on] of Object.entries(rekey<unknown>(r.stageRaisedOn))) {
+    if ((goalStage[id] ?? 0) >= 1 && str(on) && /^\d{4}-\d{2}-\d{2}$/.test(on)) stageRaisedOn[id] = on
   }
-  const onboarded = typeof r.onboarded === 'boolean' ? r.onboarded : completed.length > 0 || logs.length > 0
+  const onboarded = typeof r.onboarded === 'boolean' ? r.onboarded : allDone.length > 0 || logs.length > 0
   const rd = r.day as Partial<DayState> | undefined
   const day: DayState | null =
-    rd && typeof rd === 'object' && typeof rd.date === 'string' && (rd.pick === null || DAY_TYPES.includes(rd.pick as DayType)) &&
-    Array.isArray(rd.warm) && rd.warm.every((w) => typeof w === 'string')
+    rd && typeof rd === 'object' && str(rd.date) && (rd.pick === null || DAY_TYPES.includes(rd.pick as DayType)) &&
+    Array.isArray(rd.warm) && rd.warm.every(str)
       ? { date: rd.date, pick: rd.pick as DayType | null, warm: [...rd.warm] }
       : null
-  const rs = r.settings as Partial<Settings> | undefined
-  const settings: Settings = {
-    holdSound: rs && typeof rs === 'object' && typeof rs.holdSound === 'boolean' ? rs.holdSound : true,
-    length: rs && typeof rs === 'object' && WORKOUT_LENGTHS.includes(rs.length as WorkoutLength) ? (rs.length as WorkoutLength) : 'standard',
-  }
-  if (rs && typeof rs === 'object' && typeof rs.lastExportAt === 'number') settings.lastExportAt = rs.lastExportAt
-  const seenAchievements = Array.isArray(r.seenAchievements) ? r.seenAchievements.filter((x): x is string => typeof x === 'string') : null
-  return { completed, focus, skillFocus, logs, schedule, goalOverrides, goalStage, stageRaisedOn, onboarded, seenAchievements, day, settings }
+  const seenAchievements = Array.isArray(r.seenAchievements) ? r.seenAchievements.filter(str) : null
+  return { completed: allDone, focus, skillFocus, logs, schedule, goalOverrides, goalStage, stageRaisedOn, onboarded, seenAchievements, day, settings }
 }

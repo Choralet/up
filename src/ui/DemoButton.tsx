@@ -5,7 +5,7 @@ import type { ExerciseNode } from '../data/types'
 export function DemoButton({ node }: { node: ExerciseNode }) {
   const [open, setOpen] = useState(false)
   const [failed, setFailed] = useState(false)
-  const src = demoUrl(node.id)
+  const src = demoUrl(node.id, node.twins)
   if (!src) return null
   return (
     <>

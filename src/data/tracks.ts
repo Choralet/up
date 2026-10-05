@@ -1,45 +1,47 @@
+import { TREES } from './trees'
 import type { Branch, DayType } from './types'
 
-/** A movement pattern inside a branch. Each track has its own current exercise and levels up on its own. */
+/** A main or muscle-specific tree. Each track has its own current exercise and levels up on its own. */
 export interface Track {
   id: string
   name: string
   branch: Branch
+  /** a muscle-specific tree: trained as the accessory in Full workouts, never asked in Find your level */
+  accessory?: boolean
 }
 
-/** In the order Find your level asks and a day's workout lists them. */
-export const TRACKS: Track[] = [
-  { id: 'push-h', name: 'Push-ups', branch: 'push' },
-  { id: 'push-v', name: 'Pike & handstand', branch: 'push' },
-  { id: 'push-d', name: 'Dips', branch: 'push' },
-  { id: 'pull-v', name: 'Pull-ups', branch: 'pull' },
-  { id: 'pull-r', name: 'Rows', branch: 'pull' },
-  { id: 'legs-s', name: 'Squats', branch: 'legs' },
-  { id: 'legs-h', name: 'Hinge', branch: 'legs' },
-  { id: 'core-a', name: 'Plank & hollow', branch: 'core' },
-  { id: 'core-l', name: 'Leg raises', branch: 'core' },
-]
+/** Main tracks first (the order Find your level asks them and a day lists them), then accessories. */
+export const TRACKS: Track[] = TREES.filter((t) => t.category !== 'skill').map((t) =>
+  t.category === 'supp' ? { id: t.id, name: t.name, branch: t.branch, accessory: true } : { id: t.id, name: t.name, branch: t.branch },
+)
 
-/** Tracks trained on each day type, in order (Short length takes the first two). */
+export const MAIN_TRACKS = TRACKS.filter((t) => !t.accessory)
+
+/** Tracks trained on each day type, in order (Short length takes SHORT_TRACKS). */
 export const DAY_TRACKS: Record<DayType, string[]> = {
-  push: ['push-h', 'push-v', 'push-d'],
-  pull: ['pull-v', 'pull-r'],
-  legs: ['legs-s', 'legs-h', 'core-a', 'core-l'],
+  push: ['hpush', 'vpush', 'dip'],
+  pull: ['vpull', 'hpull'],
+  legs: ['squat', 'hinge', 'antiext', 'compress', 'lateral'],
   rest: [],
 }
 
 /** Short length: two tracks per day (Legs + Core keeps one core track). */
 export const SHORT_TRACKS: Record<DayType, string[]> = {
-  push: ['push-h', 'push-v'],
-  pull: ['pull-v', 'pull-r'],
-  legs: ['legs-s', 'core-a'],
+  push: ['hpush', 'vpush'],
+  pull: ['vpull', 'hpull'],
+  legs: ['squat', 'antiext'],
   rest: [],
 }
 
-/** Core finisher on Push and Pull days: plank & hollow, then leg raises once that track is finished. */
-export const FINISHER_TRACKS = ['core-a', 'core-l']
+/** Core finisher on Push and Pull days: the first of these that still has an exercise. */
+export const FINISHER_TRACKS = ['antiext', 'compress', 'lateral']
 
-/** Easier steps added under existing exercises in Plan 6. Older saves get them marked done when they already did (or trained) the harder move. */
-export const ADDED_BELOW = new Set(['push-pike-hold', 'push-bench-dip', 'push-dip-neg', 'pull-row-high', 'legs-bridge', 'legs-sl-bridge', 'core-lying-raise'])
+/** Full length adds one of these a day, a different one each week. */
+export const ACCESSORY_TRACKS: Record<DayType, string[]> = {
+  push: ['tri', 'scap', 'cuff'],
+  pull: ['bic', 'rear', 'grip'],
+  legs: ['calf', 'tib', 'hips', 'lowback', 'neck'],
+  rest: [],
+}
 
 export const trackById = (id: string) => TRACKS.find((t) => t.id === id)

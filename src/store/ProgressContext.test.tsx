@@ -7,8 +7,8 @@ import { memoryStorage } from './storage'
 function Probe() {
   const { progress, log } = useProgress()
   return (
-    <button onClick={() => log('push-wall', 10)}>
-      {`focus:${progress.focus['push-h']} logs:${progress.logs.length}`}
+    <button onClick={() => log('hpush:w', 10)}>
+      {`focus:${progress.focus.hpush} logs:${progress.logs.length}`}
     </button>
   )
 }
@@ -18,7 +18,7 @@ describe('ProgressProvider', () => {
     const storage = memoryStorage()
     render(<ProgressProvider storage={storage} nodes={NODES}><Probe /></ProgressProvider>)
     const button = await screen.findByRole('button')
-    expect(button).toHaveTextContent('focus:push-wall logs:0')
+    expect(button).toHaveTextContent('focus:hpush:w logs:0')
     await userEvent.click(button)
     await waitFor(async () => {
       const saved = (await storage.load()) as { logs: unknown[] }
@@ -30,13 +30,13 @@ describe('ProgressProvider', () => {
   it('survives corrupted stored data', async () => {
     const storage = memoryStorage({ completed: 'nope', focus: { push: 'ghost' }, logs: 7 })
     render(<ProgressProvider storage={storage} nodes={NODES}><Probe /></ProgressProvider>)
-    expect(await screen.findByRole('button')).toHaveTextContent('focus:push-wall logs:0')
+    expect(await screen.findByRole('button')).toHaveTextContent('focus:hpush:w logs:0')
   })
 
   it('falls back to initial progress when storage throws', async () => {
     const storage = { load: () => Promise.reject(new Error('boom')), save: async () => {} }
     render(<ProgressProvider storage={storage} nodes={NODES}><Probe /></ProgressProvider>)
-    expect(await screen.findByRole('button')).toHaveTextContent('focus:push-wall logs:0')
+    expect(await screen.findByRole('button')).toHaveTextContent('focus:hpush:w logs:0')
   })
 
   it('warns when progress cannot be saved', async () => {
@@ -48,18 +48,18 @@ describe('ProgressProvider', () => {
 
 function Actions() {
   const { nodes, defaults, progress, setGoal, setDayType, activateSkill, deactivateSkill, finishOnboarding, restartOnboarding } = useProgress()
-  const wall = nodes.find((n) => n.id === 'push-wall')!
+  const wall = nodes.find((n) => n.id === 'hpush:w')!
   return (
     <div>
-      <div data-testid="goal">{`${wall.goal.sets}x${wall.goal.target} default:${defaults.get('push-wall')!.goal.target}`}</div>
+      <div data-testid="goal">{`${wall.goal.sets}x${wall.goal.target} default:${defaults.get('hpush:w')!.goal.target}`}</div>
       <div data-testid="monday">{progress.schedule[0]}</div>
       <div data-testid="skills">{Object.keys(progress.skillFocus).join(',')}</div>
       <div data-testid="onboarded">{String(progress.onboarded)}</div>
-      <button onClick={() => setGoal('push-wall', { sets: 4, target: 12 })}>goal</button>
-      <button onClick={() => setGoal('push-wall', null)}>reset</button>
+      <button onClick={() => setGoal('hpush:w', { sets: 4, target: 12 })}>goal</button>
+      <button onClick={() => setGoal('hpush:w', null)}>reset</button>
       <button onClick={() => setDayType(0, 'pull')}>monday-pull</button>
-      <button onClick={() => activateSkill('handstand')}>start</button>
-      <button onClick={() => deactivateSkill('handstand')}>stop</button>
+      <button onClick={() => activateSkill('hs')}>start</button>
+      <button onClick={() => deactivateSkill('hs')}>stop</button>
       <button onClick={finishOnboarding}>finish</button>
       <button onClick={restartOnboarding}>restart</button>
     </div>
@@ -73,11 +73,11 @@ describe('ProgressProvider actions (Plan 2)', () => {
   it('applies goal overrides to nodes and keeps the defaults', async () => {
     const user = userEvent.setup()
     mount()
-    expect(await screen.findByTestId('goal')).toHaveTextContent('3x10 default:10')
+    expect(await screen.findByTestId('goal')).toHaveTextContent('3x8 default:8')
     await user.click(screen.getByText('goal'))
-    expect(screen.getByTestId('goal')).toHaveTextContent('4x12 default:10')
+    expect(screen.getByTestId('goal')).toHaveTextContent('4x12 default:8')
     await user.click(screen.getByText('reset'))
-    expect(screen.getByTestId('goal')).toHaveTextContent('3x10 default:10')
+    expect(screen.getByTestId('goal')).toHaveTextContent('3x8 default:8')
   })
 
   it('changes the schedule', async () => {
@@ -90,11 +90,11 @@ describe('ProgressProvider actions (Plan 2)', () => {
 
   it('activates and deactivates a skill once its requirement is done', async () => {
     const user = userEvent.setup()
-    mount({ completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike'] })
+    mount({ completed: ['antiext:db', 'antiext:pl'] })
     await screen.findByTestId('skills')
     expect(screen.getByTestId('skills')).toBeEmptyDOMElement()
     await user.click(screen.getByText('start'))
-    expect(screen.getByTestId('skills')).toHaveTextContent('handstand')
+    expect(screen.getByTestId('skills')).toHaveTextContent('hs')
     await user.click(screen.getByText('stop'))
     expect(screen.getByTestId('skills')).toBeEmptyDOMElement()
   })

@@ -2,7 +2,7 @@ import type { ExerciseNode } from '../data/types'
 import { rootOf } from './graph'
 
 const N = (id: string, over: Partial<ExerciseNode> = {}): ExerciseNode => ({
-  id, name: id, branch: 'push', kind: 'strength', requires: [], col: 1,
+  id, name: id, branch: 'push', kind: 'strength', requires: [],
   goal: { type: 'reps', sets: 3, target: 10 }, cue: 'cue', ...over,
 })
 

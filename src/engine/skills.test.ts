@@ -3,7 +3,7 @@ import { initialProgress, type Progress } from './progress'
 import { skillStatus } from './skills'
 
 const N = (id: string, requires: string[] = [], over: Partial<ExerciseNode> = {}): ExerciseNode => ({
-  id, name: `Name ${id}`, branch: 'push', kind: 'strength', requires, col: 1,
+  id, name: `Name ${id}`, branch: 'push', kind: 'strength', requires,
   goal: { type: 'reps', sets: 3, target: 10 }, cue: 'cue', ...over,
 })
 const nodes = [

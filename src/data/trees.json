@@ -1,0 +1,6009 @@
+{
+ "equipment": {
+  "floor": "Floor",
+  "wall": "Wall",
+  "bar": "Pull-up bar",
+  "dip": "Dip bars",
+  "pt": "Parallettes",
+  "rings": "Rings",
+  "band": "Bands",
+  "wt": "Vest / dip belt",
+  "anchor": "Nordic anchor",
+  "slider": "Sliders / towel",
+  "low": "Low bar / table",
+  "box": "Bench / box",
+  "pole": "Vertical pole"
+ },
+ "muscles": [
+  "Abs",
+  "Adductors",
+  "Biceps",
+  "Brachialis",
+  "Calves",
+  "Chest",
+  "Forearms/grip",
+  "Front delts",
+  "Glute med",
+  "Glutes",
+  "Hamstrings",
+  "Hip flexors",
+  "Lats",
+  "Lower back",
+  "Neck",
+  "Obliques",
+  "Quads",
+  "Rear delts",
+  "Rotator cuff",
+  "Serratus",
+  "Side delts",
+  "Tibialis",
+  "Triceps",
+  "Upper back",
+  "Wrists"
+ ],
+ "sources": {
+  "rr": {
+   "title": "r/bodyweightfitness Recommended Routine",
+   "url": "https://www.reddit.com/r/bodyweightfitness/wiki/kb/recommended_routine"
+  },
+  "hc": {
+   "title": "Hybrid Calisthenics: pull-up progressions and standards",
+   "url": "https://www.hybridcalisthenics.com/pullups"
+  },
+  "ffpl": {
+   "title": "FitnessFAQs × Austin Dunham: NEW Planche Progressions (YouTube)",
+   "url": "https://www.youtube.com/watch?v=3vKmcAN-iVw"
+  },
+  "ffppu": {
+   "title": "FitnessFAQs: How To Planche Push-Up, Best Progressions (YouTube)",
+   "url": "https://www.youtube.com/watch?v=TZ63httkob4"
+  },
+  "ffpb": {
+   "title": "FitnessFAQs: Planche For Beginners Made Easy (YouTube)",
+   "url": "https://www.youtube.com/watch?v=bn-HZm7bpy0"
+  },
+  "ffpw": {
+   "title": "FitnessFAQs: The Smartest Planche Workout Techniques (YouTube)",
+   "url": "https://www.youtube.com/watch?v=ghNIgUG8_ZY"
+  },
+  "thx": {
+   "title": "THENX / Chris Heria: How To Handstand Push Up (YouTube)",
+   "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+  },
+  "anths": {
+   "title": "Antranik: Heel Pulls, the best drill to get off the wall (YouTube)",
+   "url": "https://www.youtube.com/watch?v=q6Xcsw0O23I"
+  },
+  "antp": {
+   "title": "Antranik: Bodyweight Training routine",
+   "url": "https://antranik.org/bodyweight-training/"
+  },
+  "antw": {
+   "title": "Antranik: How to avoid wrist pain",
+   "url": "https://antranik.org/avoid-wrist-pain/"
+  },
+  "cmfl": {
+   "title": "Calisthenicmovement: Front Lever Tutorial (YouTube)",
+   "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+  },
+  "cmmu": {
+   "title": "Calimove: How to Do a Muscle Up, Complete Progression",
+   "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+  },
+  "soc": {
+   "title": "School of Calisthenics: Pistol Squat Progressions (YouTube)",
+   "url": "https://www.youtube.com/watch?v=DJ5Ukbfak7I"
+  },
+  "sim": {
+   "title": "Simonster Strength: weighted calisthenics",
+   "url": "https://www.fitapp.app/calisthenics-evolution/"
+  },
+  "low": {
+   "title": "Steven Low: Overcoming Tendonitis",
+   "url": "https://stevenlow.org/overcoming-tendonitis/"
+  },
+  "flag": {
+   "title": "Calisthenics Nerd: Human Flag progressions",
+   "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+  },
+  "tm": {
+   "title": "Tom Merrick (Bodyweight Warrior) on YouTube",
+   "url": "https://www.youtube.com/@BodyweightWarrior"
+  },
+  "gen": {
+   "title": "General coaching consensus (no single verified video)"
+  }
+ },
+ "trees": [
+  {
+   "id": "hpush",
+   "name": "Horizontal push",
+   "category": "main",
+   "notes": "Push-up tree. Chest, front delts, triceps, with ring and one-arm branches.",
+   "nodes": [
+    {
+     "id": "w",
+     "parent": null,
+     "rung": 1,
+     "name": "Wall push-up",
+     "equipment": "wall",
+     "primary": [
+      "Chest",
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Abs"
+     ],
+     "advance": "3×8 clean (RR rule), then incline",
+     "cues": "Body rigid, hands at chest height, elbows about 45°",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wall-pushup"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/wall-pushups"
+      }
+     ]
+    },
+    {
+     "id": "i",
+     "parent": "w",
+     "rung": 2,
+     "name": "Incline push-up",
+     "equipment": "box|low",
+     "primary": [
+      "Chest",
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Abs"
+     ],
+     "advance": "3×8, then lower the surface or go to knee push-ups",
+     "cues": "Hips in line, chest to the edge",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/incline-pushup"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/incline-pushups"
+      }
+     ]
+    },
+    {
+     "id": "k",
+     "parent": "i",
+     "rung": 3,
+     "name": "Knee push-up",
+     "equipment": "floor",
+     "primary": [
+      "Chest",
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×8, then full push-up",
+     "cues": "Straight line from knees to head",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/knee-push-up"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/knee-pushups"
+      }
+     ]
+    },
+    {
+     "id": "p",
+     "parent": "k",
+     "rung": 4,
+     "name": "Push-up",
+     "equipment": "floor",
+     "primary": [
+      "Chest",
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Abs"
+     ],
+     "advance": "RR: 3×8. Many coaches want 3×15–20 before one-arm work",
+     "cues": "Elbows 30–45°, full lockout with a little protraction",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pushup"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/full-pushups"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/push-up/"
+      }
+     ]
+    },
+    {
+     "id": "d",
+     "parent": "p",
+     "rung": 5,
+     "name": "Diamond / close push-up",
+     "equipment": "floor",
+     "primary": [
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Front delts"
+     ],
+     "advance": "3×8, then archer or pseudo-planche",
+     "cues": "Hands under the sternum, elbows brush the ribs",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/diamond-pushup"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/narrow-pushups"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/close-grip-push-up/"
+      }
+     ]
+    },
+    {
+     "id": "dp",
+     "parent": "p",
+     "rung": 5,
+     "name": "Deficit push-up",
+     "equipment": "pt|box",
+     "primary": [
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Triceps"
+     ],
+     "advance": "3×8–12 at the deeper range",
+     "cues": "Chest drops below the hands; control the stretch",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "a",
+     "parent": "d",
+     "rung": 6,
+     "name": "Archer push-up",
+     "equipment": "floor",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Obliques",
+      "Abs"
+     ],
+     "advance": "3×8 per side, then one-arm incline",
+     "cues": "Assisting arm straight, weight shifted over the working hand",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/archer-push-up"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/archer-pushups"
+      }
+     ]
+    },
+    {
+     "id": "oai",
+     "parent": "a",
+     "rung": 7,
+     "name": "One-arm incline push-up",
+     "equipment": "box|low",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Obliques",
+      "Rotator cuff"
+     ],
+     "advance": "3×5–8 per side, lowering the incline over time",
+     "cues": "Feet wide, hips square, no twisting",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "oa",
+     "parent": "oai",
+     "rung": 8,
+     "name": "One-arm push-up",
+     "equipment": "floor",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Obliques",
+      "Abs",
+      "Lats"
+     ],
+     "advance": "3×5 per side, then weighted or feet-elevated",
+     "cues": "Wide stance, elbow tucked, squeeze glutes",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/single-arm-push-up"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/onearm-pushups"
+      }
+     ]
+    },
+    {
+     "id": "pp",
+     "parent": "d",
+     "rung": 6,
+     "name": "Pseudo-planche push-up",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Chest",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Biceps",
+      "Wrists"
+     ],
+     "advance": "3×8 with hands at the waist, then increase the lean. Leads into the planche push-up ladder",
+     "cues": "Fingers out or back, protract, shoulders ahead of the hands",
+     "source": "ffppu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pseudo-planche-push-ups"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=TZ63httkob4"
+      }
+     ]
+    },
+    {
+     "id": "rp",
+     "parent": "p",
+     "rung": 5,
+     "name": "Ring push-up",
+     "equipment": "rings",
+     "primary": [
+      "Chest",
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Biceps",
+      "Rotator cuff"
+     ],
+     "advance": "3×8–12 steady, then RTO ring push-up",
+     "cues": "Rings close to the body, no shaking",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/rings-push-ups"
+      }
+     ]
+    },
+    {
+     "id": "rto",
+     "parent": "rp",
+     "rung": 6,
+     "name": "RTO ring push-up",
+     "equipment": "rings",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Biceps",
+      "Forearms/grip"
+     ],
+     "advance": "3×8, then ring archer or weighted",
+     "cues": "Turn the rings out at lockout",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/rings-turned-out-push-up"
+      }
+     ]
+    },
+    {
+     "id": "wp",
+     "parent": "p",
+     "rung": 5,
+     "name": "Weighted push-up",
+     "equipment": "floor+wt",
+     "primary": [
+      "Chest",
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus"
+     ],
+     "advance": "Work in 5–12 reps; add 2.5–5 kg when every set hits the top",
+     "cues": "Same form standard as bodyweight",
+     "source": "sim",
+     "links": []
+    }
+   ],
+   "video": {
+    "label": "Hybrid Calisthenics: push-up progression video",
+    "url": "https://www.youtube.com/watch?v=zkU6Ok44_CI"
+   }
+  },
+  {
+   "id": "vpush",
+   "name": "Vertical push",
+   "category": "main",
+   "notes": "Overhead pressing for shoulders and triceps. Feeds the handstand push-up skill ladder.",
+   "nodes": [
+    {
+     "id": "pk",
+     "parent": null,
+     "rung": 1,
+     "name": "Pike push-up",
+     "equipment": "floor",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Side delts",
+      "Upper back",
+      "Serratus"
+     ],
+     "advance": "3×8–12, then elevate the feet",
+     "cues": "Head travels in front of the hands (tripod), elbows about 45°",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pike-push-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "epk",
+     "parent": "pk",
+     "rung": 2,
+     "name": "Feet-elevated pike push-up",
+     "equipment": "box",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Side delts",
+      "Serratus"
+     ],
+     "advance": "Sets of about 10 (THENX), then wall negatives",
+     "cues": "Hips stacked over shoulders",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/elevated-pike-push-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "dpk",
+     "parent": "epk",
+     "rung": 3,
+     "name": "Deficit elevated pike push-up",
+     "equipment": "box+pt",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×8, then full wall HSPU",
+     "cues": "Head drops below hand level",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "whn",
+     "parent": "epk",
+     "rung": 3,
+     "name": "Wall HSPU negative",
+     "equipment": "wall",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Upper back",
+      "Abs"
+     ],
+     "advance": "Sets of about 5 slow 3–5 s lowers (THENX), then wall HSPU",
+     "cues": "Tripod head position, ribs down",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wall-headstand-push-up-negatives"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "bp",
+     "parent": "pk",
+     "rung": 2,
+     "name": "Band overhead press",
+     "equipment": "band",
+     "primary": [
+      "Front delts",
+      "Side delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "Hypertrophy add-on, 3×12–20",
+     "cues": "Stand on the band, ribs down, press to lockout",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/shoulder-press-with-bands"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dip",
+   "name": "Dips",
+   "category": "main",
+   "notes": "Downward push for chest, triceps and front delts. Parallel bar, straight bar and ring branches.",
+   "nodes": [
+    {
+     "id": "sh",
+     "parent": null,
+     "rung": 1,
+     "name": "Support hold",
+     "equipment": "dip|rings|pt",
+     "primary": [
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Chest",
+      "Serratus",
+      "Abs"
+     ],
+     "advance": "Hold 30–60 s, then negative dips",
+     "cues": "Shoulders down, elbows locked, slight hollow",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/parallel-bar-support"
+      }
+     ]
+    },
+    {
+     "id": "bd",
+     "parent": "sh",
+     "rung": 2,
+     "name": "Bench dip (optional regression)",
+     "equipment": "box",
+     "primary": [
+      "Triceps"
+     ],
+     "secondary": [
+      "Front delts",
+      "Chest"
+     ],
+     "advance": "3×12–15. Stop if the front of the shoulder hurts",
+     "cues": "Shoulders back, moderate depth",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/bench-dips"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/bench-dips"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/bench-dip/"
+      }
+     ]
+    },
+    {
+     "id": "nd",
+     "parent": "sh",
+     "rung": 2,
+     "name": "Negative dip",
+     "equipment": "dip",
+     "primary": [
+      "Triceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Serratus"
+     ],
+     "advance": "3×5 slow 3–5 s lowers, then full dips",
+     "cues": "Lower until the shoulder is below the elbow",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/negative-dips"
+      }
+     ]
+    },
+    {
+     "id": "d",
+     "parent": "nd",
+     "rung": 3,
+     "name": "Parallel bar dip",
+     "equipment": "dip",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Serratus",
+      "Lats"
+     ],
+     "advance": "RR: 3×8, then ring dips or weighted",
+     "cues": "Slight forward lean, full depth, lock out",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/parallel-bar-dips"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/parallel-dips"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/dip/"
+      }
+     ]
+    },
+    {
+     "id": "wd",
+     "parent": "d",
+     "rung": 4,
+     "name": "Weighted dip",
+     "equipment": "dip+wt",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Serratus"
+     ],
+     "advance": "5–8 reps; add load when all sets hit the top",
+     "cues": "Same depth as bodyweight",
+     "source": "sim",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dip-parallel-bar-weighted"
+      }
+     ]
+    },
+    {
+     "id": "sbd",
+     "parent": "d",
+     "rung": 4,
+     "name": "Straight-bar dip",
+     "equipment": "bar",
+     "primary": [
+      "Triceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Abs",
+      "Forearms/grip"
+     ],
+     "advance": "3×8–10. Calimove wants 5 deep reps before a clean bar muscle-up",
+     "cues": "Lean over the bar, elbows back",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/straight-bar-dips"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "krd",
+     "parent": "sbd",
+     "rung": 5,
+     "name": "Russian / Korean dip",
+     "equipment": "dip|bar",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Chest",
+      "Biceps"
+     ],
+     "advance": "Advanced, 3×5. Builds muscle-up transition strength",
+     "cues": "Needs shoulder extension mobility; ease in",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "rs",
+     "parent": "sh",
+     "rung": 2,
+     "name": "Ring support hold, turned out",
+     "equipment": "rings",
+     "primary": [
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Biceps",
+      "Chest",
+      "Serratus"
+     ],
+     "advance": "30 s turned out, then ring dips",
+     "cues": "Rings by the hips, arms locked",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/rings-turned-out-support-hold"
+      }
+     ]
+    },
+    {
+     "id": "rd",
+     "parent": "rs",
+     "rung": 3,
+     "name": "Ring dip",
+     "equipment": "rings",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Serratus",
+      "Biceps",
+      "Rotator cuff"
+     ],
+     "advance": "RR's final dip step. 3×8, then weighted or ring muscle-up",
+     "cues": "Keep the rings close to the body",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-dips"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hpull",
+   "name": "Horizontal pull",
+   "category": "main",
+   "notes": "Row tree for lats, mid and upper back, rear delts and biceps. Body angle is the main lever.",
+   "nodes": [
+    {
+     "id": "vr",
+     "parent": null,
+     "rung": 1,
+     "name": "Vertical row (pole or doorframe)",
+     "equipment": "wall|rings|low",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Biceps",
+      "Rear delts"
+     ],
+     "advance": "Hybrid Calisthenics standard: 3×50",
+     "cues": "Lean back from something sturdy, squeeze the shoulder blades, 1 s pause",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/vertical-row"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/wall-pullups"
+      }
+     ]
+    },
+    {
+     "id": "ir",
+     "parent": "vr",
+     "rung": 2,
+     "name": "Incline row",
+     "equipment": "rings|low",
+     "primary": [
+      "Lats",
+      "Upper back",
+      "Rear delts"
+     ],
+     "secondary": [
+      "Biceps",
+      "Forearms/grip"
+     ],
+     "advance": "HC sternum-height base 3×30 (RR: 3×8), then go lower",
+     "cues": "Body straight, pull chest to hands",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/incline-row"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/horizontal-pullups"
+      }
+     ]
+    },
+    {
+     "id": "hr",
+     "parent": "ir",
+     "rung": 3,
+     "name": "Horizontal (Australian) row",
+     "equipment": "rings|low|bar",
+     "primary": [
+      "Lats",
+      "Upper back",
+      "Rear delts"
+     ],
+     "secondary": [
+      "Biceps",
+      "Brachialis",
+      "Forearms/grip"
+     ],
+     "advance": "HC hip-height base 3×25; RR 3×8, then wide or archer",
+     "cues": "Chest touches the bar, 1 s pause",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/inverted-row"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/advanced-horizontal-pullups"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/inverted-row/"
+      }
+     ]
+    },
+    {
+     "id": "fe",
+     "parent": "hr",
+     "rung": 4,
+     "name": "Feet-elevated row",
+     "equipment": "rings+box|low+box",
+     "primary": [
+      "Lats",
+      "Upper back",
+      "Rear delts"
+     ],
+     "secondary": [
+      "Biceps",
+      "Glutes"
+     ],
+     "advance": "3×8–12, then archer",
+     "cues": "Body horizontal, no hip sag",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/feet-elevated-table-row"
+      }
+     ]
+    },
+    {
+     "id": "wr",
+     "parent": "hr",
+     "rung": 4,
+     "name": "Wide row",
+     "equipment": "rings|low",
+     "primary": [
+      "Upper back",
+      "Rear delts"
+     ],
+     "secondary": [
+      "Lats",
+      "Biceps"
+     ],
+     "advance": "RR: 3×8, then archer",
+     "cues": "Elbows out 70–90°",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wide-row"
+      }
+     ]
+    },
+    {
+     "id": "ar",
+     "parent": "wr",
+     "rung": 5,
+     "name": "Archer row",
+     "equipment": "rings|low",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Biceps",
+      "Rear delts",
+      "Obliques"
+     ],
+     "advance": "RR: 3×8 per side, then one-arm row",
+     "cues": "Assisting arm stays straight",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/archer-row"
+      }
+     ]
+    },
+    {
+     "id": "oar",
+     "parent": "ar",
+     "rung": 6,
+     "name": "One-arm row",
+     "equipment": "rings|low",
+     "primary": [
+      "Lats",
+      "Upper back",
+      "Biceps"
+     ],
+     "secondary": [
+      "Obliques",
+      "Rear delts"
+     ],
+     "advance": "3×5–8 per side",
+     "cues": "Resist rotation, feet wide",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/one-arm-row"
+      }
+     ]
+    },
+    {
+     "id": "tflr",
+     "parent": "hr",
+     "rung": 4,
+     "name": "Tuck front-lever row",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Abs",
+      "Biceps"
+     ],
+     "advance": "3×5, then the front lever ladder",
+     "cues": "Hips at hand height, back flat",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tuck-front-lever-row"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "wtr",
+     "parent": "hr",
+     "rung": 4,
+     "name": "Weighted inverted row",
+     "equipment": "low+wt|rings+wt",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Biceps",
+      "Rear delts"
+     ],
+     "advance": "5–12 reps; add load at the top of the range",
+     "cues": "Same full range",
+     "source": "sim",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/weighted-inverted-rows"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "vpull",
+   "name": "Vertical pull",
+   "category": "main",
+   "notes": "Pull-up tree for lats, biceps, brachialis and grip. Two entry paths: RR and Hybrid Calisthenics.",
+   "nodes": [
+    {
+     "id": "dh",
+     "parent": null,
+     "rung": 1,
+     "name": "Dead hang",
+     "equipment": "bar|rings",
+     "primary": [
+      "Forearms/grip",
+      "Lats"
+     ],
+     "secondary": [
+      "Rotator cuff"
+     ],
+     "advance": "Accumulate 30–60 s",
+     "cues": "Passive hang, then active (shoulders pulled down)",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dead-hang"
+      }
+     ]
+    },
+    {
+     "id": "sp",
+     "parent": "dh",
+     "rung": 2,
+     "name": "Scapular pull",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Serratus",
+      "Forearms/grip"
+     ],
+     "advance": "RR step 1: 3×8, then arch hangs",
+     "cues": "Arms straight; pull shoulder blades down without bending elbows",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/scapular-pulls"
+      }
+     ]
+    },
+    {
+     "id": "ah",
+     "parent": "sp",
+     "rung": 3,
+     "name": "Arch hang",
+     "equipment": "bar|rings",
+     "primary": [
+      "Upper back",
+      "Lats"
+     ],
+     "secondary": [
+      "Lower back"
+     ],
+     "advance": "RR step 2: 3×8, then negatives",
+     "cues": "Retract and depress, chest up",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/arch-hangs"
+      }
+     ]
+    },
+    {
+     "id": "jk",
+     "parent": "sp",
+     "rung": 3,
+     "name": "Jackknife pull-up",
+     "equipment": "bar+box|low",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Upper back",
+      "Quads"
+     ],
+     "advance": "HC standard 3×20, then full pull-ups",
+     "cues": "Feet on a box, legs help only as needed",
+     "source": "hc",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/jackknife-pullups"
+      }
+     ]
+    },
+    {
+     "id": "bap",
+     "parent": "sp",
+     "rung": 3,
+     "name": "Band-assisted pull-up",
+     "equipment": "bar+band",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×8 with progressively lighter bands",
+     "cues": "Bands help most at the bottom; pair with negatives",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/band-assisted-pull-up"
+      }
+     ]
+    },
+    {
+     "id": "np",
+     "parent": "ah",
+     "rung": 4,
+     "name": "Negative pull-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Brachialis"
+     ],
+     "secondary": [
+      "Upper back",
+      "Forearms/grip"
+     ],
+     "advance": "RR step 3: 3×5–8 slow 3–5 s lowers, then pull-up",
+     "cues": "Jump to the top, lower to a full dead hang",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/negative-pull-up"
+      }
+     ]
+    },
+    {
+     "id": "pu",
+     "parent": "np",
+     "rung": 5,
+     "name": "Pull-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Brachialis"
+     ],
+     "secondary": [
+      "Upper back",
+      "Rear delts",
+      "Forearms/grip",
+      "Abs"
+     ],
+     "advance": "RR: 3×8, then weighted. HC level: 3×12",
+     "cues": "Dead hang to chin over bar, no kip, about shoulder-width grip",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pull-up"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/full-pullups"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/pull-up/"
+      }
+     ]
+    },
+    {
+     "id": "cu",
+     "parent": "np",
+     "rung": 5,
+     "name": "Chin-up (underhand)",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Brachialis",
+      "Forearms/grip"
+     ],
+     "advance": "Same as pull-up",
+     "cues": "Underhand grip shifts more work to the biceps",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/chin-ups"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/chin-up/"
+      }
+     ]
+    },
+    {
+     "id": "lpu",
+     "parent": "pu",
+     "rung": 6,
+     "name": "L-sit pull-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Hip flexors",
+      "Abs"
+     ],
+     "secondary": [
+      "Quads"
+     ],
+     "advance": "3×5–8",
+     "cues": "Legs stay horizontal",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/l-sit-pull-up"
+      }
+     ]
+    },
+    {
+     "id": "cbp",
+     "parent": "pu",
+     "rung": 6,
+     "name": "Chest-to-bar pull-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Biceps",
+      "Rear delts"
+     ],
+     "advance": "3×5, then explosive pull-ups or muscle-up",
+     "cues": "Pull the bar to the lower chest",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/chest-to-bar-pull-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "wpu",
+     "parent": "pu",
+     "rung": 6,
+     "name": "Weighted pull-up",
+     "equipment": "bar+wt",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Upper back",
+      "Forearms/grip"
+     ],
+     "advance": "RR step 5: 5–8 reps, add 1–2.5 kg when achieved",
+     "cues": "Belt or vest, same range",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/weighted-pull-ups"
+      }
+     ]
+    },
+    {
+     "id": "npu",
+     "parent": "pu",
+     "rung": 6,
+     "name": "Narrow pull-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Biceps",
+      "Lats",
+      "Brachialis"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "HC standard 3×9, then archer",
+     "cues": "Hands close; more arm work",
+     "source": "hc",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/narrow-pullups"
+      }
+     ]
+    },
+    {
+     "id": "arp",
+     "parent": "npu",
+     "rung": 7,
+     "name": "Archer pull-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Obliques"
+     ],
+     "advance": "HC: 2×9 per side, then the one-arm ladder",
+     "cues": "Extended arm stays straight",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/archer-pull-up"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/archer-pullups"
+      }
+     ]
+    },
+    {
+     "id": "tw",
+     "parent": "arp",
+     "rung": 8,
+     "name": "Typewriter pull-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×3–5 traverses",
+     "cues": "Stay at the top while sliding across",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/typewriter-pull-up"
+      }
+     ]
+    }
+   ],
+   "video": {
+    "label": "Hybrid Calisthenics: pull-up progression video",
+    "url": "https://www.youtube.com/watch?v=fO3dKSQayfg"
+   }
+  },
+  {
+   "id": "squat",
+   "name": "Squat",
+   "category": "main",
+   "notes": "Knee-dominant work for quads and glutes, with shrimp, pistol, sissy and Cossack branches.",
+   "nodes": [
+    {
+     "id": "as",
+     "parent": null,
+     "rung": 1,
+     "name": "Assisted squat",
+     "equipment": "wall|low|rings",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Adductors",
+      "Calves"
+     ],
+     "advance": "RR step 1: 3×8, then bodyweight squat",
+     "cues": "Hold a pole or frame, sit hips back and down",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/assisted-bodyweight-squat"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/assisted-squats"
+      }
+     ]
+    },
+    {
+     "id": "s",
+     "parent": "as",
+     "rung": 2,
+     "name": "Bodyweight squat",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Adductors",
+      "Hamstrings",
+      "Calves"
+     ],
+     "advance": "RR: 3×8 (many go to 3×20), then split squat",
+     "cues": "Knees track the toes, full depth, heels down",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/bodyweight-squat"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/full-squats"
+      }
+     ]
+    },
+    {
+     "id": "ss",
+     "parent": "s",
+     "rung": 3,
+     "name": "Split squat",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Adductors",
+      "Calves"
+     ],
+     "advance": "RR: 3×8 per leg, then Bulgarian",
+     "cues": "Back knee to the floor",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/split-squat"
+      }
+     ]
+    },
+    {
+     "id": "bss",
+     "parent": "ss",
+     "rung": 4,
+     "name": "Bulgarian split squat",
+     "equipment": "box",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Adductors",
+      "Hamstrings"
+     ],
+     "advance": "RR: 3×8 per leg, then shrimp or weighted",
+     "cues": "Rear foot on a bench; lean forward for more glute",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/bulgarian-split-squats"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/bulgarian-split-squat/"
+      }
+     ]
+    },
+    {
+     "id": "bsh",
+     "parent": "bss",
+     "rung": 5,
+     "name": "Beginner shrimp squat",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves",
+      "Adductors"
+     ],
+     "advance": "RR: 3×8, then intermediate",
+     "cues": "Rear knee to floor, hands may assist",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/beginner-shrimp-squats"
+      }
+     ]
+    },
+    {
+     "id": "ish",
+     "parent": "bsh",
+     "rung": 6,
+     "name": "Intermediate shrimp squat",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves"
+     ],
+     "advance": "RR: 3×8, then advanced",
+     "cues": "Less assistance",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/intermediate-shrimp-squats"
+      }
+     ]
+    },
+    {
+     "id": "ash",
+     "parent": "ish",
+     "rung": 7,
+     "name": "Advanced shrimp squat",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves",
+      "Hip flexors"
+     ],
+     "advance": "RR: 3×8, then elevated or weighted",
+     "cues": "Hold the rear foot; knee touches, toes don't",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/advanced-shrimp-squats"
+      }
+     ]
+    },
+    {
+     "id": "wbs",
+     "parent": "bss",
+     "rung": 5,
+     "name": "Weighted Bulgarian / step-up",
+     "equipment": "box+wt",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Adductors"
+     ],
+     "advance": "6–12 reps, add load at the top",
+     "cues": "Controlled descent",
+     "source": "sim",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/step-up/"
+      }
+     ]
+    },
+    {
+     "id": "cs",
+     "parent": "s",
+     "rung": 3,
+     "name": "Cossack squat",
+     "equipment": "floor",
+     "primary": [
+      "Adductors",
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Hamstrings"
+     ],
+     "advance": "3×8 per side",
+     "cues": "Straight leg, toes up",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/cossack-squat"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/cossack-squat/"
+      }
+     ]
+    },
+    {
+     "id": "sis",
+     "parent": "s",
+     "rung": 3,
+     "name": "Assisted sissy squat",
+     "equipment": "wall|low",
+     "primary": [
+      "Quads"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×10–15. Progress slowly: high knee tendon load",
+     "cues": "Hips extended, knees travel forward",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/sissy-squat"
+      }
+     ]
+    },
+    {
+     "id": "pis",
+     "parent": "s",
+     "rung": 3,
+     "name": "Box pistol (into the pistol ladder)",
+     "equipment": "box",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves",
+      "Hip flexors"
+     ],
+     "advance": "See the Pistol skill ladder",
+     "cues": "Sit to a lower box over time",
+     "source": "soc",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/one-leg-chair-squats"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=DJ5Ukbfak7I"
+      }
+     ]
+    },
+    {
+     "id": "js",
+     "parent": "s",
+     "rung": 3,
+     "name": "Jump squat / split jumps",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes",
+      "Calves"
+     ],
+     "secondary": [
+      "Hamstrings"
+     ],
+     "advance": "Power: 3–5 sets of 3–6 explosive reps",
+     "cues": "Soft, quiet landing",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/squat-jumps"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/jump-squat/"
+      }
+     ]
+    }
+   ],
+   "video": {
+    "label": "Hybrid Calisthenics: squat progression video",
+    "url": "https://www.youtube.com/watch?v=z3XQ7T4-abQ"
+   }
+  },
+  {
+   "id": "hinge",
+   "name": "Hinge and posterior chain",
+   "category": "main",
+   "notes": "Glutes and hamstrings at both the hip and the knee. The Nordic curl is the top rung.",
+   "nodes": [
+    {
+     "id": "gb",
+     "parent": null,
+     "rung": 1,
+     "name": "Glute bridge",
+     "equipment": "floor",
+     "primary": [
+      "Glutes"
+     ],
+     "secondary": [
+      "Hamstrings",
+      "Lower back"
+     ],
+     "advance": "3×15–20, then single-leg",
+     "cues": "Tuck the pelvis, drive through the heels",
+     "source": "gen",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/glute-bridges"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/glute-bridge/"
+      }
+     ]
+    },
+    {
+     "id": "sgb",
+     "parent": "gb",
+     "rung": 2,
+     "name": "Single-leg glute bridge",
+     "equipment": "floor",
+     "primary": [
+      "Glutes"
+     ],
+     "secondary": [
+      "Hamstrings"
+     ],
+     "advance": "3×12 per leg, then elevated",
+     "cues": "Hips level",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/one-legged-glute-bridge/"
+      }
+     ]
+    },
+    {
+     "id": "ht",
+     "parent": "sgb",
+     "rung": 3,
+     "name": "Single-leg hip thrust, shoulders elevated",
+     "equipment": "box",
+     "primary": [
+      "Glutes"
+     ],
+     "secondary": [
+      "Hamstrings",
+      "Adductors"
+     ],
+     "advance": "3×12–15 per leg; add a vest",
+     "cues": "Ribs down, full lockout",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/one-legged-hip-thrust/"
+      }
+     ]
+    },
+    {
+     "id": "slc",
+     "parent": "gb",
+     "rung": 2,
+     "name": "Slider / towel leg curl",
+     "equipment": "slider",
+     "primary": [
+      "Hamstrings"
+     ],
+     "secondary": [
+      "Glutes",
+      "Calves"
+     ],
+     "advance": "3×10–12, then single-leg",
+     "cues": "Hips stay up throughout",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/hamstring-slide"
+      }
+     ]
+    },
+    {
+     "id": "slc1",
+     "parent": "slc",
+     "rung": 3,
+     "name": "Single-leg slider curl",
+     "equipment": "slider",
+     "primary": [
+      "Hamstrings"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×8–10 per leg",
+     "cues": "No hip drop",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/eccentric-single-leg-sliding-hamstring-slide"
+      }
+     ]
+    },
+    {
+     "id": "rlc",
+     "parent": "gb",
+     "rung": 2,
+     "name": "Ring leg curl",
+     "equipment": "rings",
+     "primary": [
+      "Hamstrings"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×8–12",
+     "cues": "Heels in straps, hips extended",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "rdl",
+     "parent": null,
+     "rung": 1,
+     "name": "Bodyweight Romanian deadlift",
+     "equipment": "floor",
+     "primary": [
+      "Hamstrings",
+      "Glutes"
+     ],
+     "secondary": [
+      "Lower back"
+     ],
+     "advance": "RR hinge step 1, then single-leg",
+     "cues": "Hips back, neutral spine",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/romanian-deadlift"
+      }
+     ]
+    },
+    {
+     "id": "sld",
+     "parent": "rdl",
+     "rung": 2,
+     "name": "Single-leg RDL",
+     "equipment": "floor",
+     "primary": [
+      "Hamstrings",
+      "Glutes"
+     ],
+     "secondary": [
+      "Glute med",
+      "Lower back"
+     ],
+     "advance": "RR: 3×8 per leg, then banded Nordic",
+     "cues": "Hips square",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/single-legged-deadlift"
+      }
+     ]
+    },
+    {
+     "id": "bn",
+     "parent": "sld",
+     "rung": 3,
+     "name": "Banded Nordic curl",
+     "equipment": "anchor+band",
+     "primary": [
+      "Hamstrings"
+     ],
+     "secondary": [
+      "Glutes",
+      "Calves"
+     ],
+     "advance": "RR: 3×8, then a lighter band",
+     "cues": "Hips extended, lower slowly",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/banded-nordic-curl"
+      }
+     ]
+    },
+    {
+     "id": "nn",
+     "parent": "bn",
+     "rung": 4,
+     "name": "Nordic negative",
+     "equipment": "anchor",
+     "primary": [
+      "Hamstrings"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×3–6 slow lowers, catch with your hands",
+     "cues": "Fight every degree",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/nordic-hamstring-eccentric/"
+      }
+     ]
+    },
+    {
+     "id": "nc",
+     "parent": "nn",
+     "rung": 5,
+     "name": "Full Nordic curl",
+     "equipment": "anchor",
+     "primary": [
+      "Hamstrings"
+     ],
+     "secondary": [
+      "Glutes",
+      "Calves"
+     ],
+     "advance": "RR final step, 3×5. Programs with Nordics cut hamstring injuries by about 51%",
+     "cues": "Straight line from knees to head",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/nordic-curl"
+      }
+     ]
+    },
+    {
+     "id": "rh",
+     "parent": "rdl",
+     "rung": 2,
+     "name": "Reverse hyperextension",
+     "equipment": "box",
+     "primary": [
+      "Glutes",
+      "Lower back"
+     ],
+     "secondary": [
+      "Hamstrings"
+     ],
+     "advance": "RR extension progression, 3×8–12",
+     "cues": "Lift legs to body line, no swinging",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/reverse-hyperextension"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/reverse-hyperextension/"
+      }
+     ]
+    },
+    {
+     "id": "ghr",
+     "parent": "rh",
+     "rung": 3,
+     "name": "Glute-ham raise / bench back extension",
+     "equipment": "box+anchor",
+     "primary": [
+      "Hamstrings",
+      "Glutes",
+      "Lower back"
+     ],
+     "secondary": [
+      "Calves"
+     ],
+     "advance": "RR extension step 2: 3×8",
+     "cues": "Hinge, then curl up",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/glute-ham-raise"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "antiext",
+   "name": "Core: anti-extension",
+   "category": "main",
+   "notes": "Abs and deep core. The bodyline that every skill depends on.",
+   "nodes": [
+    {
+     "id": "db",
+     "parent": null,
+     "rung": 1,
+     "name": "Dead bug",
+     "equipment": "floor",
+     "primary": [
+      "Abs",
+      "Obliques"
+     ],
+     "secondary": [
+      "Hip flexors"
+     ],
+     "advance": "RR warm-up 30 s, then plank",
+     "cues": "Low back stays down",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dead-bugs"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/dead-bugs/"
+      }
+     ]
+    },
+    {
+     "id": "pl",
+     "parent": "db",
+     "rung": 2,
+     "name": "Plank",
+     "equipment": "floor",
+     "primary": [
+      "Abs",
+      "Obliques"
+     ],
+     "secondary": [
+      "Front delts",
+      "Glutes"
+     ],
+     "advance": "3×10 s up to 1×60 s, then just maintain",
+     "cues": "Tuck the pelvis, squeeze glutes",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/plank"
+      }
+     ]
+    },
+    {
+     "id": "hh",
+     "parent": "pl",
+     "rung": 3,
+     "name": "Hollow hold (tuck → straddle → full)",
+     "equipment": "floor",
+     "primary": [
+      "Abs"
+     ],
+     "secondary": [
+      "Hip flexors",
+      "Obliques"
+     ],
+     "advance": "3×10 s → 3×15 s → 3×20 s → 2×30 s → 2×45 s → 1×60 s",
+     "cues": "Low back pressed to the floor",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/hollow"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/hollow-hold/"
+      }
+     ]
+    },
+    {
+     "id": "hro",
+     "parent": "hh",
+     "rung": 4,
+     "name": "Hollow rocks",
+     "equipment": "floor",
+     "primary": [
+      "Abs"
+     ],
+     "secondary": [
+      "Hip flexors"
+     ],
+     "advance": "Prerequisite: 60 s hollow hold (Antranik)",
+     "cues": "Keep the shape while rocking",
+     "source": "antp",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "bsw",
+     "parent": "pl",
+     "rung": 3,
+     "name": "Slider body saw",
+     "equipment": "slider",
+     "primary": [
+      "Abs"
+     ],
+     "secondary": [
+      "Lats",
+      "Front delts"
+     ],
+     "advance": "3×8–12, then rollouts",
+     "cues": "Move from the shoulders, hips level",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "rro",
+     "parent": "pl",
+     "rung": 3,
+     "name": "Ring ab rollout",
+     "equipment": "rings",
+     "primary": [
+      "Abs",
+      "Lats"
+     ],
+     "secondary": [
+      "Front delts",
+      "Serratus"
+     ],
+     "advance": "RR anti-extension step 2: 3×8–12; lower the rings to progress",
+     "cues": "Hollow body, no hip sag",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-ab-rollout"
+      }
+     ]
+    },
+    {
+     "id": "sro",
+     "parent": "rro",
+     "rung": 4,
+     "name": "Standing / long-lever rollout",
+     "equipment": "rings|slider",
+     "primary": [
+      "Abs",
+      "Lats"
+     ],
+     "secondary": [
+      "Front delts",
+      "Serratus"
+     ],
+     "advance": "3×5–8",
+     "cues": "Very advanced; full hollow",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/standing-ab-wheel-rollouts"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "compress",
+   "name": "Core: compression",
+   "category": "main",
+   "notes": "Abs and hip flexors. Leads into the L-sit, V-sit and dragon flag.",
+   "nodes": [
+    {
+     "id": "llr",
+     "parent": null,
+     "rung": 1,
+     "name": "Lying leg raise",
+     "equipment": "floor",
+     "primary": [
+      "Abs",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Obliques"
+     ],
+     "advance": "3×12–15, then hanging knee raise",
+     "cues": "Low back flat, slow lowering",
+     "source": "gen",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/full-leg-raises"
+      }
+     ]
+    },
+    {
+     "id": "spl",
+     "parent": "llr",
+     "rung": 2,
+     "name": "Seated pike compression lifts",
+     "equipment": "floor",
+     "primary": [
+      "Hip flexors",
+      "Abs"
+     ],
+     "secondary": [
+      "Quads"
+     ],
+     "advance": "3×10–15, then the L-sit ladder",
+     "cues": "Hands beside the knees, lift the heels",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pike-compressions"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "hkr",
+     "parent": "llr",
+     "rung": 2,
+     "name": "Hanging knee raise",
+     "equipment": "bar|rings",
+     "primary": [
+      "Abs",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Forearms/grip",
+      "Lats"
+     ],
+     "advance": "3×10–12, then hanging leg raise",
+     "cues": "No swing; tilt the pelvis up at the top",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tucked-hanging-leg-raises"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/hanging-knee-raises"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/hanging-knee-raise/"
+      }
+     ]
+    },
+    {
+     "id": "hlr",
+     "parent": "hkr",
+     "rung": 3,
+     "name": "Hanging leg raise",
+     "equipment": "bar|rings",
+     "primary": [
+      "Abs",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Forearms/grip",
+      "Lats"
+     ],
+     "advance": "3×8–12, then toes-to-bar",
+     "cues": "Straight legs, controlled",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/straight-hanging-leg-raises"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/hanging-leg-raises"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/hanging-leg-raise/"
+      }
+     ]
+    },
+    {
+     "id": "ttb",
+     "parent": "hlr",
+     "rung": 4,
+     "name": "Toes-to-bar",
+     "equipment": "bar",
+     "primary": [
+      "Abs",
+      "Hip flexors",
+      "Lats"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×8 strict",
+     "cues": "Press the bar down with straight arms",
+     "source": "gen",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/toe-to-bars"
+      }
+     ]
+    },
+    {
+     "id": "ww",
+     "parent": "hlr",
+     "rung": 4,
+     "name": "Windshield wipers",
+     "equipment": "bar",
+     "primary": [
+      "Obliques",
+      "Abs"
+     ],
+     "secondary": [
+      "Hip flexors",
+      "Lats"
+     ],
+     "advance": "3×6–10 per side",
+     "cues": "Legs vertical, rotate slowly",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/windshield-wiper"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lateral",
+   "name": "Core: lateral and anti-rotation",
+   "category": "main",
+   "notes": "Obliques, glute medius and adductors.",
+   "nodes": [
+    {
+     "id": "sp",
+     "parent": null,
+     "rung": 1,
+     "name": "Side plank",
+     "equipment": "floor",
+     "primary": [
+      "Obliques"
+     ],
+     "secondary": [
+      "Glute med",
+      "Abs"
+     ],
+     "advance": "10 s up to 60 s per side (RR bodyline)",
+     "cues": "Straight line, hips high",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/side-plank"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/side-plank/"
+      }
+     ]
+    },
+    {
+     "id": "cp",
+     "parent": "sp",
+     "rung": 2,
+     "name": "Copenhagen plank (short, then long lever)",
+     "equipment": "box",
+     "primary": [
+      "Adductors",
+      "Obliques"
+     ],
+     "secondary": [
+      "Glute med"
+     ],
+     "advance": "2–3×20–30 s per side",
+     "cues": "Top leg on a bench, lift the bottom leg",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/copenhagen-plank/"
+      },
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/copenhagen-plank-135"
+      }
+     ]
+    },
+    {
+     "id": "sha",
+     "parent": "sp",
+     "rung": 2,
+     "name": "Side plank with hip abduction",
+     "equipment": "floor",
+     "primary": [
+      "Obliques",
+      "Glute med"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×10 per side",
+     "cues": "Top leg straight, toes forward",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "pal",
+     "parent": "sp",
+     "rung": 2,
+     "name": "Band Pallof press",
+     "equipment": "band",
+     "primary": [
+      "Obliques",
+      "Abs"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "RR anti-rotation step 1: 3×8–12",
+     "cues": "Resist rotation, ribs down",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/banded-pallof-press"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/pallof-press/"
+      }
+     ]
+    },
+    {
+     "id": "rpal",
+     "parent": "pal",
+     "rung": 3,
+     "name": "Ring Pallof press",
+     "equipment": "rings",
+     "primary": [
+      "Obliques",
+      "Abs"
+     ],
+     "secondary": [
+      "Front delts"
+     ],
+     "advance": "RR anti-rotation step 2",
+     "cues": "Lean further to progress",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-pallof-press"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "calf",
+   "name": "Calves",
+   "category": "supp",
+   "notes": "Squats don't load the calves through full range. Train them directly.",
+   "nodes": [
+    {
+     "id": "c1",
+     "parent": null,
+     "rung": 1,
+     "name": "Calf raise, both legs",
+     "equipment": "floor",
+     "primary": [
+      "Calves"
+     ],
+     "secondary": [],
+     "advance": "3×20, then on a step",
+     "cues": "Full stretch, 1–2 s pause at the top",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/standing-calf-raise/"
+      }
+     ]
+    },
+    {
+     "id": "c2",
+     "parent": "c1",
+     "rung": 2,
+     "name": "Deficit calf raise on a step",
+     "equipment": "box",
+     "primary": [
+      "Calves"
+     ],
+     "secondary": [],
+     "advance": "3×15–20, then single-leg",
+     "cues": "Heel well below the step",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/standing-calf-raise/"
+      }
+     ]
+    },
+    {
+     "id": "c3",
+     "parent": "c2",
+     "rung": 3,
+     "name": "Single-leg deficit calf raise",
+     "equipment": "box",
+     "primary": [
+      "Calves"
+     ],
+     "secondary": [],
+     "advance": "3×12–20 per leg, then weighted",
+     "cues": "Hold a wall lightly for balance",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "c4",
+     "parent": "c3",
+     "rung": 4,
+     "name": "Weighted single-leg calf raise",
+     "equipment": "box+wt",
+     "primary": [
+      "Calves"
+     ],
+     "secondary": [],
+     "advance": "8–15 reps",
+     "cues": "Same depth",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "c5",
+     "parent": "c1",
+     "rung": 2,
+     "name": "Bent-knee calf raise (soleus)",
+     "equipment": "floor|box",
+     "primary": [
+      "Calves"
+     ],
+     "secondary": [],
+     "advance": "3×15–25",
+     "cues": "Knees bent about 45°",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "tib",
+   "name": "Tibialis",
+   "category": "supp",
+   "notes": "Balances the calves and supports knees and ankles.",
+   "nodes": [
+    {
+     "id": "t1",
+     "parent": null,
+     "rung": 1,
+     "name": "Wall tibialis raise",
+     "equipment": "wall",
+     "primary": [
+      "Tibialis"
+     ],
+     "secondary": [],
+     "advance": "3×15–25, then walk the feet farther out",
+     "cues": "Back on the wall, lift the toes high",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/tibialis-raise/"
+      },
+      {
+       "label": "video",
+       "url": "https://www.hybridcalisthenics.com/tibialis-exercises"
+      }
+     ]
+    },
+    {
+     "id": "t2",
+     "parent": "t1",
+     "rung": 2,
+     "name": "Wall tib raise, farther or single-leg",
+     "equipment": "wall",
+     "primary": [
+      "Tibialis"
+     ],
+     "secondary": [],
+     "advance": "3×12–20",
+     "cues": "Slow lowering",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/tibialis-raise/"
+      },
+      {
+       "label": "video",
+       "url": "https://www.hybridcalisthenics.com/tibialis-exercises"
+      }
+     ]
+    },
+    {
+     "id": "t3",
+     "parent": null,
+     "rung": 1,
+     "name": "Band dorsiflexion",
+     "equipment": "band",
+     "primary": [
+      "Tibialis"
+     ],
+     "secondary": [],
+     "advance": "3×15–20",
+     "cues": "Band anchored in front of the foot",
+     "source": "gen",
+     "links": [
+      {
+       "label": "video",
+       "url": "https://www.hybridcalisthenics.com/tibialis-exercises"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grip",
+   "name": "Forearms, grip and wrists",
+   "category": "supp",
+   "notes": "Hanging grip plus the wrist prep that hand-balancing needs.",
+   "nodes": [
+    {
+     "id": "g1",
+     "parent": null,
+     "rung": 1,
+     "name": "Dead hang",
+     "equipment": "bar|rings",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Lats"
+     ],
+     "advance": "Accumulate 60 s",
+     "cues": "Full grip, shoulders active",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dead-hang"
+      }
+     ]
+    },
+    {
+     "id": "g2",
+     "parent": "g1",
+     "rung": 2,
+     "name": "Towel hang / towel pull-up",
+     "equipment": "bar+slider",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Lats",
+      "Biceps"
+     ],
+     "advance": "Hang 20–40 s, then towel pull-ups",
+     "cues": "Towel over the bar, crush grip",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/towel-pull-up"
+      }
+     ]
+    },
+    {
+     "id": "g3",
+     "parent": "g1",
+     "rung": 2,
+     "name": "One-arm hang (assisted, then free)",
+     "equipment": "bar",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Lats",
+      "Rotator cuff"
+     ],
+     "advance": "10–30 s per arm",
+     "cues": "Active shoulder, no dangling",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/one-handed-hang"
+      }
+     ]
+    },
+    {
+     "id": "g4",
+     "parent": "g1",
+     "rung": 2,
+     "name": "False-grip hang",
+     "equipment": "rings",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "20–30 s (muscle-up prep, Calimove)",
+     "cues": "Wrist over the ring, heel of hand on top",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-false-grip-hold"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "g5",
+     "parent": null,
+     "rung": 1,
+     "name": "Wrist prep: palm pulses, back-of-hand push-ups",
+     "equipment": "floor",
+     "primary": [
+      "Wrists",
+      "Forearms/grip"
+     ],
+     "secondary": [],
+     "advance": "Every hand-balancing session; progress from knees to full",
+     "cues": "Gentle, pain-free range",
+     "source": "antw",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/gmb-wrist-prep"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wrist-pushups"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/avoid-wrist-pain/"
+      }
+     ]
+    },
+    {
+     "id": "g6",
+     "parent": "g5",
+     "rung": 2,
+     "name": "Fingertip plank / push-up",
+     "equipment": "floor",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Chest"
+     ],
+     "advance": "3×10–20 s holds, then reps",
+     "cues": "Start on knees",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "g7",
+     "parent": null,
+     "rung": 1,
+     "name": "Band wrist curls and extensions",
+     "equipment": "band",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [],
+     "advance": "3×15–25",
+     "cues": "Full range",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "rear",
+   "name": "Rear delts and upper back",
+   "category": "supp",
+   "notes": "Posture and shoulder balance against heavy pushing.",
+   "nodes": [
+    {
+     "id": "r1",
+     "parent": null,
+     "rung": 1,
+     "name": "Band pull-apart",
+     "equipment": "band",
+     "primary": [
+      "Rear delts",
+      "Upper back"
+     ],
+     "secondary": [
+      "Rotator cuff"
+     ],
+     "advance": "3×15–25",
+     "cues": "Straight arms, squeeze the shoulder blades",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/band-pull-apart"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/band-pull-apart/"
+      }
+     ]
+    },
+    {
+     "id": "r2",
+     "parent": "r1",
+     "rung": 2,
+     "name": "Band face pull",
+     "equipment": "band+bar",
+     "primary": [
+      "Rear delts",
+      "Rotator cuff"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×12–20",
+     "cues": "Pull to the forehead, rotate out",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/face-pull-resistance-bands"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/face-pull/"
+      }
+     ]
+    },
+    {
+     "id": "r3",
+     "parent": null,
+     "rung": 1,
+     "name": "Prone Y-T-W raises",
+     "equipment": "floor",
+     "primary": [
+      "Rear delts",
+      "Upper back"
+     ],
+     "secondary": [
+      "Rotator cuff"
+     ],
+     "advance": "3×8–12 per letter",
+     "cues": "Thumbs up, lift from the shoulder blades",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/prone-y-t-w"
+      }
+     ]
+    },
+    {
+     "id": "r4",
+     "parent": "r3",
+     "rung": 2,
+     "name": "Ring reverse fly",
+     "equipment": "rings",
+     "primary": [
+      "Rear delts"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×10–15; steeper angle to progress",
+     "cues": "Soft elbows, arms wide",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "r5",
+     "parent": "r4",
+     "rung": 3,
+     "name": "Ring face pull",
+     "equipment": "rings",
+     "primary": [
+      "Rear delts",
+      "Rotator cuff"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "3×10–15",
+     "cues": "Elbows high, hands by the ears",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/face-pull-rings"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bic",
+   "name": "Biceps and brachialis",
+   "category": "supp",
+   "notes": "Optional isolation for intermediates. Pull-ups and rows cover beginners.",
+   "nodes": [
+    {
+     "id": "b1",
+     "parent": null,
+     "rung": 1,
+     "name": "Band curl",
+     "equipment": "band",
+     "primary": [
+      "Biceps"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×12–20",
+     "cues": "Elbows pinned",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "b2",
+     "parent": null,
+     "rung": 1,
+     "name": "Bodyweight ring / bar curl",
+     "equipment": "rings|low",
+     "primary": [
+      "Biceps"
+     ],
+     "secondary": [
+      "Brachialis",
+      "Forearms/grip"
+     ],
+     "advance": "3×8–12; walk the feet forward to progress",
+     "cues": "Elbows stay in front, body rigid",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-curl"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/bodyweight-bicep-curl"
+      }
+     ]
+    },
+    {
+     "id": "b3",
+     "parent": "b2",
+     "rung": 2,
+     "name": "Hammer-grip ring curl",
+     "equipment": "rings",
+     "primary": [
+      "Brachialis",
+      "Biceps"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×8–12",
+     "cues": "Thumbs up",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "b4",
+     "parent": null,
+     "rung": 1,
+     "name": "Close-grip chin-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Biceps",
+      "Lats"
+     ],
+     "secondary": [
+      "Brachialis"
+     ],
+     "advance": "3×6–12",
+     "cues": "Underhand, full range",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/close-grip-chin-up"
+      }
+     ]
+    },
+    {
+     "id": "b5",
+     "parent": "b4",
+     "rung": 2,
+     "name": "Chin-up slow negatives / top holds",
+     "equipment": "bar",
+     "primary": [
+      "Biceps"
+     ],
+     "secondary": [
+      "Brachialis"
+     ],
+     "advance": "3×3–5 negatives of 5 s",
+     "cues": "Control to a dead hang",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/chin-up-hold"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tri",
+   "name": "Triceps",
+   "category": "supp",
+   "notes": "Long-head emphasis with arms overhead or in front.",
+   "nodes": [
+    {
+     "id": "x1",
+     "parent": null,
+     "rung": 1,
+     "name": "Band pushdown / overhead extension",
+     "equipment": "band",
+     "primary": [
+      "Triceps"
+     ],
+     "secondary": [],
+     "advance": "3×12–20",
+     "cues": "Elbows fixed",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "x2",
+     "parent": null,
+     "rung": 1,
+     "name": "Bodyweight triceps extension",
+     "equipment": "low|rings|box",
+     "primary": [
+      "Triceps"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×8–12; lower the bar to progress",
+     "cues": "Hinge at the elbows, body rigid",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/triceps-bodyweight-extension/"
+      }
+     ]
+    },
+    {
+     "id": "x3",
+     "parent": "x2",
+     "rung": 2,
+     "name": "Ring triceps extension",
+     "equipment": "rings",
+     "primary": [
+      "Triceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Serratus"
+     ],
+     "advance": "3×8–12",
+     "cues": "Rings close together",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-tricep-extension"
+      }
+     ]
+    },
+    {
+     "id": "x4",
+     "parent": "x2",
+     "rung": 2,
+     "name": "Sphinx push-up (forearms to hands)",
+     "equipment": "floor",
+     "primary": [
+      "Triceps"
+     ],
+     "secondary": [
+      "Front delts"
+     ],
+     "advance": "3×6–12; start from the knees",
+     "cues": "Elbows under the shoulders",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "x5",
+     "parent": null,
+     "rung": 1,
+     "name": "Diamond push-up",
+     "equipment": "floor",
+     "primary": [
+      "Triceps"
+     ],
+     "secondary": [
+      "Chest"
+     ],
+     "advance": "3×8–15",
+     "cues": "Elbows back",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/diamond-pushup"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "neck",
+   "name": "Neck",
+   "category": "supp",
+   "notes": "Load it gently and gradually.",
+   "nodes": [
+    {
+     "id": "n1",
+     "parent": null,
+     "rung": 1,
+     "name": "Hand-resisted neck isometrics",
+     "equipment": "floor",
+     "primary": [
+      "Neck"
+     ],
+     "secondary": [],
+     "advance": "3×10–20 s each direction",
+     "cues": "Light pressure, no pain",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "n2",
+     "parent": "n1",
+     "rung": 2,
+     "name": "Lying neck flexion / extension",
+     "equipment": "box",
+     "primary": [
+      "Neck"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "2–3×15–25",
+     "cues": "Head off the bench, slow",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "n3",
+     "parent": "n2",
+     "rung": 3,
+     "name": "Band neck work",
+     "equipment": "band",
+     "primary": [
+      "Neck"
+     ],
+     "secondary": [],
+     "advance": "2–3×15–20",
+     "cues": "Smooth and controlled; skip aggressive bridges",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "hips",
+   "name": "Glute medius and adductors",
+   "category": "supp",
+   "notes": "Hip stability for pistols, shrimps and healthy knees.",
+   "nodes": [
+    {
+     "id": "m1",
+     "parent": null,
+     "rung": 1,
+     "name": "Side-lying hip abduction",
+     "equipment": "floor",
+     "primary": [
+      "Glute med"
+     ],
+     "secondary": [],
+     "advance": "3×15–20",
+     "cues": "Toes forward, leg slightly behind",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "m2",
+     "parent": "m1",
+     "rung": 2,
+     "name": "Band lateral walk / clamshell",
+     "equipment": "band",
+     "primary": [
+      "Glute med"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×12–20 steps",
+     "cues": "Stay low, knees out",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/clamshells/"
+      }
+     ]
+    },
+    {
+     "id": "m3",
+     "parent": "m1",
+     "rung": 2,
+     "name": "Side plank with hip abduction",
+     "equipment": "floor",
+     "primary": [
+      "Glute med",
+      "Obliques"
+     ],
+     "secondary": [],
+     "advance": "3×10 per side",
+     "cues": "Hips high",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "m4",
+     "parent": null,
+     "rung": 1,
+     "name": "Side-lying adduction",
+     "equipment": "floor",
+     "primary": [
+      "Adductors"
+     ],
+     "secondary": [],
+     "advance": "3×15–20",
+     "cues": "Lift the bottom leg",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "m5",
+     "parent": "m4",
+     "rung": 2,
+     "name": "Copenhagen plank",
+     "equipment": "box",
+     "primary": [
+      "Adductors",
+      "Obliques"
+     ],
+     "secondary": [
+      "Glute med"
+     ],
+     "advance": "2–3×20–30 s",
+     "cues": "Short lever first",
+     "source": "gen",
+     "links": [
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/copenhagen-plank/"
+      },
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/copenhagen-plank-135"
+      }
+     ]
+    },
+    {
+     "id": "m6",
+     "parent": "m4",
+     "rung": 2,
+     "name": "Cossack squat",
+     "equipment": "floor",
+     "primary": [
+      "Adductors",
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Hamstrings"
+     ],
+     "advance": "3×8 per side",
+     "cues": "Heel down on the bent leg",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/cossack-squat"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cuff",
+   "name": "Rotator cuff",
+   "category": "supp",
+   "notes": "Shoulder health for rings, handstands and levers.",
+   "nodes": [
+    {
+     "id": "q1",
+     "parent": null,
+     "rung": 1,
+     "name": "Side-lying external rotation",
+     "equipment": "floor",
+     "primary": [
+      "Rotator cuff"
+     ],
+     "secondary": [
+      "Rear delts"
+     ],
+     "advance": "3×15–20",
+     "cues": "Towel under the elbow",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/external-rotation"
+      }
+     ]
+    },
+    {
+     "id": "q2",
+     "parent": "q1",
+     "rung": 2,
+     "name": "Band external rotation",
+     "equipment": "band",
+     "primary": [
+      "Rotator cuff"
+     ],
+     "secondary": [],
+     "advance": "3×12–20",
+     "cues": "Elbow at your side",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/external-rotation-with-band"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/band-external-shoulder-rotation/"
+      }
+     ]
+    },
+    {
+     "id": "q3",
+     "parent": "q2",
+     "rung": 3,
+     "name": "Band W raise",
+     "equipment": "band",
+     "primary": [
+      "Rotator cuff",
+      "Rear delts"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×12–15",
+     "cues": "Squeeze the shoulder blades",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "q4",
+     "parent": null,
+     "rung": 1,
+     "name": "Shoulder dislocates",
+     "equipment": "band",
+     "primary": [
+      "Rotator cuff"
+     ],
+     "secondary": [
+      "Front delts"
+     ],
+     "advance": "RR warm-up, 5–10 reps",
+     "cues": "Wide grip, slow arc",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/band-dislocates"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lowback",
+   "name": "Lower back",
+   "category": "supp",
+   "notes": "Spinal erectors and extension strength.",
+   "nodes": [
+    {
+     "id": "l1",
+     "parent": null,
+     "rung": 1,
+     "name": "Bird dog",
+     "equipment": "floor",
+     "primary": [
+      "Lower back",
+      "Glutes"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×8 per side",
+     "cues": "Hips level, slow",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/bird-dog"
+      }
+     ]
+    },
+    {
+     "id": "l2",
+     "parent": "l1",
+     "rung": 2,
+     "name": "Arch (superman) hold",
+     "equipment": "floor",
+     "primary": [
+      "Lower back",
+      "Glutes"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "RR bodyline: 10 s up to 60 s",
+     "cues": "Squeeze glutes, neck neutral",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/arch-body-hold"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/superman"
+      }
+     ]
+    },
+    {
+     "id": "l3",
+     "parent": "l2",
+     "rung": 3,
+     "name": "Reverse hyperextension",
+     "equipment": "box",
+     "primary": [
+      "Glutes",
+      "Lower back"
+     ],
+     "secondary": [
+      "Hamstrings"
+     ],
+     "advance": "RR extension progression, 3×8–12",
+     "cues": "No swinging",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/reverse-hyperextension"
+      }
+     ]
+    },
+    {
+     "id": "l4",
+     "parent": "l3",
+     "rung": 4,
+     "name": "Bench back extension",
+     "equipment": "box+anchor",
+     "primary": [
+      "Lower back"
+     ],
+     "secondary": [
+      "Glutes",
+      "Hamstrings"
+     ],
+     "advance": "3×10–15",
+     "cues": "A partner or strap holds the legs",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/hyperextensions-with-no-hyperextension-bench"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/back-extension/"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scap",
+   "name": "Scapular control and serratus",
+   "category": "supp",
+   "notes": "The base for every push, pull and straight-arm skill.",
+   "nodes": [
+    {
+     "id": "s1",
+     "parent": null,
+     "rung": 1,
+     "name": "Scapular push-up",
+     "equipment": "floor",
+     "primary": [
+      "Serratus"
+     ],
+     "secondary": [
+      "Chest"
+     ],
+     "advance": "2–3×10 as activation",
+     "cues": "Arms locked; protract, then retract",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/scapular-push-up"
+      }
+     ]
+    },
+    {
+     "id": "s2",
+     "parent": "s1",
+     "rung": 2,
+     "name": "Push-up plus",
+     "equipment": "floor",
+     "primary": [
+      "Serratus",
+      "Chest"
+     ],
+     "secondary": [
+      "Triceps"
+     ],
+     "advance": "3×8–12",
+     "cues": "Extra protraction at lockout",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "s3",
+     "parent": null,
+     "rung": 1,
+     "name": "Scapular pull",
+     "equipment": "bar|rings",
+     "primary": [
+      "Upper back",
+      "Lats"
+     ],
+     "secondary": [
+      "Serratus"
+     ],
+     "advance": "RR pull-up step 1",
+     "cues": "No elbow bend",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/scapular-pulls"
+      }
+     ]
+    },
+    {
+     "id": "s4",
+     "parent": null,
+     "rung": 1,
+     "name": "Support shrug (scapular dip)",
+     "equipment": "dip|rings",
+     "primary": [
+      "Upper back",
+      "Serratus"
+     ],
+     "secondary": [
+      "Triceps"
+     ],
+     "advance": "3×10",
+     "cues": "Rise and sink with locked arms",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "s5",
+     "parent": null,
+     "rung": 1,
+     "name": "Wall handstand shrug",
+     "equipment": "wall",
+     "primary": [
+      "Serratus",
+      "Upper back"
+     ],
+     "secondary": [
+      "Front delts"
+     ],
+     "advance": "3×10",
+     "cues": "Push tall through the shoulders",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "hs",
+   "name": "Handstand",
+   "category": "skill",
+   "notes": "Entry: 30 s plank, then 60 s chest-to-wall handstand before balance drills. Needs shoulder flexion and wrist prep.",
+   "nodes": [
+    {
+     "id": "w",
+     "parent": null,
+     "rung": 1,
+     "name": "Wrist prep, 3–5 min",
+     "equipment": "floor",
+     "primary": [
+      "Wrists",
+      "Forearms/grip"
+     ],
+     "secondary": [],
+     "advance": "Every handstand session (Antranik)",
+     "cues": "Finger pulses, palm pulses, rotations, stretches",
+     "source": "antw",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/gmb-wrist-prep"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/avoid-wrist-pain/"
+      }
+     ]
+    },
+    {
+     "id": "pk",
+     "parent": "w",
+     "rung": 2,
+     "name": "Plank / pike hold",
+     "equipment": "floor|box",
+     "primary": [
+      "Front delts",
+      "Serratus"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "Plank 30 s before handstand practice (RR)",
+     "cues": "Push the floor away",
+     "source": "rr",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/plank"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/feet-elevated-pike-hold"
+      }
+     ]
+    },
+    {
+     "id": "cw",
+     "parent": "pk",
+     "rung": 3,
+     "name": "Chest-to-wall handstand",
+     "equipment": "wall",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Upper back"
+     ],
+     "secondary": [
+      "Abs",
+      "Triceps",
+      "Wrists"
+     ],
+     "advance": "60 s hold (Antranik), then balance drills",
+     "cues": "Hollow, stacked, push tall; walk in",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/stomach-to-wall-handstand-practice"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wall-handstand-hold"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "ku",
+     "parent": "cw",
+     "rung": 4,
+     "name": "Kick-up and bail practice",
+     "equipment": "floor",
+     "primary": [
+      "Front delts",
+      "Serratus"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "Learn the cartwheel bail first",
+     "cues": "Turn out of the fall",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wall-handstand-kick-up"
+      }
+     ]
+    },
+    {
+     "id": "hp",
+     "parent": "cw",
+     "rung": 4,
+     "name": "Wall heel pulls / toe taps",
+     "equipment": "wall",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Wrists"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "Prerequisite: comfortable wall handstand",
+     "cues": "Peel one heel, then both, off the wall",
+     "source": "anths",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=q6Xcsw0O23I"
+      }
+     ]
+    },
+    {
+     "id": "fs",
+     "parent": "hp",
+     "rung": 5,
+     "name": "Freestanding handstand",
+     "equipment": "floor",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Upper back",
+      "Wrists"
+     ],
+     "secondary": [
+      "Abs",
+      "Forearms/grip"
+     ],
+     "advance": "Accumulate time; goal 30–60 s consistently",
+     "cues": "Balance with fingers and heel of the hand",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/freestanding-handstand"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "ph",
+     "parent": "fs",
+     "rung": 6,
+     "name": "Press to handstand",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Hip flexors",
+      "Abs"
+     ],
+     "secondary": [
+      "Triceps"
+     ],
+     "advance": "Needs pancake and pike compression",
+     "cues": "Shift shoulders forward, hips up",
+     "source": "tm",
+     "links": [
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/press-to-handstand-1388"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/@BodyweightWarrior"
+      }
+     ]
+    },
+    {
+     "id": "oah",
+     "parent": "fs",
+     "rung": 6,
+     "name": "One-arm handstand",
+     "equipment": "floor",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Wrists"
+     ],
+     "secondary": [
+      "Obliques",
+      "Forearms/grip"
+     ],
+     "advance": "Very advanced; solid 60 s two-arm first",
+     "cues": "Shift weight gradually",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "hspu",
+   "name": "Handstand push-up",
+   "category": "skill",
+   "notes": "Bent-arm overhead strength. A 3×5 wall HSPU is also Antranik's human flag prerequisite.",
+   "nodes": [
+    {
+     "id": "pk",
+     "parent": null,
+     "rung": 1,
+     "name": "Pike push-up",
+     "equipment": "floor",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Side delts",
+      "Serratus"
+     ],
+     "advance": "3×8–12",
+     "cues": "Tripod head path",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pike-push-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "epk",
+     "parent": "pk",
+     "rung": 2,
+     "name": "Elevated pike push-up",
+     "equipment": "box",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus"
+     ],
+     "advance": "Sets of about 10 (THENX)",
+     "cues": "Hips over the shoulders",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/elevated-pike-push-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "wn",
+     "parent": "epk",
+     "rung": 3,
+     "name": "Wall HSPU negatives",
+     "equipment": "wall",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "Sets of about 5 slow lowers (THENX)",
+     "cues": "3–5 s down",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wall-headstand-push-up-negatives"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "wh",
+     "parent": "wn",
+     "rung": 4,
+     "name": "Wall HSPU",
+     "equipment": "wall",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Upper back",
+      "Abs"
+     ],
+     "advance": "Sets of about 8 (THENX)",
+     "cues": "Head to floor, press to lockout",
+     "source": "thx",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/wall-handstand-push-ups"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/handstand-push-up/"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=FaRge9WFzWg"
+      }
+     ]
+    },
+    {
+     "id": "dw",
+     "parent": "wh",
+     "rung": 5,
+     "name": "Deficit wall HSPU",
+     "equipment": "wall+pt",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×5 at full depth",
+     "cues": "Head goes below the hands",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "fhs",
+     "parent": "dw",
+     "rung": 6,
+     "name": "Freestanding HSPU",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Abs"
+     ],
+     "advance": "Requires a reliable freestanding handstand",
+     "cues": "Controlled, stacked",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/freestanding-handstand-push-ups"
+      }
+     ]
+    },
+    {
+     "id": "n90",
+     "parent": "fhs",
+     "rung": 7,
+     "name": "90° push-up",
+     "equipment": "pt|floor",
+     "primary": [
+      "Front delts",
+      "Triceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Wrists"
+     ],
+     "advance": "Elite strength",
+     "cues": "Lower into a planche-like position and press back",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "planche",
+   "name": "Planche",
+   "category": "skill",
+   "notes": "Straight-arm push skill. Very slow tendon adaptation, so expect months per rung.",
+   "nodes": [
+    {
+     "id": "ln",
+     "parent": null,
+     "rung": 1,
+     "name": "Planche lean",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Wrists"
+     ],
+     "secondary": [
+      "Biceps",
+      "Abs"
+     ],
+     "advance": "3×15–30 s, increasing the lean",
+     "cues": "Protract, tuck the pelvis, elbows locked",
+     "source": "ffpb",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/planche-lean-hold"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=bn-HZm7bpy0"
+      }
+     ]
+    },
+    {
+     "id": "fr",
+     "parent": "ln",
+     "rung": 2,
+     "name": "Frog / crow stand",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Triceps",
+      "Wrists"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "20–30 s (Antranik's crow standard)",
+     "cues": "Knees on the triceps, eyes forward",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/crow-pose"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "tp",
+     "parent": "fr",
+     "rung": 3,
+     "name": "Tuck planche",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Biceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Wrists"
+     ],
+     "advance": "3×10–15 s, then advanced tuck",
+     "cues": "Arms locked, round the back, hips at shoulder height",
+     "source": "ffpl",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tuck-planche-hold"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=3vKmcAN-iVw"
+      }
+     ]
+    },
+    {
+     "id": "atp",
+     "parent": "tp",
+     "rung": 4,
+     "name": "Advanced tuck planche",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Biceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Lower back",
+      "Wrists"
+     ],
+     "advance": "3×10–15 s, then straddle",
+     "cues": "Flat back, knees away from the chest",
+     "source": "ffpl",
+     "links": [
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/planche-tuck-advanced-1282"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=3vKmcAN-iVw"
+      }
+     ]
+    },
+    {
+     "id": "bap",
+     "parent": "tp",
+     "rung": 4,
+     "name": "Band-assisted planche (branch)",
+     "equipment": "bar+band|pt+band",
+     "primary": [
+      "Front delts",
+      "Serratus"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "Use to practise harder body lines",
+     "cues": "Band under the hips",
+     "source": "ffpw",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=ghNIgUG8_ZY"
+      }
+     ]
+    },
+    {
+     "id": "ppu",
+     "parent": "tp",
+     "rung": 4,
+     "name": "Planche push-up branch",
+     "equipment": "floor|pt|band",
+     "primary": [
+      "Front delts",
+      "Chest",
+      "Triceps"
+     ],
+     "secondary": [
+      "Serratus",
+      "Wrists"
+     ],
+     "advance": "FitnessFAQs order: band-assisted → bodyweight → mechanical-advantage → pseudo-planche push-ups",
+     "cues": "Keep the lean as you lower",
+     "source": "ffppu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pseudo-planche-push-ups"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/rings-turned-out-psuedo-plance-push-ups"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=TZ63httkob4"
+      }
+     ]
+    },
+    {
+     "id": "sp",
+     "parent": "atp",
+     "rung": 5,
+     "name": "Straddle planche",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Biceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Glutes",
+      "Lower back"
+     ],
+     "advance": "3×5–10 s, then full",
+     "cues": "Wide straddle, legs active",
+     "source": "ffpl",
+     "links": [
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/planche-straddle-147"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=3vKmcAN-iVw"
+      }
+     ]
+    },
+    {
+     "id": "fp",
+     "parent": "sp",
+     "rung": 6,
+     "name": "Full planche",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Serratus",
+      "Biceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Glutes",
+      "Lower back"
+     ],
+     "advance": "Takes years for most people",
+     "cues": "Legs together, body horizontal",
+     "source": "ffpl",
+     "links": [
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/planche-100"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=3vKmcAN-iVw"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fl",
+   "name": "Front lever",
+   "category": "skill",
+   "notes": "Straight-arm pull skill. Simonster's intermediate entry: 12 dips, 8 pull-ups, 10 s tuck lever.",
+   "nodes": [
+    {
+     "id": "tf",
+     "parent": null,
+     "rung": 1,
+     "name": "Tuck front lever",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Rear delts",
+      "Upper back",
+      "Biceps",
+      "Forearms/grip"
+     ],
+     "advance": "3×10–15 s, then advanced tuck",
+     "cues": "Arms locked, shoulders down, pelvis tucked",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tuck-front-lever"
+      },
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/front-lever-tuck-719"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "at",
+     "parent": "tf",
+     "rung": 2,
+     "name": "Advanced tuck front lever",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Rear delts",
+      "Biceps"
+     ],
+     "advance": "3×10–15 s",
+     "cues": "Flat back",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "ol",
+     "parent": "at",
+     "rung": 3,
+     "name": "One-leg front lever",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Hip flexors",
+      "Biceps"
+     ],
+     "advance": "3×8–10 s per leg",
+     "cues": "Extended leg in line",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "st",
+     "parent": "ol",
+     "rung": 4,
+     "name": "Straddle front lever",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Glutes",
+      "Biceps"
+     ],
+     "advance": "3×5–10 s",
+     "cues": "Wide legs, hips up",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "hl",
+     "parent": "st",
+     "rung": 5,
+     "name": "Half-lay front lever",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×5–8 s",
+     "cues": "Knees bent 90°, hips extended",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "ff",
+     "parent": "hl",
+     "rung": 6,
+     "name": "Full front lever",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Rear delts",
+      "Glutes",
+      "Biceps"
+     ],
+     "advance": "Hold 5–10 s",
+     "cues": "Straight line from ankles to shoulders",
+     "source": "cmfl",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=vLrjlIofGZ0"
+      }
+     ]
+    },
+    {
+     "id": "flr",
+     "parent": "tf",
+     "rung": 2,
+     "name": "Front-lever raises / rows (branch)",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Biceps",
+      "Rear delts"
+     ],
+     "advance": "3×5 at your tuck level",
+     "cues": "Straight arms on raises",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tuck-front-lever-row"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/advanced-tuck-front-lever-row"
+      }
+     ]
+    },
+    {
+     "id": "bfl",
+     "parent": "tf",
+     "rung": 2,
+     "name": "Band-assisted front lever (branch)",
+     "equipment": "bar+band",
+     "primary": [
+      "Lats",
+      "Abs"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "Use for harder positions",
+     "cues": "Band under the hips",
+     "source": "gen",
+     "links": []
+    }
+   ],
+   "video": {
+    "label": "Front Lever Training Tutorial: tuck → full (YouTube, via Antranik)",
+    "url": "https://www.youtube.com/watch?v=ysqkaCxv2bI"
+   }
+  },
+  {
+   "id": "bl",
+   "name": "Back lever",
+   "category": "skill",
+   "notes": "Heavy on the biceps tendon and shoulder extension. Go slowly.",
+   "nodes": [
+    {
+     "id": "gh",
+     "parent": null,
+     "rung": 1,
+     "name": "German hang",
+     "equipment": "rings|bar",
+     "primary": [
+      "Biceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Rotator cuff"
+     ],
+     "advance": "Build to 30 s, feet assisted at first",
+     "cues": "Lower slowly, no bouncing",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/german-hang"
+      }
+     ]
+    },
+    {
+     "id": "stc",
+     "parent": "gh",
+     "rung": 2,
+     "name": "Skin the cat",
+     "equipment": "rings|bar",
+     "primary": [
+      "Lats",
+      "Abs",
+      "Biceps"
+     ],
+     "secondary": [
+      "Front delts"
+     ],
+     "advance": "3×3–5 slow reps",
+     "cues": "Controlled in and out",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/skin-the-cat"
+      }
+     ]
+    },
+    {
+     "id": "tb",
+     "parent": "stc",
+     "rung": 3,
+     "name": "Tuck back lever",
+     "equipment": "rings|bar",
+     "primary": [
+      "Biceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Abs",
+      "Lower back"
+     ],
+     "advance": "3×10–15 s",
+     "cues": "Arms locked, hips at hand height",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tuck-back-lever"
+      }
+     ]
+    },
+    {
+     "id": "atb",
+     "parent": "tb",
+     "rung": 4,
+     "name": "Advanced tuck back lever",
+     "equipment": "rings|bar",
+     "primary": [
+      "Biceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Glutes"
+     ],
+     "advance": "3×10–15 s",
+     "cues": "Hips open",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/advanced-tuck-back-lever"
+      }
+     ]
+    },
+    {
+     "id": "sb",
+     "parent": "atb",
+     "rung": 5,
+     "name": "Straddle / half-lay back lever",
+     "equipment": "rings|bar",
+     "primary": [
+      "Biceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Glutes",
+      "Lower back"
+     ],
+     "advance": "3×5–10 s",
+     "cues": "Squeeze the glutes",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "fb",
+     "parent": "sb",
+     "rung": 6,
+     "name": "Full back lever",
+     "equipment": "rings|bar",
+     "primary": [
+      "Biceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Glutes",
+      "Abs"
+     ],
+     "advance": "Hold 5–10 s",
+     "cues": "Straight body, face down",
+     "source": "gen",
+     "links": []
+    }
+   ],
+   "video": {
+    "label": "RingFrat: The Back Lever Tutorial, tuck → half-lay (YouTube)",
+    "url": "https://www.youtube.com/watch?v=9DhXHwcI4L4"
+   }
+  },
+  {
+   "id": "bmu",
+   "name": "Bar muscle-up",
+   "category": "skill",
+   "notes": "Calimove: 8–10 pull-ups, 8–10 dips and a 20–30 s false grip to start drills; about 12 pull-ups, 5 deep straight-bar dips and 3 explosive pull-ups for clean reps.",
+   "nodes": [
+    {
+     "id": "cb",
+     "parent": null,
+     "rung": 1,
+     "name": "Chest-to-bar pull-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Upper back"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "3×5 clean",
+     "cues": "Bar to the lower chest",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/chest-to-bar-pull-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "ep",
+     "parent": "cb",
+     "rung": 2,
+     "name": "Explosive (high) pull-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Abs",
+      "Forearms/grip"
+     ],
+     "advance": "3 reps to waist height (Calimove)",
+     "cues": "Pull the bar toward the hips, not the chin",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "sbd",
+     "parent": "cb",
+     "rung": 2,
+     "name": "Straight-bar dip",
+     "equipment": "bar",
+     "primary": [
+      "Triceps",
+      "Chest",
+      "Front delts"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "5 deep reps (Calimove)",
+     "cues": "Lean over the bar",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/straight-bar-dips"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "amu",
+     "parent": "ep",
+     "rung": 3,
+     "name": "Band / jumping muscle-up, negatives",
+     "equipment": "bar+band|bar+box",
+     "primary": [
+      "Lats",
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×3–5",
+     "cues": "Learn the turnover",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/muscle-up-negative"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "kmu",
+     "parent": "amu",
+     "rung": 4,
+     "name": "Kipping bar muscle-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Abs",
+      "Hip flexors"
+     ],
+     "advance": "3×3",
+     "cues": "Hollow, arch, then pull to the hips",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/kipping-muscle-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "smu",
+     "parent": "kmu",
+     "rung": 5,
+     "name": "Strict bar muscle-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Abs",
+      "Forearms/grip"
+     ],
+     "advance": "3×3–5",
+     "cues": "Minimal swing",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/muscle-up"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "wmu",
+     "parent": "smu",
+     "rung": 6,
+     "name": "Weighted muscle-up",
+     "equipment": "bar+wt",
+     "primary": [
+      "Lats",
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "Small loads",
+     "cues": "Same technique",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "rmu",
+   "name": "Ring muscle-up",
+   "category": "skill",
+   "notes": "The false grip is the key. Daniel Vadnal's floor: about 5 pull-ups, 5 dips and 10 push-ups before serious ring work.",
+   "nodes": [
+    {
+     "id": "fg",
+     "parent": null,
+     "rung": 1,
+     "name": "False-grip hang",
+     "equipment": "rings",
+     "primary": [
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "20–30 s",
+     "cues": "Heel of the hand over the ring",
+     "source": "cmmu",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-false-grip-hold"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://blog.calimove.com/2026/09/14/muscle-up-progression-guide/"
+      }
+     ]
+    },
+    {
+     "id": "fgr",
+     "parent": "fg",
+     "rung": 2,
+     "name": "False-grip rows / pull-ups",
+     "equipment": "rings",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Upper back"
+     ],
+     "advance": "3×5–8 without losing the grip",
+     "cues": "Pull rings to the lower chest",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "rd",
+     "parent": "fg",
+     "rung": 2,
+     "name": "Deep ring dips",
+     "equipment": "rings",
+     "primary": [
+      "Chest",
+      "Triceps",
+      "Front delts"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "3×8 to full depth",
+     "cues": "Rings close, elbows back",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/ring-dips"
+      }
+     ]
+    },
+    {
+     "id": "td",
+     "parent": "fgr",
+     "rung": 3,
+     "name": "Low-ring transition drill",
+     "equipment": "rings",
+     "primary": [
+      "Lats",
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×5 with feet assisting",
+     "cues": "Rings to the ribs, then lean over",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/kipping-muscle-up-feet-assisted-transition-rings"
+      }
+     ]
+    },
+    {
+     "id": "rm",
+     "parent": "td",
+     "rung": 4,
+     "name": "Ring muscle-up",
+     "equipment": "rings",
+     "primary": [
+      "Lats",
+      "Triceps",
+      "Chest"
+     ],
+     "secondary": [
+      "Forearms/grip",
+      "Abs"
+     ],
+     "advance": "3×3–5",
+     "cues": "Keep the rings close through the transition",
+     "source": "gen",
+     "links": []
+    }
+   ]
+  },
+  {
+   "id": "flag",
+   "name": "Human flag",
+   "category": "skill",
+   "notes": "Needs a vertical pole or stall bars. Antranik's prerequisite: 3×5 wall HSPU.",
+   "nodes": [
+    {
+     "id": "vf",
+     "parent": null,
+     "rung": 1,
+     "name": "Vertical flag",
+     "equipment": "pole",
+     "primary": [
+      "Lats",
+      "Obliques",
+      "Front delts"
+     ],
+     "secondary": [
+      "Triceps",
+      "Side delts"
+     ],
+     "advance": "10–15 reps per set before negatives",
+     "cues": "Bottom arm pushes, top arm pulls",
+     "source": "flag",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+      }
+     ]
+    },
+    {
+     "id": "ef",
+     "parent": "vf",
+     "rung": 2,
+     "name": "Eccentric flag (one knee bent)",
+     "equipment": "pole",
+     "primary": [
+      "Lats",
+      "Obliques",
+      "Side delts"
+     ],
+     "secondary": [
+      "Triceps"
+     ],
+     "advance": "3×3–5 slow lowers",
+     "cues": "Lower from vertical with control",
+     "source": "antp",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "tf",
+     "parent": "ef",
+     "rung": 3,
+     "name": "Tuck flag",
+     "equipment": "pole",
+     "primary": [
+      "Lats",
+      "Obliques",
+      "Side delts"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "3×10 s",
+     "cues": "Lift without jumping",
+     "source": "flag",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+      }
+     ]
+    },
+    {
+     "id": "olf",
+     "parent": "tf",
+     "rung": 4,
+     "name": "One-leg flag",
+     "equipment": "pole",
+     "primary": [
+      "Lats",
+      "Obliques",
+      "Side delts"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "20 s hold before straddle",
+     "cues": "One leg tucked, one extended",
+     "source": "flag",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+      }
+     ]
+    },
+    {
+     "id": "bf",
+     "parent": "tf",
+     "rung": 4,
+     "name": "Band-assisted flag (branch)",
+     "equipment": "pole+band",
+     "primary": [
+      "Lats",
+      "Obliques"
+     ],
+     "secondary": [
+      "Side delts"
+     ],
+     "advance": "Use for straddle and full lines",
+     "cues": "Band around the waist",
+     "source": "flag",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+      }
+     ]
+    },
+    {
+     "id": "sf",
+     "parent": "olf",
+     "rung": 5,
+     "name": "Straddle flag",
+     "equipment": "pole",
+     "primary": [
+      "Lats",
+      "Obliques",
+      "Side delts"
+     ],
+     "secondary": [
+      "Glute med",
+      "Abs"
+     ],
+     "advance": "3×5–10 s",
+     "cues": "Wide straddle",
+     "source": "flag",
+     "links": [
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/straddle-human-flag-hold-1514"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+      }
+     ]
+    },
+    {
+     "id": "ff",
+     "parent": "sf",
+     "rung": 6,
+     "name": "Full human flag",
+     "equipment": "pole",
+     "primary": [
+      "Lats",
+      "Obliques",
+      "Side delts"
+     ],
+     "secondary": [
+      "Abs",
+      "Glute med",
+      "Triceps"
+     ],
+     "advance": "Hold 5–10 s",
+     "cues": "Body horizontal, legs together",
+     "source": "flag",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://calisthenicsnerd.com/2020/12/15/human-flag-tutorial-all-the-progressions/"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lsit",
+   "name": "L-sit → V-sit → manna",
+   "category": "skill",
+   "notes": "Compression plus straight-arm support. Flexibility is half the work.",
+   "nodes": [
+    {
+     "id": "fs",
+     "parent": null,
+     "rung": 1,
+     "name": "Foot-supported L-sit",
+     "equipment": "floor|pt|dip",
+     "primary": [
+      "Triceps",
+      "Abs",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Quads"
+     ],
+     "advance": "3×20–30 s",
+     "cues": "Shoulders pushed down",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/foot-supported-l-sit"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "tl",
+     "parent": "fs",
+     "rung": 2,
+     "name": "Tuck L-sit",
+     "equipment": "floor|pt|dip",
+     "primary": [
+      "Abs",
+      "Hip flexors",
+      "Triceps"
+     ],
+     "secondary": [
+      "Quads"
+     ],
+     "advance": "3×10–20 s",
+     "cues": "Knees to chest, hips off the floor",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/tuck-l-sit"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "ol",
+     "parent": "tl",
+     "rung": 3,
+     "name": "One-leg L-sit",
+     "equipment": "floor|pt|dip",
+     "primary": [
+      "Abs",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Quads",
+      "Triceps"
+     ],
+     "advance": "3×10–15 s per leg",
+     "cues": "Extended leg locked",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/one-leg-l-sit"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "fl",
+     "parent": "ol",
+     "rung": 4,
+     "name": "Full L-sit",
+     "equipment": "floor|pt|dip",
+     "primary": [
+      "Abs",
+      "Hip flexors",
+      "Quads"
+     ],
+     "secondary": [
+      "Triceps",
+      "Front delts"
+     ],
+     "advance": "3×15–30 s",
+     "cues": "Legs horizontal, toes pointed",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/l-sit"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/l-sit/"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "rl",
+     "parent": "fl",
+     "rung": 5,
+     "name": "Ring L-sit (branch)",
+     "equipment": "rings",
+     "primary": [
+      "Abs",
+      "Hip flexors",
+      "Triceps"
+     ],
+     "secondary": [
+      "Biceps"
+     ],
+     "advance": "3×10–20 s",
+     "cues": "Rings turned out",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "sl",
+     "parent": "fl",
+     "rung": 5,
+     "name": "Straddle L-sit",
+     "equipment": "floor|pt",
+     "primary": [
+      "Hip flexors",
+      "Abs"
+     ],
+     "secondary": [
+      "Adductors"
+     ],
+     "advance": "3×10 s",
+     "cues": "Hands between the legs",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/straddle-l-sit-hold"
+      }
+     ]
+    },
+    {
+     "id": "vs",
+     "parent": "fl",
+     "rung": 5,
+     "name": "V-sit",
+     "equipment": "floor|pt",
+     "primary": [
+      "Hip flexors",
+      "Abs"
+     ],
+     "secondary": [
+      "Triceps",
+      "Front delts"
+     ],
+     "advance": "3×5–10 s",
+     "cues": "Needs pike compression; lean back",
+     "source": "tm",
+     "links": [
+      {
+       "label": "cv",
+       "url": "https://www.caliverse.app/exercises/tucked-v-sit-hold-1390"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/@BodyweightWarrior"
+      }
+     ]
+    },
+    {
+     "id": "mn",
+     "parent": "vs",
+     "rung": 6,
+     "name": "Manna",
+     "equipment": "floor|pt",
+     "primary": [
+      "Front delts",
+      "Triceps",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Abs",
+      "Upper back"
+     ],
+     "advance": "Elite; years of work",
+     "cues": "Shoulder extension strength plus extreme compression",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/manna"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "oap",
+   "name": "One-arm pull-up",
+   "category": "skill",
+   "notes": "Unilateral pulling ladder. Heavy weighted pull-ups build the base.",
+   "nodes": [
+    {
+     "id": "arp",
+     "parent": null,
+     "rung": 1,
+     "name": "Archer pull-up",
+     "equipment": "bar|rings",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Obliques"
+     ],
+     "advance": "HC: 2×9 per side",
+     "cues": "Assisting arm straight",
+     "source": "hc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/archer-pull-up"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/archer-pullups"
+      }
+     ]
+    },
+    {
+     "id": "tw",
+     "parent": "arp",
+     "rung": 2,
+     "name": "Typewriter pull-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×3–5 traverses",
+     "cues": "Stay at the top",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/typewriter-pull-up"
+      }
+     ]
+    },
+    {
+     "id": "aoap",
+     "parent": "tw",
+     "rung": 3,
+     "name": "Assisted one-arm pull-up",
+     "equipment": "bar+slider|bar+band|bar",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Brachialis"
+     ],
+     "secondary": [
+      "Forearms/grip",
+      "Obliques"
+     ],
+     "advance": "HC one-hand-assisted standard: 2×9 per side",
+     "cues": "Assisting hand on the forearm or a towel; use less over time",
+     "source": "hc",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/one-hand-pullups"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/advanced-onehand-pullups"
+      }
+     ]
+    },
+    {
+     "id": "oan",
+     "parent": "aoap",
+     "rung": 4,
+     "name": "One-arm negative",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Brachialis"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×3 per side, 5 s lowers",
+     "cues": "Resist rotation",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "oapu",
+     "parent": "oan",
+     "rung": 5,
+     "name": "One-arm pull-up",
+     "equipment": "bar",
+     "primary": [
+      "Lats",
+      "Biceps",
+      "Brachialis"
+     ],
+     "secondary": [
+      "Forearms/grip",
+      "Obliques",
+      "Abs"
+     ],
+     "advance": "1–3 reps per side",
+     "cues": "Chin over the bar, minimal swing",
+     "source": "gen",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/one-arm-pullups"
+      },
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/one-arm-chin-up"
+      }
+     ]
+    },
+    {
+     "id": "wpu",
+     "parent": null,
+     "rung": 1,
+     "name": "Weighted pull-up (support branch)",
+     "equipment": "bar+wt",
+     "primary": [
+      "Lats",
+      "Biceps"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "Heavy sets of 3–5",
+     "cues": "Full range",
+     "source": "sim",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/weighted-pull-ups"
+      }
+     ]
+    }
+   ],
+   "video": {
+    "label": "Hybrid Calisthenics: pull-up progression video",
+    "url": "https://www.youtube.com/watch?v=fO3dKSQayfg"
+   }
+  },
+  {
+   "id": "pistol",
+   "name": "Pistol squat",
+   "category": "skill",
+   "notes": "Strength plus balance, ankle and hip mobility.",
+   "nodes": [
+    {
+     "id": "bp",
+     "parent": null,
+     "rung": 1,
+     "name": "Box pistol",
+     "equipment": "box",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves",
+      "Hip flexors"
+     ],
+     "advance": "3×5–8 per leg, lowering the box",
+     "cues": "Sit back under control",
+     "source": "soc",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/one-leg-chair-squats"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=DJ5Ukbfak7I"
+      }
+     ]
+    },
+    {
+     "id": "ap",
+     "parent": "bp",
+     "rung": 2,
+     "name": "Assisted pistol (holding support)",
+     "equipment": "rings|wall|low",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves"
+     ],
+     "advance": "3×5–8 per leg",
+     "cues": "Use your hands only as needed",
+     "source": "soc",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/assisted-oneleg-squats"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=DJ5Ukbfak7I"
+      }
+     ]
+    },
+    {
+     "id": "neg",
+     "parent": "ap",
+     "rung": 3,
+     "name": "Pistol negative",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Hip flexors"
+     ],
+     "advance": "3×5 slow per leg",
+     "cues": "Reach the arms forward",
+     "source": "soc",
+     "links": [
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=DJ5Ukbfak7I"
+      }
+     ]
+    },
+    {
+     "id": "eps",
+     "parent": "ap",
+     "rung": 3,
+     "name": "Elevated pistol (on a box)",
+     "equipment": "box",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Hip flexors",
+      "Calves"
+     ],
+     "advance": "3×5 per leg",
+     "cues": "Free leg hangs below box level",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "ps",
+     "parent": "eps",
+     "rung": 4,
+     "name": "Pistol squat",
+     "equipment": "floor",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves",
+      "Hip flexors",
+      "Adductors"
+     ],
+     "advance": "3×5 per leg, then weighted",
+     "cues": "Heel down, knee tracks the toes",
+     "source": "soc",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/pistol-squat"
+      },
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/oneleg-squats"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/pistol-squat/"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://www.youtube.com/watch?v=DJ5Ukbfak7I"
+      }
+     ]
+    },
+    {
+     "id": "wps",
+     "parent": "ps",
+     "rung": 5,
+     "name": "Weighted pistol",
+     "equipment": "floor+wt",
+     "primary": [
+      "Quads",
+      "Glutes"
+     ],
+     "secondary": [
+      "Calves"
+     ],
+     "advance": "3–8 reps",
+     "cues": "A front counterweight helps balance",
+     "source": "sim",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/kettlebell-pistol-squat"
+      }
+     ]
+    }
+   ],
+   "video": {
+    "label": "Hybrid Calisthenics: squat progression video",
+    "url": "https://www.youtube.com/watch?v=z3XQ7T4-abQ"
+   }
+  },
+  {
+   "id": "dflag",
+   "name": "Dragon flag",
+   "category": "skill",
+   "notes": "Grip a bench or pole behind your head.",
+   "nodes": [
+    {
+     "id": "llr",
+     "parent": null,
+     "rung": 1,
+     "name": "Lying leg raise / reverse crunch",
+     "equipment": "floor",
+     "primary": [
+      "Abs",
+      "Hip flexors"
+     ],
+     "secondary": [
+      "Obliques"
+     ],
+     "advance": "3×12–15",
+     "cues": "Low back down",
+     "source": "gen",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/full-leg-raises"
+      }
+     ]
+    },
+    {
+     "id": "tdf",
+     "parent": "llr",
+     "rung": 2,
+     "name": "Tuck dragon flag negatives",
+     "equipment": "box",
+     "primary": [
+      "Abs",
+      "Lats"
+     ],
+     "secondary": [
+      "Obliques",
+      "Hip flexors"
+     ],
+     "advance": "3×5 slow",
+     "cues": "Weight on the upper back, not the neck",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dragon-flag-tucked-short-range-bench"
+      }
+     ]
+    },
+    {
+     "id": "sldf",
+     "parent": "tdf",
+     "rung": 3,
+     "name": "One-leg / straddle dragon flag",
+     "equipment": "box",
+     "primary": [
+      "Abs",
+      "Lats"
+     ],
+     "secondary": [
+      "Obliques"
+     ],
+     "advance": "3×5",
+     "cues": "Hips stay extended",
+     "source": "gen",
+     "links": []
+    },
+    {
+     "id": "dfn",
+     "parent": "sldf",
+     "rung": 4,
+     "name": "Full dragon flag negatives",
+     "equipment": "box",
+     "primary": [
+      "Abs",
+      "Lats"
+     ],
+     "secondary": [
+      "Obliques",
+      "Glutes"
+     ],
+     "advance": "3×3–5 lowers of 5 s",
+     "cues": "Straight line, no hip bend",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dragon-flag"
+      }
+     ]
+    },
+    {
+     "id": "df",
+     "parent": "dfn",
+     "rung": 5,
+     "name": "Full dragon flag",
+     "equipment": "box",
+     "primary": [
+      "Abs",
+      "Lats"
+     ],
+     "secondary": [
+      "Obliques",
+      "Glutes"
+     ],
+     "advance": "3×3–5 reps",
+     "cues": "Straight line, no hip bend",
+     "source": "gen",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/dragon-flag"
+      },
+      {
+       "label": "sl",
+       "url": "https://www.strengthlog.com/dragon-flag/"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "elbow",
+   "name": "Elbow lever",
+   "category": "skill",
+   "notes": "An accessible balance skill, but hard on the wrists.",
+   "nodes": [
+    {
+     "id": "cr",
+     "parent": null,
+     "rung": 1,
+     "name": "Crow pose",
+     "equipment": "floor",
+     "primary": [
+      "Front delts",
+      "Triceps",
+      "Wrists"
+     ],
+     "secondary": [
+      "Abs"
+     ],
+     "advance": "20 s (Antranik's prerequisite)",
+     "cues": "Knees on the triceps",
+     "source": "antp",
+     "links": [
+      {
+       "label": "fl",
+       "url": "https://www.fitloop.app/exercises/crow-pose"
+      },
+      {
+       "label": "source video/guide",
+       "url": "https://antranik.org/bodyweight-training/"
+      }
+     ]
+    },
+    {
+     "id": "el",
+     "parent": "cr",
+     "rung": 2,
+     "name": "Two-arm elbow lever",
+     "equipment": "floor|pt",
+     "primary": [
+      "Abs",
+      "Wrists",
+      "Forearms/grip"
+     ],
+     "secondary": [
+      "Front delts",
+      "Obliques"
+     ],
+     "advance": "3×10–20 s",
+     "cues": "Elbows into the hips, body horizontal",
+     "source": "gen",
+     "links": [
+      {
+       "label": "hc",
+       "url": "https://www.hybridcalisthenics.com/fullelbowlevers"
+      }
+     ]
+    },
+    {
+     "id": "oel",
+     "parent": "el",
+     "rung": 3,
+     "name": "One-arm elbow lever",
+     "equipment": "floor|pt",
+     "primary": [
+      "Abs",
+      "Obliques",
+      "Wrists"
+     ],
+     "secondary": [
+      "Forearms/grip"
+     ],
+     "advance": "3×5–10 s per side",
+     "cues": "Elbow at the hip bone",
+     "source": "gen",
+     "links": []
+    }
+   ],
+   "video": {
+    "label": "Hybrid Calisthenics: elbow lever progression video",
+    "url": "https://www.youtube.com/watch?v=yJqW3Xh253E"
+   }
+  }
+ ]
+}

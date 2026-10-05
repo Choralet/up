@@ -4,7 +4,7 @@ import { indexNodes } from '../engine/graph'
 import {
   activateSkill as activateSkillRule, applyOverrides, currentStages, settleStage, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
-  levelUp as levelUpRule, logSet, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
+  levelUp as levelUpRule, logSet, passedFor, setEquipment as setEquipmentRule, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
   sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, markSeen as markSeenRule, unlockedBy, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
   type Progress, type Settings,
 } from '../engine/progress'
@@ -21,6 +21,8 @@ export interface ProgressValue {
   /** the full goal (with your overrides), ignoring the ramp stage */
   finalById: Map<string, ExerciseNode>
   progress: Progress
+  /** completed exercises plus the ones stepped over for missing equipment (for `nodeState`) */
+  passed: Set<string>
   log(nodeId: string, value: number): void
   levelUp(fromId: string, toId: string | null): void
   setFocus(nodeId: string): void
@@ -41,6 +43,8 @@ export interface ProgressValue {
   setDayPick(pick: DayType | null): void
   toggleWarm(key: string): void
   setSettings(patch: Partial<Settings>): void
+  /** what you own; null = not set (everything counts) */
+  setEquipment(kit: string[] | null): void
   markSeen(ids: string[]): void
   /** nodes unlocked by the last level-up (this session only), for the unlock animation */
   justUnlocked: string[]
@@ -102,6 +106,7 @@ export function ProgressProvider({
     byId,
     finalById,
     progress,
+    passed: passedFor(nodes, progress),
     log: (nodeId, v) => update((p) => settle(logSet(p, nodeId, v, localDate(), Date.now()), nodeId)),
     levelUp: (fromId, toId) =>
       update((p) => {
@@ -125,6 +130,7 @@ export function ProgressProvider({
     setDayPick: (pick) => update((p) => setDayPickRule(p, localDate(), pick)),
     toggleWarm: (key) => update((p) => toggleWarmRule(p, localDate(), key)),
     setSettings: (patch) => update((p) => setSettingsRule(p, patch)),
+    setEquipment: (kit) => update((p) => setEquipmentRule(nodes, p, kit)),
     markSeen: (ids) => update((p) => markSeenRule(p, ids)),
   }
   return (

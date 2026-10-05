@@ -51,12 +51,12 @@ export function achievements(nodes: ExerciseNode[], progress: Progress, _today: 
     ['streak-8', '8-Week Streak', 'Eight weeks in a row', streak >= 8],
     ['first-level-up', 'First Level Up', 'Finish your first exercise', done.size >= 1],
     ['level-ups-10', '10 Level Ups', 'Finish 10 exercises', done.size >= 10],
-    ['first-push-up', 'First Push-up', 'Finish Push-up', done.has('push-standard')],
-    ['first-pull-up', 'First Pull-up', 'Finish Pull-up', done.has('pull-pullup')],
-    ['first-dip', 'First Dip', 'Finish Dip', done.has('rm-dip')],
-    ['first-pistol', 'First Pistol Squat', 'Finish Pistol squat', done.has('legs-pistol')],
+    ['first-push-up', 'First Push-up', 'Finish Push-up', done.has('hpush:p')],
+    ['first-pull-up', 'First Pull-up', 'Finish Pull-up', done.has('vpull:pu')],
+    ['first-dip', 'First Dip', 'Finish Parallel bar dip', done.has('dip:d')],
+    ['first-pistol', 'First Pistol Squat', 'Finish Pistol squat', done.has('pistol:ps')],
     ['first-skill', 'First Skill Step', 'Finish a skill step', skillStep],
-    ['handstand', 'Freestanding Handstand', 'Finish the freestanding handstand hold', done.has('push-hs-free')],
+    ['handstand', 'Freestanding Handstand', 'Finish the freestanding handstand', done.has('hs:fs')],
     ['roadmap-y1', 'Roadmap Year 1', 'Finish every Year 1 skill', year1],
   ]
   return list.map(([id, name, detail, earned]) => ({ id, name, detail, earned }))

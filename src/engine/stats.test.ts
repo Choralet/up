@@ -38,7 +38,7 @@ describe('weeklyStreak', () => {
 })
 
 const N = (id: string, over: Partial<ExerciseNode> = {}): ExerciseNode => ({
-  id, name: `Name ${id}`, branch: 'push', kind: 'strength', requires: [], col: 1,
+  id, name: `Name ${id}`, branch: 'push', kind: 'strength', requires: [],
   goal: { type: 'reps', sets: 3, target: 10 }, cue: 'cue', ...over,
 })
 const byId = new Map([N('a'), N('b'), N('c')].map((n) => [n.id, n]))
