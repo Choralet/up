@@ -149,6 +149,7 @@ See [DEMOS.md](DEMOS.md). Short version: good GIF sources exist, but the ones wi
 | 6 | Backup: export/import, then GitHub backup | **Done** (Plan 3) |
 | 7 | How-to demos (per your choice) | **Done** (Plan 3) |
 | 8 | Polish (dark mode, accessibility, offline) | **Done** (Plan 3) |
+| 9 | New tree data: 34 trees, 229 exercises, equipment filter, accessories | **Built** (Plan 8), waiting for the user's look before `main` |
 
 Apple Health and widgets are dropped (web app). 
 

@@ -1,6 +1,8 @@
 # Skill Progressions (draft data)
 
 Researched 2026-09-26 from [Gymnase Tips](https://www.gymnasetips.com/calisthenics-skills/), [Calisteniapp](https://calisteniapp.com/articles/order-calisthenics-tricks) and [Simple Calisthenics](https://www.simple-calisthenics.com/features/calisthenics-skill-tree).
+
+> **Superseded by Plan 8 (2026-10-05):** the app now uses the user's tree export, `docs/data/calisthenics-trees.md` (13 skill ladders with sources). This file is kept for history.
 **Treat every number as a starting default.** Sources differ and are not peer-reviewed. Goals are editable in the app, and the bundled JSON is the single source.
 
 ## How skills differ from regular strength chains

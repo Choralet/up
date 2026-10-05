@@ -145,7 +145,7 @@ User: "Redesign my app following ui-ux-pro-max skill." Reason given: **more ener
 - Work on branch `redesign-game-quest`, shipped to `main` only when complete. Spec: `docs/superpowers/specs/2026-10-01-game-quest-redesign-design.md`.
 - Built on `redesign-game-quest`, finished 2026-10-01. Decided while building: level caption reads "Push 4/23" (the long form did not fit Legs + Core day at large text); rest-day header shows only the streak; Roadmap "ready" icons and the Finish sheet take the screen's colour; tree nodes are bigger (`NODE_R` 19, `ROW_H` 86, `LABEL_Y` 20); tree track chips and zoom buttons restyled; screenshot script `scripts/shots.mjs` added.
 
-## Plan 8: new tree data (2026-10-05, plan awaiting approval)
+## Plan 8: new tree data (2026-10-05, built on the work branch)
 
 User: "Implement this new tree data to the app. Show me the plan first." Source export copied to `docs/data/calisthenics-trees.md` (34 trees, 229 exercises). Plan: `docs/superpowers/plans/2026-10-05-up-plan-8-tree-data.md`. Answers:
 - **Muscle-specific trees:** in the Tree and in **Full** workouts (one per day, rotating).
@@ -153,3 +153,6 @@ User: "Implement this new tree data to the app. Show me the plan first." Source 
 - **Equipment:** a **My equipment** filter (set in Find your level and Settings); exercises you can't do are greyed and stepped over, never blocking a ladder.
 - **Skill ladders:** keep a **lock** on each ladder's first rung from one main exercise (agent picks from the source notes).
 - Agent recommendations in the plan, open to the user's veto: one ladder drawn at a time; exercises repeated across trees are linked twins; branch level counts main + skill trees only; old progress migrates by an id map, never going backwards.
+- **Approved** ("Do what you think is the best"), so the three agent recommendations stand. User's equipment: **resistance band and pull-up bar**; must be able to add more later (Settings → My Equipment; Find your level asks too). Wants to **see the app before it goes to `main`**.
+- Built decisions (agent): tree packing rule (no unrelated vertical neighbours); ladders keep their own names in Skills; 22 default goals for exercises without a number (list in the Plan 8 file, section 13); Wall pre-ticked for new users; a save that never set equipment counts everything as owned; the stepping-over rule applies to gates too (a ladder's gate you can't do counts once its easier steps are passed).
+- **Trade-off flagged to the user:** with only a bar, Dips starts at Straight-bar dip (every easier dip needs dip bars, rings or parallettes). A sturdy chair pair counts as Bench / box; a table edge as Low bar / table.

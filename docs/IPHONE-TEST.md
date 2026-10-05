@@ -40,5 +40,12 @@ Open https://choralet.github.io/up/ in **Safari** → Share → **Add to Home Sc
 - [ ] Switch the phone between light and dark mode: every screen is readable in both.
 - [ ] Settings → Display & Brightness → Text Size larger: Legs + Core day header still fits.
 
-## 8. VoiceOver (optional)
+## 8. New tree data (Plan 8)
+- [ ] Your old progress is still there (Today shows where you were; Tree shows your finished exercises).
+- [ ] Settings → **My Equipment**: tick Pull-up bar and Bands. Today only offers exercises you can do; greyed ones in the Tree say what they need.
+- [ ] Tree: Push / Pull / Legs / Core, then the ladder chips (Push-ups, Overhead, Dips, Handstand…). Each ladder fits or scrolls sideways.
+- [ ] Tap an exercise: Move on when, Equipment, Muscles, Source and How-to links open in Safari.
+- [ ] Workout Length **Full** adds an Accessory (a different one next week).
+
+## 9. VoiceOver (optional)
 - [ ] Settings → Accessibility → VoiceOver on: swipe through Today and a log screen; buttons and numbers are read sensibly.

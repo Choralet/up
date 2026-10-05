@@ -32,7 +32,7 @@ const SEED = {
 }
 
 // steps: ['text', label] clicks the first button/link/tab whose accessible label or text is, starts with, or contains label;
-//        ['sel', css] clicks the first element matching css; ['wait', ms]
+//        ['sel', css] clicks the first element matching css; ['wait', ms]; ['scroll', css, px] scrolls that element (else the page)
 const SCENARIOS = {
   today: { steps: [] },
   fri: { date: FRI, steps: [] },
@@ -49,6 +49,16 @@ const SCENARIOS = {
   settings: { steps: [['sel', '[aria-label="Settings"]']] },
   onboarding: { seed: { onboarded: false }, steps: [] },
   'node-bottom': { steps: [['text', 'Tree'], ['sel', '[aria-label^="Wall push-up,"]']] },
+  // Plan 8: one ladder at a time, details, equipment (the SEED above uses pre-Plan 8 ids, so every run also checks the migration)
+  'tree-pull': { steps: [['text', 'Tree'], ['text', 'Pull']] },
+  'tree-hs': { steps: [['text', 'Tree'], ['text', 'Handstand']] },
+  'tree-gear': { seed: { settings: { holdSound: true, length: 'standard', equipment: ['band', 'bar'] } }, steps: [['text', 'Tree']] },
+  'today-gear': { seed: { settings: { holdSound: true, length: 'standard', equipment: ['band', 'bar'] } }, steps: [] },
+  'node-gear': { seed: { settings: { holdSound: true, length: 'standard', equipment: ['band', 'bar'] } }, steps: [['text', 'Tree'], ['text', 'Overhead'], ['sel', '[aria-label^="Feet-elevated pike push-up,"]']] },
+  'node-details': { steps: [['text', 'Tree'], ['sel', '[aria-label^="Push-up,"]'], ['scroll', '.sheet', 2000]] },
+  'settings-gear': { seed: { settings: { holdSound: true, length: 'standard', equipment: ['band', 'bar'] } }, steps: [['sel', '[aria-label="Settings"]'], ['scroll', '.log', 1150]] },
+  'onboarding-gear': { seed: { onboarded: false }, steps: [['text', 'Start']] },
+  full: { seed: { settings: { holdSound: true, length: 'full' } }, steps: [['scroll', '.screen', 2000]] },
   'fri-high': { date: FRI, seed: { completed: ["legs-assisted", "legs-squat", "legs-split", "legs-bulgarian", "legs-shrimp", "legs-assisted-pistol", "legs-pistol", "core-deadbug", "core-plank", "core-hollow", "core-knee-raise", "core-tuck-lsit", "core-leg-raise", "core-lsit", "core-dragon", "core-dragon-full", "legs-bridge", "legs-sl-bridge", "legs-nordic-neg", "core-lying-raise"] }, steps: [] },
 }
 
@@ -134,7 +144,7 @@ async function cdp(wsUrl) {
 
 async function main() {
   mkdirSync(outDir, { recursive: true })
-  const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'up-shots-'))}`, '--no-first-run', '--hide-scrollbars', 'about:blank'], { stdio: 'ignore' })
+  const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'up-shots-'))}`, '--no-first-run', '--hide-scrollbars', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : []), 'about:blank'], { stdio: 'ignore' })
   try {
     let list
     for (let i = 0; i < 50 && !list; i++) { try { list = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json() } catch { await sleep(200) } }
@@ -155,6 +165,7 @@ async function main() {
         await c.send('Page.navigate', { url: BASE }); await sleep(1500)
         for (const step of sc.steps) {
           if (step[0] === 'wait') { await sleep(step[1]); continue }
+          if (step[0] === 'scroll') { await evalJs(`(() => { const el = document.querySelector(${JSON.stringify(step[1])}); if (el) el.scrollTop = ${step[2]}; else scrollTo(0, ${step[2]}) })()`); await sleep(500); continue }
           if (!(await evalJs(clickJs(step)))) console.warn(`  ${nameKey}: could not click ${step[1]}`)
           await sleep(900)
         }

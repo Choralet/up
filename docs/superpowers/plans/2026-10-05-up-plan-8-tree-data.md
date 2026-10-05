@@ -1,6 +1,6 @@
 # Up: Plan 8: New tree data (34 trees, 229 exercises)
 
-> **Status: decisions taken; awaiting the user's approval of the whole plan.** No code until approved (CLAUDE.md gate).
+> **Status: approved 2026-10-05 ("Do what you think is the best") and built on branch `claude/beautiful-carson-9h5eok`.** Not on `main` until the user has seen it. What changed while building: end of this file.
 > Source: the user's export "Calisthenics Progression Trees — Data Export" (copied to `docs/data/calisthenics-trees.md`).
 
 **Goal:** Replace the hand-made exercise graph (109 nodes) with the user's researched data: 10 main trees, 11 muscle-specific trees, 13 skill ladders. Every exercise gains equipment, muscles, a "move on when" rule, form cues, a source and how-to links. Nobody loses progress.
@@ -153,3 +153,13 @@ Pushes go to the work branch only; `main` (your phone) only when you say so.
 | Q4 | Skill entry | **Keep a lock** on each ladder's first rung (section 7) |
 
 Agent recommendations you can still overrule at approval: one ladder at a time in the Tree (section 8); twins share completion (section 4); branch level counts main + skill trees only (section 8); range rule also applies to "Hold 30–60 s" (→ 60 s).
+
+## 13. Built (2026-10-05): what changed from the plan
+
+- **Tree layout:** packed columns, row by row; an exercise only sits straight above one it builds on (Pull-ups fits 5 columns instead of 7).
+- **Names:** a tree skill ladder keeps its own name in Skills (Planche, not its first rung's Roadmap name); Roadmap-only skills keep Roadmap names.
+- **Goals with no number** (22, agent defaults, all editable): Chin-up 3×8, Box pistol 3×8/leg, Bodyweight RDL 3×8, Hollow rocks 3×15, Ring Pallof 3×12, Wrist prep 1×180 s (Grip and Handstand), Scapular pull 3×8, Kick-up practice 3×5, Heel pulls 3×5, Press to handstand 3×3, Freestanding HSPU 3×5, 90° push-up 3×3, Band planche 3×10 s, Planche push-ups 3×8, Full planche 3×5 s, Band front lever 3×10 s, Weighted muscle-up 3×3, Band flag 3×10 s, Manna 3×5 s, Weighted pull-up (one-arm ladder) 3×5. "Up to" sequences use the last target (Plank, Hollow hold, Side plank, Superman 1×60 s).
+- **Roadmap:** Frog stand → Crow pose (`elbow:cr`, twin of the planche Frog/crow stand); One-leg planche stays a Roadmap-only move (`rm-planche-oneleg`, no match in the new ladder).
+- **History** shows a twin's sets too.
+- **Find your level** asks equipment first (Wall pre-ticked), then only tracks you can do.
+- **Trade-off to watch:** with a bar but no dip bars, rings or parallettes, every easier dip is stepped over, so Dips starts at the Straight-bar dip.

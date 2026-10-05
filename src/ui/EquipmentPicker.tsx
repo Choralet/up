@@ -12,7 +12,7 @@ export function EquipmentPicker({ value, onChange }: { value: string[] | null; o
       {PICKABLE.map((code) => {
         const on = have.has(code)
         return (
-          <button key={code} className="check" role="checkbox" aria-checked={on} aria-label={EQUIPMENT[code]}
+          <button key={code} className="check pick" role="checkbox" aria-checked={on} aria-label={EQUIPMENT[code]}
             onClick={() => onChange(on ? [...have].filter((c) => c !== code) : [...have, code])}>
             <span className="box" aria-hidden="true">{on && <Icon name="check" size={14} />}</span>
             <span className="lbl">{EQUIPMENT[code]}</span>
