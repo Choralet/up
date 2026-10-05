@@ -116,3 +116,14 @@ describe('Plan 6 review fixes: workout', () => {
     expect(workoutDone(buildWorkout(NODES, real(), 'rest', SKILLS, 'standard'), real(), '2026-09-21')).toBe(false)
   })
 })
+
+describe('Plan 8 review fixes: workout', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  it('the same exercise is never listed twice in a day (a skill step and its twin track exercise)', () => {
+    const p = real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p', 'vpush:pk', 'hspu:pk'], skillFocus: { hspu: 'hspu:epk' } })
+    const w = buildWorkout(NODES, p, 'push', SKILLS, 'standard')
+    const ids = [...w.skill, ...w.main.flatMap((m) => (m.node ? [m.node] : [])), ...w.extra.map((e) => e.node)].flatMap((n) => [n.id, ...(n.twins ?? [])])
+    expect(ids.filter((id) => id === 'vpush:epk' || id === 'hspu:epk')).toHaveLength(2) // one exercise: itself + its twin
+    expect(w.skill.map((n) => n.id)).toEqual(['hspu:epk'])
+  })
+})

@@ -86,6 +86,14 @@ describe('goals from the "advance" text', () => {
     }
     for (const id of Object.keys(GOALS)) expect(byId.has(id), id).toBe(true)
   })
+  it('review fixes: German hang builds to one 30 s hold; shrimp squats and weighted pistols count per leg', () => {
+    expect(byId.get('bl:gh')!.goal).toEqual({ type: 'hold', sets: 1, target: 30 })
+    for (const id of ['squat:bsh', 'squat:ish', 'squat:ash', 'pistol:wps']) expect(byId.get(id)!.goal.per, id).toBe('leg')
+  })
+  it('review fixes: a doorway pull-up bar is too high for rows; Human flag waits for full wall HSPUs', () => {
+    expect(byId.get('hpull:hr')!.equipment).toEqual([['rings'], ['low']])
+    expect(byId.get('flag:vf')!.requires).toEqual(['hspu:wh'])
+  })
   it('known goals', () => {
     expect(byId.get('hpush:p')!.goal).toEqual({ type: 'reps', sets: 3, target: 8 })
     expect(byId.get('fl:tf')!.goal).toEqual({ type: 'hold', sets: 3, target: 15 })
@@ -112,13 +120,13 @@ describe('exercise graph', () => {
   it('has no cycles (computeDepths would throw)', () => {
     expect(() => computeDepths(NODES)).not.toThrow()
   })
-  it('every skill ladder starts behind a main exercise (its gate)', () => {
+  it('every skill ladder starts behind an exercise of another tree (its gate)', () => {
     for (const t of TREES.filter((x) => x.category === 'skill')) {
       const roots = TREE.filter((n) => n.tree === t.id && n.requires.every((r) => byId.get(r)!.tree !== t.id))
       expect(roots.length, t.id).toBeGreaterThan(0)
       for (const r of roots) {
         expect(r.requires.length, r.id).toBeGreaterThan(0)
-        for (const g of r.requires) expect(TREES.find((x) => x.id === byId.get(g)!.tree)?.category, `${r.id} gate ${g}`).toBe('main')
+        for (const g of r.requires) expect(byId.get(g)!.tree, `${r.id} gate ${g}`).not.toBe(t.id)
       }
     }
   })

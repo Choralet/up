@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { DAY_LABEL, WEEKDAYS } from '../data/schedule'
 import { MAIN_TRACKS as TRACKS } from '../data/tracks'
 import type { DayType, ExerciseNode } from '../data/types'
-import { levelUp, setEquipment, type Progress } from '../engine/progress'
+import { levelUp, mainLineNext, setEquipment, type Progress } from '../engine/progress'
 import { useProgress } from '../store/ProgressContext'
 import { Icon } from './Icon'
 import { EquipmentPicker } from './EquipmentPicker'
@@ -28,10 +28,11 @@ export function assignDays(schedule: DayType[], ticked: boolean[]): DayType[] {
   })
 }
 
-function question(node: ExerciseNode): string {
-  return node.goal.type === 'hold'
-    ? `Can you hold it for ${node.goal.target} s, ${node.goal.sets} times?`
-    : `Can you do ${node.goal.sets} sets of ${node.goal.target} clean reps?`
+export function question(node: ExerciseNode): string {
+  const { type, sets, target, per } = node.goal
+  const each = per ? ` per ${per}` : ''
+  if (type === 'hold') return sets === 1 ? `Can you hold it for ${target} s${each}?` : `Can you hold it for ${target} s${each}, ${sets} times?`
+  return `Can you do ${sets} ${sets === 1 ? 'set' : 'sets'} of ${target} clean reps${each}?`
 }
 
 interface Snapshot {
@@ -114,7 +115,7 @@ export function Onboarding() {
         <h1 className="large title-sm intro-title">{node.name}</h1>
         <p className="question">{question(node)}</p>
         <p className="sub">{node.cue}</p>
-        <button className="cta spaced" onClick={answer(() => setDraft((d) => levelUp(nodes, d, node.id, null)))}>Yes</button>
+        <button className="cta spaced" onClick={answer(() => setDraft((d) => levelUp(nodes, d, node.id, mainLineNext(nodes, d, node.id))))}>Yes</button>
         <button className="cta sec" onClick={answer(() => setStep(s + 1))}>Not Yet</button>
       </>
     )

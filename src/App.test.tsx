@@ -125,7 +125,7 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
     const done = ['antiext:db', 'antiext:pl', 'hs:w', 'hs:pk']
     render(<App storage={seed({ completed: done, skillFocus: { hs: 'hs:cw' } })} />)
     const skill = await screen.findByRole('button', { name: /Chest-to-wall handstand/ })
-    expect(skill).toHaveTextContent('Skill') // shown in capitals by CSS, like the other tags
+    expect(skill.querySelector('.tag')).toHaveTextContent('Handstand') // the ladder's name, in capitals by CSS
     expect(skill).toHaveTextContent('1 × 60 s')
     await user.click(skill)
     expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
@@ -1137,7 +1137,7 @@ describe('Plan 5 · Phase 1 slips', () => {
     const completed = ['push-wall', 'push-incline', 'push-knee', 'push-standard', 'push-pike', 'pull-hang', 'pull-scap', 'legs-assisted', 'legs-squat', 'core-deadbug', 'core-plank', 'rm-frog-1']
     const text = JSON.stringify({ app: 'up', version: 1, progress: { completed, onboarded: true } })
     await user.upload(screen.getByLabelText('Import backup file'), new File([text], 'b.json', { type: 'application/json' }))
-    expect(await screen.findByRole('dialog', { name: 'Replace your progress?' })).toHaveTextContent('16 finished exercises') // old ids move to the new trees, and four of them finish a twin too
+    expect(await screen.findByRole('dialog', { name: 'Replace your progress?' })).toHaveTextContent('15 finished exercises') // old ids move to the new trees; three finish a twin too (Crow pose's planche twin waits for planche leans)
   })
 })
 
@@ -1817,5 +1817,56 @@ describe('Plan 8 · new trees, equipment, details', () => {
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('button', { name: 'Archer push-up, locked' }))
     expect(screen.getByRole('dialog', { name: 'Archer push-up' })).toHaveTextContent('Goal 3 × 8 / side')
+  })
+})
+
+describe('Plan 8 review fixes (testers)', () => {
+  const kit = (equipment: string[]) => ({ settings: { holdSound: true, length: 'standard', equipment } })
+  it('Skills names the first step you can actually do (Box pistol needs a box)', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ completed: ['squat:as', 'squat:s'], ...kit(['band', 'bar', 'wall']) })} />)
+    await user.click(await screen.findByRole('button', { name: 'Skills' }))
+    expect(screen.getByRole('button', { name: 'Start Pistol squat' }).closest('li')).toHaveTextContent('first: Assisted pistol (holding support)')
+  })
+
+  it('the streak card does not promise that rest weeks are fine', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Progress' }))
+    expect(screen.queryByText(/Rest weeks are fine/)).not.toBeInTheDocument()
+    expect(screen.getByText(/A week with fewer days starts it again/)).toBeInTheDocument()
+  })
+
+  it('Find your level walks the main line (Arch hang, Negative pull-up, Pull-up), never a side branch', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    await user.click(screen.getByRole('checkbox', { name: 'Pull-up bar' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // Push-ups
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // Overhead
+    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // Dips (a bar: the straight-bar dip)
+    expect(screen.getByRole('heading', { name: 'Dead hang' })).toBeInTheDocument()
+    expect(screen.getByText('Can you hold it for 60 s?')).toBeInTheDocument()
+    for (const next of ['Scapular pull', 'Arch hang', 'Negative pull-up', 'Pull-up']) {
+      await user.click(screen.getByRole('button', { name: 'Yes' }))
+      expect(screen.getByRole('heading', { name: next })).toBeInTheDocument()
+    }
+  })
+
+  it('Find your level says per side / per leg', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Start' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    for (let i = 0; i < 7; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
+    expect(screen.getByRole('heading', { name: 'Side plank' })).toBeInTheDocument()
+    expect(screen.getByText('Can you hold it for 60 s per side?')).toBeInTheDocument()
+  })
+
+  it('a skill on Today is tagged with its ladder, not a second "Skill"', async () => {
+    render(<App storage={seed({ completed: ['antiext:db', 'antiext:pl'], skillFocus: { hs: 'hs:w' } })} />)
+    const skill = await screen.findByRole('button', { name: /Wrist prep/ })
+    expect(skill.querySelector('.tag')).toHaveTextContent('Handstand')
   })
 })

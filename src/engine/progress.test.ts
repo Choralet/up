@@ -491,7 +491,7 @@ describe('movement tracks (real data)', () => {
 describe('Plan 8: twins, ladder gates, equipment', () => {
   const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
   it('finishing an exercise finishes its twin in the other tree, and that tree moves on', () => {
-    const p = levelUp(NODES, real({ completed: ['vpush:pk'], focus: { vpush: 'vpush:epk' } }), 'vpush:epk', null)
+    const p = levelUp(NODES, real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p', 'vpush:pk'], focus: { vpush: 'vpush:epk' } }), 'vpush:epk', null)
     expect(p.completed).toEqual(expect.arrayContaining(['vpush:epk', 'hspu:epk', 'hspu:pk']))
   })
   it('a twin finished elsewhere moves an active skill off that step', () => {
@@ -535,7 +535,7 @@ describe('Plan 8: twins, ladder gates, equipment', () => {
     expect(real({ settings: { holdSound: true, length: 'standard', equipment: ['floor', 'bar', 7] } }).settings.equipment).toEqual(['bar'])
   })
   it('a skill whose remaining steps all need missing equipment leaves the active list', () => {
-    let p = real({ completed: ['vpush:pk', 'vpush:epk', 'vpush:whn'], settings: { holdSound: true, length: 'standard', equipment: ['bar', 'pole'] } })
+    let p = real({ completed: ['vpush:pk', 'vpush:epk', 'vpush:whn', 'hspu:wh'], settings: { holdSound: true, length: 'standard', equipment: ['bar', 'pole'] } })
     p = activateSkill(NODES, p, 'flag')
     expect(p.skillFocus.flag).toBe('flag:vf')
     p = setEquipment(NODES, p, ['bar'])
@@ -628,5 +628,28 @@ describe('unlockedBy (for the unlock moment)', () => {
     const after = levelUp(g2, before, 'a', 'b')
     expect(unlockedBy(g2, before, after).sort()).toEqual(['b', 'k2', 'k3', 's1'])
     expect(unlockedBy(g2, after, after)).toEqual([])
+  })
+})
+
+describe('Plan 8 review fixes: linked exercises never open a locked ladder', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  it('a lying leg raise does not open Dragon flag before its Hanging knee raise gate', () => {
+    const p = levelUp(NODES, real(), 'compress:llr', null)
+    expect(p.completed).not.toContain('dflag:llr')
+    expect(activateSkill(NODES, p, 'dflag')).toBe(p)
+  })
+  it('the linked step is finished as soon as its ladder opens', () => {
+    let p = levelUp(NODES, real(), 'compress:llr', 'compress:hkr')
+    expect(p.focus.compress).toBe('compress:hkr')
+    p = levelUp(NODES, p, 'compress:hkr', null)
+    expect(p.completed).toContain('dflag:llr')
+    expect(activateSkill(NODES, p, 'dflag').skillFocus.dflag).toBe('dflag:tdf')
+  })
+  it('a false-grip hang does not open Ring muscle-up without pull-ups and dips; Crow pose does not skip planche leans', () => {
+    const fg = real({ completed: ['vpull:dh', 'grip:g4'] })
+    expect(fg.completed).not.toContain('rmu:fg')
+    const crow = real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p', 'elbow:cr'] })
+    expect(crow.completed).not.toContain('planche:fr')
+    expect(activateSkill(NODES, crow, 'planche').skillFocus.planche).toBe('planche:ln')
   })
 })

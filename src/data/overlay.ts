@@ -58,7 +58,7 @@ export const GATES: Record<string, string[]> = {
   bl: ['vpull:np'],
   bmu: ['vpull:pu'],
   rmu: ['vpull:pu', 'dip:d'],
-  flag: ['vpush:whn'],
+  flag: ['hspu:wh'], // Antranik: 3×5 wall HSPU before the flag
   oap: ['vpull:pu'],
   pistol: ['squat:s'],
   lsit: ['antiext:pl'],
@@ -130,6 +130,16 @@ export const GOALS: Record<string, Goal> = {
   'hs:oah': hold(3, 10), // the text's 60 s is the two-arm prerequisite
   'squat:js': reps(5, 6), // "3–5 sets of 3–6": top of both ranges
   'hips:m5': hold(3, 30, 'side'), // Copenhagen plank, as in the Side plank tree
+  'bl:gh': hold(1, 30), // "build to 30 s, feet assisted": one hold, not three
+  'squat:bsh': reps(3, 8, 'leg'),
+  'squat:ish': reps(3, 8, 'leg'),
+  'squat:ash': reps(3, 8, 'leg'),
+  'pistol:wps': reps(3, 8, 'leg'),
+}
+
+/** Equipment the export lists that doesn't work in practice ("|" = or, "+" = and). */
+export const EQUIPMENT_FIX: Record<string, string> = {
+  'hpull:hr': 'rings|low', // a doorway pull-up bar is too high for rows
 }
 
 /** Shorter tree labels where the name does not fit two lines. */

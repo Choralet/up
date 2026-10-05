@@ -105,9 +105,23 @@ export function passedFor(nodes: ExerciseNode[], progress: Progress): Set<string
   return set
 }
 
-/** `ids` plus the same exercises in other trees. */
-export function withTwins(byId: Map<string, ExerciseNode>, ids: string[]): string[] {
-  return [...new Set(ids.flatMap((id) => [id, ...(byId.get(id)?.twins ?? [])]))]
+/**
+ * `ids` plus the same exercises in other trees, each once its own requirements are passed: a linked exercise
+ * never opens a locked ladder (Lying leg raise waits for Dragon flag's gate), and is finished as soon as it opens.
+ */
+export function withTwins(nodes: ExerciseNode[], ids: string[], kit: Kit): string[] {
+  const done = new Set(ids)
+  for (let grew = true; grew; ) {
+    grew = false
+    const passed = passedSet(nodes, done, kit)
+    for (const n of nodes) {
+      if (!done.has(n.id) && n.twins?.some((t) => done.has(t)) && isUnlocked(n, passed)) {
+        done.add(n.id)
+        grew = true
+      }
+    }
+  }
+  return [...done]
 }
 
 /** `passed` (from `passedFor`) tells stepped-over exercises apart; without it only completed ones count. */
@@ -148,6 +162,23 @@ export function editSet(progress: Progress, index: number, value: number): Progr
   return { ...progress, logs: progress.logs.map((l, i) => (i === index ? { ...l, value: v } : l)) }
 }
 
+/**
+ * The next exercise up a track's main line (its longest path) from `fromId`, stepping over ones you can't do;
+ * null when there is none. Find your level walks this line, so it never asks a side branch (Jackknife pull-up).
+ */
+export function mainLineNext(nodes: ExerciseNode[], progress: Progress, fromId: string): string | null {
+  const byId = indexNodes(nodes)
+  const from = byId.get(fromId)
+  if (!from || from.skill) return null
+  const kids = (id: string) => nodes.filter((n) => !n.skill && n.requires.includes(id) && trackOf(n) === trackOf(from))
+  const height = (n: ExerciseNode): number => 1 + Math.max(0, ...kids(n.id).map(height))
+  const tallest = (id: string) => kids(id).sort((a, b) => height(b) - height(a))[0]
+  const passed = passedSet(nodes, [...progress.completed, fromId], kitOf(progress))
+  let next = tallest(fromId)
+  while (next && passed.has(next.id)) next = tallest(next.id)
+  return next?.id ?? null
+}
+
 /** Strength before skill; the sort is stable so JSON order breaks ties. */
 const kindRank = (n: ExerciseNode) => (n.kind === 'skill' ? 1 : 0)
 
@@ -160,7 +191,7 @@ export function suggestNext(nodes: ExerciseNode[], progress: Progress, fromId: s
   const from = byId.get(fromId)
   if (!from) return []
   const before = passedFor(nodes, progress)
-  const after = passedSet(nodes, withTwins(byId, [...progress.completed, fromId]), kitOf(progress))
+  const after = passedSet(nodes, withTwins(nodes, [...progress.completed, fromId], kitOf(progress)), kitOf(progress))
   const score = (s: Suggestion) => kindRank(s.node) * 2 + (s.isNew ? 0 : 1)
   return nodes
     .filter((n) => !after.has(n.id) && isUnlocked(n, after) && (from.skill ? n.skill === from.skill : !n.skill && trackOf(n) === trackOf(from)))
@@ -173,7 +204,7 @@ export function newlyUnlockedSkills(nodes: ExerciseNode[], progress: Progress, f
   const byId = indexNodes(nodes)
   const own = byId.get(fromId)?.skill // the next step of the chain you are already on is not "a new skill"
   const before = passedFor(nodes, progress)
-  const after = passedSet(nodes, withTwins(byId, [...progress.completed, fromId]), kitOf(progress))
+  const after = passedSet(nodes, withTwins(nodes, [...progress.completed, fromId], kitOf(progress)), kitOf(progress))
   return nodes.filter((n) => n.skill && n.skill !== own && !after.has(n.id) && isUnlocked(n, after) && !isUnlocked(n, before))
 }
 
@@ -224,7 +255,7 @@ function levelUpSkill(nodes: ExerciseNode[], progress: Progress, from: ExerciseN
   const chain = from.skill!
   if (progress.skillFocus[chain] !== from.id) return progress
   const byId = indexNodes(nodes)
-  const completed = withTwins(byId, [...progress.completed, from.id])
+  const completed = withTwins(nodes, [...progress.completed, from.id], kitOf(progress))
   const done = passedSet(nodes, completed, kitOf(progress))
   const to = toId ? byId.get(toId) : undefined
   const valid = !!to && to.skill === chain && !done.has(to.id) && isUnlocked(to, done)
@@ -242,7 +273,7 @@ export function levelUp(nodes: ExerciseNode[], progress: Progress, fromId: strin
   if (from.skill) return levelUpSkill(nodes, progress, from, toId)
   const track = trackOf(from)
   if (progress.focus[track] !== fromId) return progress
-  const completed = withTwins(byId, [...progress.completed, fromId])
+  const completed = withTwins(nodes, [...progress.completed, fromId], kitOf(progress))
   const done = passedSet(nodes, completed, kitOf(progress))
   const to = toId ? byId.get(toId) : undefined
   const focusId = to && trainable(to, track, done) ? to.id : pickFocus(nodes, done, track)
@@ -314,7 +345,7 @@ export function completeSteps(nodes: ExerciseNode[], progress: Progress, ids: st
   let completed = progress.completed
   for (const id of ids) {
     const n = byId.get(id)
-    if (n && !completed.includes(id) && isUnlocked(n, passedSet(nodes, completed, kitOf(progress)))) completed = withTwins(byId, [...completed, id])
+    if (n && !completed.includes(id) && isUnlocked(n, passedSet(nodes, completed, kitOf(progress)))) completed = withTwins(nodes, [...completed, id], kitOf(progress))
   }
   if (completed === progress.completed) return progress
   return sanitizeProgress(nodes, { ...progress, completed })
@@ -479,7 +510,7 @@ export function sanitizeProgress(nodes: ExerciseNode[], raw: unknown): Progress 
       }
     }
   }
-  const allDone = withTwins(byId, completed)
+  const allDone = withTwins(nodes, completed, kit)
   const done = passedSet(nodes, allDone, kit)
 
   const stored = [...Object.values(rawFocus), ...converted.map((n) => n.id)].filter(str).map((id) => byId.get(id))

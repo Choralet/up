@@ -19,15 +19,14 @@ const roadmapOrder = (stepId: string) => {
 }
 
 export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) => void; view: SkillsView; onView: (v: SkillsView) => void }) {
-  const { nodes, byId, progress, activateSkill, deactivateSkill } = useProgress()
+  const { nodes, byId, progress, passed, activateSkill, deactivateSkill } = useProgress()
   const [replacing, setReplacing] = useState<{ chain: string; name: string } | null>(null)
   const activeIds = Object.keys(progress.skillFocus)
   const full = activeIds.length >= MAX_ACTIVE_SKILLS
-  const done = new Set(progress.completed)
 
   const ready = SKILLS.filter((c) => skillStatus(nodes, progress, c.id).status === 'available')
     .map((chain) => {
-      const step = byId.get(firstStep(nodes, done, chain.id)!)!
+      const step = byId.get(firstStep(nodes, passed, chain.id)!)!
       return { chain, step, name: skillName(chain.id, step.id), steps: nodes.filter((n) => n.skill === chain.id).length }
     })
     .sort((a, b) => roadmapOrder(a.step.id) - roadmapOrder(b.step.id))

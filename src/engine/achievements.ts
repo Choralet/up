@@ -40,7 +40,12 @@ export function achievements(nodes: ExerciseNode[], progress: Progress, _today: 
   const done = new Set(progress.completed)
   const sessions = new Set(progress.logs.map((l) => l.date)).size
   const streak = bestStreak(progress.logs, progress.schedule)
-  const skillStep = nodes.some((n) => n.kind === 'skill' && done.has(n.id))
+  // a level-up is an exercise you finished after logging it: placements (Find your level, "I can already do this")
+  // and linked twins finished along with it don't count, and twins count once
+  const logged = new Set(progress.logs.map((l) => l.nodeId))
+  const trained = nodes.filter((n) => done.has(n.id) && logged.has(n.id))
+  const levelUps = new Set(trained.map((n) => [n.id, ...(n.twins ?? [])].sort()[0])).size
+  const skillStep = trained.some((n) => n.kind === 'skill')
   const year1 = ROADMAP.filter((r) => r.year === 1).every((r) => r.steps.every((s) => done.has(s)))
   const list: [string, string, string, boolean][] = [
     ['first-workout', 'First Workout', 'Log your first set', sessions >= 1],
@@ -49,8 +54,8 @@ export function achievements(nodes: ExerciseNode[], progress: Progress, _today: 
     ['streak-2', '2-Week Streak', 'Two weeks in a row', streak >= 2],
     ['streak-4', '4-Week Streak', 'Four weeks in a row', streak >= 4],
     ['streak-8', '8-Week Streak', 'Eight weeks in a row', streak >= 8],
-    ['first-level-up', 'First Level Up', 'Finish your first exercise', done.size >= 1],
-    ['level-ups-10', '10 Level Ups', 'Finish 10 exercises', done.size >= 10],
+    ['first-level-up', 'First Level Up', 'Finish your first exercise', levelUps >= 1],
+    ['level-ups-10', '10 Level Ups', 'Finish 10 exercises', levelUps >= 10],
     ['first-push-up', 'First Push-up', 'Finish Push-up', done.has('hpush:p')],
     ['first-pull-up', 'First Pull-up', 'Finish Pull-up', done.has('vpull:pu')],
     ['first-dip', 'First Dip', 'Finish Parallel bar dip', done.has('dip:d')],

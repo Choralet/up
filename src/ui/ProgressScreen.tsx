@@ -39,7 +39,7 @@ export function ProgressScreen() {
       <div className="card">
         <b>{streak > 0 ? `${streak} week streak` : 'No streak yet'}</b>
         <div className="sub">
-          {`Train on ${plural(streakDaysNeeded(progress.schedule), 'day')} in a week to keep it going.`} Rest weeks are fine, and an unfinished week never breaks it.
+          {`Train on ${plural(streakDaysNeeded(progress.schedule), 'day')} in a week to keep it going.`} A week with fewer days starts it again; the week you're in never breaks it.
         </div>
       </div>
 

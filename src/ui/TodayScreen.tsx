@@ -13,6 +13,7 @@ import { BackupNotice } from './BackupNotice'
 import { BRANCH_META, accentStyle, nodeAccent } from './branches'
 import { trackById } from '../data/tracks'
 import { Icon, type IconName } from './Icon'
+import { skillName } from '../data/names'
 import { BranchLevel, Streak } from './Level'
 
 const TRAIN_ANYWAY: Exclude<DayType, 'rest'>[] = ['push', 'pull', 'legs']
@@ -45,7 +46,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
       <button className={`quest${node.kind === 'skill' ? ' skill' : ''}`} key={`${tag ?? 'main'}:${node.id}`} style={nodeAccent(node)} onClick={() => onOpen(node.id)}>
         <span className="qicon" aria-hidden="true"><Icon name={icon} /></span>
         <span className="t">
-          {(tag || node.kind === 'skill') && <span className={`tag${tag ? ' extra' : ''}`}>{tag ?? 'Skill'}</span>}
+          {(tag || node.kind === 'skill') && <span className={`tag${tag ? ' extra' : ''}`}>{tag ?? skillName(node.skill!, node.id)}</span>}
           <b>{node.name}</b>
           <span>{status}</span>
         </span>

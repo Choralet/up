@@ -40,23 +40,26 @@ export function buildWorkout(nodes: ExerciseNode[], progress: Progress, day: Day
   const prevOf = (node: ExerciseNode | null, track: string) =>
     node?.requires.map((r) => byId.get(r)).find((p): p is ExerciseNode => !!p && !p.skill && trackOf(p) === track && done.has(p.id))
   const finished = (track: string) => nodes.every((n) => n.skill || trackOf(n) !== track || done.has(n.id))
+  // a skill step and its twin in a track are one exercise: list it once, as the skill (levelling it up moves both)
+  const shown = new Set(skill.flatMap((n) => [n.id, ...(n.twins ?? [])]))
   const main = tracks.flatMap((track) => {
     const id = progress.focus[track]
     const node = id ? byId.get(id) ?? null : null
     if (!node && !finished(track)) return [] // the rest needs equipment you don't have
+    if (node && shown.has(node.id)) return []
     const prev = prevOf(node, track)
     return [prev ? { track, node, prev } : { track, node }]
   })
   const extra: Workout['extra'] = []
   if (length === 'full') {
     for (const m of main) if (m.node && m.prev) extra.push({ node: m.prev, role: 'volume', of: m.node.id })
-    const open = ACCESSORY_TRACKS[day].filter((t) => progress.focus[t] && byId.has(progress.focus[t]!))
+    const open = ACCESSORY_TRACKS[day].filter((t) => progress.focus[t] && byId.has(progress.focus[t]!) && !shown.has(progress.focus[t]!))
     if (open.length) {
       const track = open[date ? weekNumber(date) % open.length : 0]
       extra.push({ node: byId.get(progress.focus[track]!)!, role: 'accessory', track })
     }
   }
-  const finisherTrack = FINISHER_TRACKS.find((t) => progress.focus[t])
+  const finisherTrack = FINISHER_TRACKS.find((t) => progress.focus[t] && !shown.has(progress.focus[t]!))
   const core = finisherTrack ? byId.get(progress.focus[finisherTrack]!) : undefined
   if (length !== 'short' && (day === 'push' || day === 'pull') && core && finisherTrack) {
     const prev = prevOf(core, finisherTrack)

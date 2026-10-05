@@ -1,5 +1,5 @@
 import raw from './trees.json'
-import { GATES, GOALS, SHORT, TREE_INFO, TWINS } from './overlay'
+import { EQUIPMENT_FIX, GATES, GOALS, SHORT, TREE_INFO, TWINS } from './overlay'
 import { parseGoal } from './goals'
 import type { Branch, DayType, ExerciseNode, HowToLink } from './types'
 
@@ -89,7 +89,8 @@ function toNode(tree: RawTree, meta: TreeMeta, n: RawNode): ExerciseNode {
   if (meta.category === 'skill') node.skill = tree.id
   else node.track = tree.id
   if (SHORT[id]) node.short = SHORT[id]
-  if (n.equipment !== 'floor') node.equipment = parseEquipment(n.equipment)
+  const equipment = EQUIPMENT_FIX[id] ?? n.equipment
+  if (equipment !== 'floor') node.equipment = parseEquipment(equipment)
   if (n.source && n.source !== 'gen') node.source = n.source
   const twins = twinsOf(id)
   if (twins.length) node.twins = twins
