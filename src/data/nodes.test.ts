@@ -157,7 +157,8 @@ describe('exercise graph', () => {
     }
     for (const id of FINISHER_TRACKS) expect(TRACKS.find((t) => t.id === id)?.branch).toBe('core')
     const accessories = TRACKS.filter((t) => t.accessory).map((t) => t.id).sort()
-    expect(Object.values(ACCESSORY_TRACKS).flat().sort()).toEqual(accessories)
+    expect([...new Set(Object.values(ACCESSORY_TRACKS).flat())].sort()).toEqual(accessories)
+    expect([...ACCESSORY_TRACKS.full].sort()).toEqual(accessories) // full body rotates through all of them
   })
   it('every tree label fits in two short lines', () => {
     for (const n of TREE) {

@@ -42,6 +42,12 @@ function Details({ node }: { node: ExerciseNode }) {
           <p><b className="ink">{node.muscles.primary.join(', ')}</b>{node.muscles.secondary.length > 0 && <> · also {node.muscles.secondary.join(', ')}</>}</p>
         </>
       )}
+      {node.added && (
+        <>
+          <div className="hdr inset">Source</div>
+          <p>Added by Up: not in your exercise data. It gives a band setup a way to keep training this pattern.</p>
+        </>
+      )}
       {source && (
         <>
           <div className="hdr inset">Source</div>

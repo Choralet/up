@@ -44,6 +44,24 @@ export function BranchLevel({ branch }: { branch: Branch }) {
   )
 }
 
+/** All four branch levels as badges (a full-body day trains every branch). */
+export function BranchBadges() {
+  const { nodes, progress } = useProgress()
+  return (
+    <div className="lvbadges">
+      {(['push', 'pull', 'legs', 'core'] as const).map((b) => {
+        const l = branchLevel(nodes, progress, b)
+        return (
+          <span key={b} className="lvmini" role="img" aria-label={`${BRANCH_META[b].label}: ${l.done} of ${l.total} steps`}>
+            <LevelBadge branch={b} level={l.level} />
+            <small aria-hidden="true">{BRANCH_META[b].label}</small>
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
 export function Streak() {
   const { progress } = useProgress()
   const weeks = weeklyStreak(progress.logs, progress.schedule, localDate())

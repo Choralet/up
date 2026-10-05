@@ -11,8 +11,13 @@ import { githubBackup } from './store/github'
 import { exportBackup, progressHash } from './engine/backup'
 import { sanitizeProgress } from './engine/progress'
 
-/** A save that has finished onboarding, so tests start on the Today screen. */
-const seed = (extra: Record<string, unknown> = {}) => memoryStorage({ onboarded: true, ...extra })
+/** A save that has finished onboarding, so tests start on the Today screen. Most tests below use the Push / Pull / Legs
+ * plan (Mon Push, Wed Pull, Fri Legs + Core); full body has its own tests (`seedFull`). */
+const PPL = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest']
+const seed = (extra: Record<string, unknown> = {}) =>
+  memoryStorage({ onboarded: true, schedule: PPL, ...extra, settings: { holdSound: true, length: 'standard', plan: 'ppl', restTimer: false, ...(extra.settings as object) } })
+const seedFull = (extra: Record<string, unknown> = {}) =>
+  memoryStorage({ onboarded: true, ...extra, settings: { holdSound: true, length: 'standard', plan: 'full', restTimer: false, ...(extra.settings as object) } })
 
 /** Pin the clock. Month is 0-based. 2026-09-21 is a Monday. */
 const MONDAY = new Date(2026, 8, 21, 12)
@@ -53,7 +58,7 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
 
   it('shows the day’s branch level and the streak in the header', async () => {
     render(<App storage={seed({ completed: ['hpush:w', 'hpush:i'] })} />)
-    expect(await screen.findByRole('img', { name: 'Push: 2 of 53 steps' })).toBeInTheDocument()
+    expect(await screen.findByRole('img', { name: 'Push: 2 of 52 steps' })).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'No streak yet' })).toBeInTheDocument()
   })
 
@@ -116,7 +121,7 @@ describe('Today screen (default schedule: Mon Push, Wed Pull, Fri Legs + Core)',
   it('shows "Branch complete" when every push exercise is done', async () => {
     const allPush = NODES.filter((n) => n.branch === 'push').map((n) => n.id)
     render(<App storage={seed({ completed: allPush })} />)
-    expect(await screen.findAllByText('Track complete')).toHaveLength(3) // push-ups, overhead, dips
+    expect(await screen.findAllByText(/Keep building/)).toHaveLength(3) // push-ups, overhead, dips: train the hardest one on
     expect(screen.queryByRole('button', { name: /Wall push-up/ })).not.toBeInTheDocument()
   })
 
@@ -219,7 +224,7 @@ describe('Logging and level-up', () => {
     await user.click(log); await user.click(log); await user.click(log)
     const dialog = await screen.findByRole('dialog', { name: 'Level up' })
     expect(dialog).toHaveTextContent('Push level 2')
-    expect(within(dialog).getByRole('img', { name: 'Push: 2 of 53 steps' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('img', { name: 'Push: 2 of 52 steps' })).toBeInTheDocument()
   })
 
   it('"Not yet" keeps the same focus, and a 4th set does not re-open the sheet', async () => {
@@ -367,9 +372,9 @@ describe('Skills tab', () => {
     const user = await openSkills({ completed: plankDone })
     await user.click(screen.getByRole('button', { name: 'Start Handstand' }))
     expect(screen.getByRole('button', { name: 'Stop Handstand' })).toBeInTheDocument()
-    expect(screen.getByText(/Wrist prep/)).toBeInTheDocument()
+    expect(screen.getByText(/Plank \/ pike hold/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Today' }))
-    expect(await screen.findByRole('button', { name: /Wrist prep/ })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Plank \/ pike hold/ })).toBeInTheDocument()
   })
 
   it('with both slots in use, Start becomes Replace', async () => {
@@ -390,9 +395,9 @@ describe('Node sheet and level-up for skills and goals', () => {
     render(<App storage={seed({ completed: ['antiext:db', 'antiext:pl'] })} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('tab', { name: 'Handstand' }))
-    await user.click(screen.getByRole('button', { name: 'Wrist prep, 3–5 min, ready, skill' }))
+    await user.click(screen.getByRole('button', { name: 'Plank / pike hold, ready, skill' }))
     await user.click(screen.getByRole('button', { name: 'Train This Skill' }))
-    expect(screen.getByRole('button', { name: 'Wrist prep, 3–5 min, training, skill' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Plank / pike hold, training, skill' })).toBeInTheDocument()
   })
 
   it('lets you edit a goal, see it on Today, and reset it', async () => {
@@ -534,8 +539,8 @@ describe('Progress tab', () => {
     render(<App storage={seed({ completed: ['push-wall', 'push-incline'], logs })} />)
     await user.click(await screen.findByRole('button', { name: 'Progress' }))
     expect(screen.getByText('2 week streak')).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'Push: 2 of 53 steps' })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'Pull: 0 of 62 steps' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Push: 2 of 52 steps' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Pull: 0 of 63 steps' })).toBeInTheDocument()
     expect(screen.getByText('Wall push-up')).toBeInTheDocument()
     expect(screen.getByText('12 reps')).toBeInTheDocument()
   })
@@ -795,7 +800,7 @@ describe('Plan 3 accessibility and taps', () => {
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     expect(screen.getByRole('button', { name: 'Deficit push-up, ready' })).toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: 'Handstand' }))
-    expect(screen.getByRole('button', { name: 'Wrist prep, 3–5 min, ready, skill' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Plank / pike hold, ready, skill' })).toBeInTheDocument()
   })
 
   it('the rep count is announced and the screens behind an overlay are inert', async () => {
@@ -827,7 +832,7 @@ describe('Plan 3 review fixes', () => {
   }
   const withOldBackup = async () => {
     const gh = fakeGithub()
-    const old = sanitizeProgress(NODES, { completed: ['push-wall'], onboarded: true })
+    const old = sanitizeProgress(NODES, { completed: ['push-wall'], onboarded: true, schedule: PPL, settings: { holdSound: true, length: 'standard', plan: 'ppl', restTimer: false } })
     await githubBackup(cfg, exportBackup(old), gh.fetch)
     return gh
   }
@@ -881,7 +886,7 @@ describe('Plan 3 review fixes', () => {
   it('does not upload again after a relaunch when nothing changed', async () => {
     const gh = fakeGithub()
     const services = memoryServices({ fetch: gh.fetch })
-    const progress = sanitizeProgress(NODES, { onboarded: true })
+    const progress = sanitizeProgress(NODES, { onboarded: true, schedule: PPL, settings: { holdSound: true, length: 'standard', plan: 'ppl', restTimer: false } })
     await services.github.save({ ...cfg, lastHash: progressHash(progress) })
     render(<App storage={seed()} services={services} />)
     await screen.findByRole('heading', { name: 'Push Day' })
@@ -1328,10 +1333,11 @@ describe('Plan 5 · Phase 4c Find your level', () => {
     await user.click(screen.getByRole('checkbox', { name: 'Tuesday' }))
     await user.click(screen.getByRole('button', { name: 'Start Training' }))
     await user.click(await screen.findByRole('button', { name: 'Settings' }))
-    expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('push')
-    expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('push')
-    expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('pull')
-    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('legs')
+    // full body (the default plan): every picked day is a full-body day
+    expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('full')
+    expect(screen.getByRole('combobox', { name: 'Tuesday' })).toHaveValue('full')
+    expect(screen.getByRole('combobox', { name: 'Wednesday' })).toHaveValue('full')
+    expect(screen.getByRole('combobox', { name: 'Thursday' })).toHaveValue('rest')
   })
 })
 
@@ -1404,7 +1410,7 @@ describe('Plan 5 review fixes', () => {
     await user.click(await screen.findByRole('button', { name: 'Start' }))
     await user.click(screen.getByRole('button', { name: 'Next' }))
     for (let i = 0; i < 8; i++) await user.click(screen.getByRole('button', { name: 'Not Yet' }))
-    expect(screen.getByRole('checkbox', { name: 'Friday' })).toHaveTextContent('Legs + Core')
+    expect(screen.getByRole('checkbox', { name: 'Friday' })).toHaveTextContent('Full Body')
   })
 
   it('"Last exported" only changes when a file was saved', async () => {
@@ -1437,9 +1443,9 @@ describe('Plan 5 review fixes', () => {
     render(<App storage={seed({ completed: ['antiext:db', 'antiext:pl'], skillFocus: { 'butchers-block': 'rm-butcher', 'straddle-sit': 'rm-straddle-sit' } })} />)
     await user.click(await screen.findByRole('button', { name: 'Tree' }))
     await user.click(screen.getByRole('tab', { name: 'Handstand' }))
-    await user.click(screen.getByRole('button', { name: 'Wrist prep, 3–5 min, ready, skill' }))
+    await user.click(screen.getByRole('button', { name: 'Plank / pike hold, ready, skill' }))
     await user.click(screen.getByRole('button', { name: "Replace Butcher's block" }))
-    expect(screen.getByRole('button', { name: 'Wrist prep, 3–5 min, training, skill' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Plank / pike hold, training, skill' })).toBeInTheDocument()
   })
 
   it('training on a rest day never shows more days than planned; hold gains show seconds', async () => {
@@ -1491,7 +1497,7 @@ describe('Plan 6 · movement tracks and workout length', () => {
 
   it('a finished track says so', async () => {
     render(<App storage={seed({ completed: NODES.filter((n) => n.tree === 'dip').map((n) => n.id) })} />)
-    expect(await screen.findByText('Track complete')).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Russian \/ Korean dip/ })).toHaveTextContent('Dips · Keep building')
   })
 
   it('Find your level asks about every track', async () => {
@@ -1736,7 +1742,7 @@ describe('Plan 7 · final review fixes', () => {
     const user = userEvent.setup()
     render(<App storage={memoryStorage({ onboarded: false, seenAchievements: [], completed: ['push-wall', 'push-incline', 'push-knee', 'push-standard'] })} />)
     await user.click(await screen.findByRole('button', { name: 'Skip for Now' }))
-    await screen.findByRole('heading', { name: 'Push Day' })
+    await screen.findByRole('heading', { name: 'Full Body Day' })
     expect(screen.queryByRole('status', { name: 'New achievement' })).not.toBeInTheDocument()
   })
 })
@@ -1752,11 +1758,12 @@ describe('Plan 8 · new trees, equipment, details', () => {
     await user.click(screen.getByRole('checkbox', { name: 'Bands' }))
     expect(screen.getByRole('checkbox', { name: 'Pull-up bar' })).toHaveAttribute('aria-checked', 'true')
     await user.click(screen.getByRole('button', { name: 'Done' }))
-    // no bench or table: Incline push-up is stepped over; with only a bar, Dips starts at the straight-bar dip
+    // no bench or table: Incline push-up is stepped over; no dip bars, rings or parallettes: Dips says what it needs
     expect(await screen.findByRole('button', { name: /Knee push-up/ })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Incline push-up/ })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Straight-bar dip/ })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'Push: 1 of 53 steps' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Straight-bar dip/ })).not.toBeInTheDocument()
+    expect(screen.getByText(/Next needs Dip bars or Rings or Parallettes\. Two sturdy chairs work as parallettes\./)).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Push: 1 of 52 steps' })).toBeInTheDocument()
   })
 
   it('a ladder with nothing you can do is left out of the day', async () => {
@@ -1845,7 +1852,6 @@ describe('Plan 8 review fixes (testers)', () => {
     await user.click(screen.getByRole('button', { name: 'Next' }))
     await user.click(screen.getByRole('button', { name: 'Not Yet' })) // Push-ups
     await user.click(screen.getByRole('button', { name: 'Not Yet' })) // Overhead
-    await user.click(screen.getByRole('button', { name: 'Not Yet' })) // Dips (a bar: the straight-bar dip)
     expect(screen.getByRole('heading', { name: 'Dead hang' })).toBeInTheDocument()
     expect(screen.getByText('Can you hold it for 60 s?')).toBeInTheDocument()
     for (const next of ['Scapular pull', 'Arch hang', 'Negative pull-up', 'Pull-up']) {
@@ -1865,8 +1871,105 @@ describe('Plan 8 review fixes (testers)', () => {
   })
 
   it('a skill on Today is tagged with its ladder, not a second "Skill"', async () => {
-    render(<App storage={seed({ completed: ['antiext:db', 'antiext:pl'], skillFocus: { hs: 'hs:w' } })} />)
-    const skill = await screen.findByRole('button', { name: /Wrist prep/ })
+    render(<App storage={seed({ completed: ['antiext:db', 'antiext:pl'], skillFocus: { hs: 'hs:pk' } })} />)
+    const skill = await screen.findByRole('button', { name: /Plank \/ pike hold/ })
     expect(skill.querySelector('.tag')).toHaveTextContent('Handstand')
+  })
+})
+
+describe('Plan 9 · full body, safe steps, rest and time', () => {
+  it('a full-body day lists the session, its time, three pairs and a core exercise', async () => {
+    vi.setSystemTime(new Date(2026, 9, 12, 12)) // a Monday that is session A
+    render(<App storage={seedFull()} />)
+    expect(await screen.findByRole('heading', { name: 'Full Body Day' })).toBeInTheDocument()
+    expect(screen.getByText(/^Session A · About \d+ min$/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Pair 1 · Pull-ups + Dips' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Pair 2 · Squats + Hinge' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Pair 3 · Rows + Push-ups' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Core' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /^Pull: 0 of \d+ steps$/ })).toBeInTheDocument() // four branch badges
+    expect(screen.getAllByRole('img', { name: /steps$/ })).toHaveLength(4)
+  })
+
+  it('Settings switches the weekly plan and keeps the days', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seedFull()} />)
+    await user.click(await screen.findByRole('button', { name: 'Settings' }))
+    expect(screen.getByRole('radio', { name: 'Full Body' })).toHaveAttribute('aria-checked', 'true')
+    await user.click(screen.getByRole('radio', { name: 'Push / Pull / Legs' }))
+    expect(screen.getByRole('combobox', { name: 'Monday' })).toHaveValue('push')
+    expect(screen.getByRole('combobox', { name: 'Friday' })).toHaveValue('legs')
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(await screen.findByRole('heading', { name: 'Push Day' })).toBeInTheDocument()
+  })
+
+  it('an older custom split is offered full body once', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage({ onboarded: true, schedule: ['push', 'pull', 'rest', 'legs', 'rest', 'rest', 'rest'], settings: { holdSound: true } })} />)
+    expect(await screen.findByRole('heading', { name: 'Push Day' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Switch to Full Body' }))
+    expect(await screen.findByRole('heading', { name: 'Full Body Day' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Try full body' })).not.toBeInTheDocument()
+  })
+
+  it('after a set, a rest countdown shows and never blocks logging; Skip hides it', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed({ settings: { holdSound: true, restTimer: true } })} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'Log Set' }))
+    expect(screen.getByRole('timer', { name: 'Rest, 90 seconds left' })).toHaveTextContent('Rest 1:30')
+    expect(screen.getByRole('button', { name: 'Log Set' })).toBeEnabled()
+    await user.click(screen.getByRole('button', { name: 'Skip' }))
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument()
+  })
+
+  it('no rest countdown when the Rest Timer switch is off', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'Log Set' }))
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument()
+  })
+
+  it('the log screen shows the move-on rule, and below the goal says what you did vs last time', async () => {
+    const user = userEvent.setup()
+    const logs = [6, 5].map((value, at) => ({ nodeId: 'hpush:w', value, date: '2026-09-18', at }))
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    expect(screen.getByText(/Move on when:/).closest('p')).toHaveTextContent('3×8 clean (RR rule), then incline')
+    const log = screen.getByRole('button', { name: 'Log Set' }) // starts from last session's first set: 6
+    await user.click(log); await user.click(log)
+    expect(screen.getByText('2 sets done · 12 reps in total · +1 vs last time')).toBeInTheDocument()
+  })
+
+  it('a new user starts at 60% of each goal', async () => {
+    const user = userEvent.setup()
+    render(<App storage={memoryStorage()} />)
+    await user.click(await screen.findByRole('button', { name: 'Skip for Now' }))
+    expect(await screen.findByRole('button', { name: /Pike push-up/ })).toHaveTextContent('3 × 7') // of 3 × 12
+  })
+
+  it('a hand-balancing skill adds wrist prep to the warm-up', async () => {
+    render(<App storage={seedFull({ completed: ['antiext:db', 'antiext:pl'], skillFocus: { hs: 'hs:pk' } })} />)
+    expect(await screen.findByRole('checkbox', { name: 'Wrist prep' })).toHaveTextContent('3 min')
+  })
+
+  it('exercises added by Up say so', async () => {
+    const user = userEvent.setup()
+    render(<App storage={seed()} />)
+    await user.click(await screen.findByRole('button', { name: 'Tree' }))
+    await user.click(screen.getByRole('tab', { name: 'Pull' }))
+    await user.click(screen.getByRole('tab', { name: 'Rows' }))
+    await user.click(screen.getByRole('button', { name: /^Band row \(door anchor\)/ }))
+    expect(screen.getByRole('dialog', { name: 'Band row (door anchor)' })).toHaveTextContent('Added by Up')
+  })
+
+  it('History lists each session\'s total', async () => {
+    const user = userEvent.setup()
+    const logs = [5, 6].map((value, at) => ({ nodeId: 'hpush:w', value, date: '2026-09-18', at }))
+    render(<App storage={seed({ logs })} />)
+    await user.click(await screen.findByRole('button', { name: /Wall push-up/ }))
+    await user.click(screen.getByRole('button', { name: 'History' }))
+    expect(screen.getByRole('dialog', { name: 'History: Wall push-up' })).toHaveTextContent('2 sets · best 6 reps · total 11 reps')
   })
 })

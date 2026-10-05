@@ -70,7 +70,7 @@ export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: (
             <p className="hint">Dashed line: your goal ({node.goal.target} {unit}).</p>
             <ul className="summary">
               {[...all].reverse().map((r) => (
-                <li key={r.date}><b>{shortDate(r.date)}</b><span className="sub">{plural(r.sets, 'set')} · best {r.best} {unit}</span></li>
+                <li key={r.date}><b>{shortDate(r.date)}</b><span className="sub">{plural(r.sets, 'set')} · best {r.best} {unit} · total {r.total} {unit}</span></li>
               ))}
             </ul>
           </>

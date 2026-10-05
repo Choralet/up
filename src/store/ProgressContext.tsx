@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { DayType, ExerciseNode, GoalOverride } from '../data/types'
+import type { DayType, ExerciseNode, GoalOverride, WeekPlan } from '../data/types'
 import { indexNodes } from '../engine/graph'
 import {
-  activateSkill as activateSkillRule, applyOverrides, currentStages, settleStage, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
+  activateSkill as activateSkillRule, applyOverrides, applyKeep, currentKeep, currentStages, settleKeep, settleStage, applyStages, completeSteps as completeStepsRule, deactivateSkill as deactivateSkillRule,
   editSet as editSetRule, finishOnboarding as finishOnboardingRule, initialProgress,
-  levelUp as levelUpRule, logSet, passedFor, setEquipment as setEquipmentRule, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
+  levelUp as levelUpRule, logSet, passedFor, setEquipment as setEquipmentRule, setPlan as setPlanRule, removeSet as removeSetRule, restartOnboarding as restartOnboardingRule,
   sanitizeProgress, setDayPick as setDayPickRule, setDayType as setDayTypeRule, setSettings as setSettingsRule, markSeen as markSeenRule, unlockedBy, toggleWarm as toggleWarmRule, setFocus as setFocusRule, setGoalOverride,
   type Progress, type Settings,
 } from '../engine/progress'
@@ -45,6 +45,8 @@ export interface ProgressValue {
   setSettings(patch: Partial<Settings>): void
   /** what you own; null = not set (everything counts) */
   setEquipment(kit: string[] | null): void
+  /** full body or Push / Pull / Legs, keeping your training days */
+  setPlan(plan: WeekPlan): void
   markSeen(ids: string[]): void
   /** nodes unlocked by the last level-up (this session only), for the unlock animation */
   justUnlocked: string[]
@@ -63,12 +65,16 @@ export function ProgressProvider({
   const overrides = progress?.goalOverrides
   const stages = progress?.goalStage
   const raisedOn = progress?.stageRaisedOn
+  const keepStep = progress?.keepStep
+  const keepOn = progress?.keepRaisedOn
   const today = localDate()
   // your goals (overrides) are the full goals; after a level-up the current ramp stage is what screens show
   const finals = useMemo(() => (overrides ? applyOverrides(nodes, overrides) : nodes), [nodes, overrides])
+  // finished exercises you keep building go up 2 reps (or 5 s) each time you hit them
+  const kept = useMemo(() => (keepStep && keepOn ? applyKeep(finals, currentKeep({ keepStep, keepRaisedOn: keepOn }, today)) : finals), [finals, keepStep, keepOn, today])
   const effective = useMemo(
-    () => (stages && raisedOn ? applyStages(finals, currentStages({ goalStage: stages, stageRaisedOn: raisedOn }, today)) : finals),
-    [finals, stages, raisedOn, today],
+    () => (stages && raisedOn ? applyStages(kept, currentStages({ goalStage: stages, stageRaisedOn: raisedOn }, today)) : kept),
+    [kept, stages, raisedOn, today],
   )
   const byId = useMemo(() => indexNodes(effective), [effective])
   const finalById = useMemo(() => indexNodes(finals), [finals])
@@ -95,7 +101,7 @@ export function ProgressProvider({
   // the goal ramp follows today's sets of that exercise
   const settle = (p: Progress, id: string | undefined): Progress => {
     const f = id ? finalById.get(id) : undefined
-    return f ? settleStage(p, f.id, f.goal, localDate()) : p
+    return f ? settleKeep(settleStage(p, f.id, f.goal, localDate(), f.steps), f.id, f.goal, localDate()) : p
   }
   // what Find your level placed you at is already yours: no pile of achievement cards for it
   const seeEarned = (p: Progress): Progress =>
@@ -131,6 +137,7 @@ export function ProgressProvider({
     toggleWarm: (key) => update((p) => toggleWarmRule(p, localDate(), key)),
     setSettings: (patch) => update((p) => setSettingsRule(p, patch)),
     setEquipment: (kit) => update((p) => setEquipmentRule(nodes, p, kit)),
+    setPlan: (plan) => update((p) => setPlanRule(p, plan)),
     markSeen: (ids) => update((p) => markSeenRule(p, ids)),
   }
   return (

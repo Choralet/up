@@ -1,7 +1,7 @@
 import raw from './trees.json'
-import { EQUIPMENT_FIX, GATES, GOALS, SHORT, TREE_INFO, TWINS } from './overlay'
+import { ADDED, capGoal, EQUIPMENT_FIX, GATES, GOALS, PARENT_FIX, REMOVED, SHORT, STEPS, TREE_INFO, TWINS } from './overlay'
 import { parseGoal } from './goals'
-import type { Branch, DayType, ExerciseNode, HowToLink } from './types'
+import type { Branch, ExerciseNode, HowToLink, SplitDay } from './types'
 
 export type TreeCategory = 'main' | 'supp' | 'skill'
 
@@ -36,7 +36,7 @@ export interface TreeMeta {
   category: TreeCategory
   branch: Branch
   /** skill ladders: the day that trains them */
-  day?: Exclude<DayType, 'rest'>
+  day?: SplitDay
   notes: string
   video?: HowToLink
 }
@@ -71,15 +71,18 @@ const twinsOf = (id: string) => TWINS.flatMap(([a, b]) => (a === id ? [b] : b ==
 
 function toNode(tree: RawTree, meta: TreeMeta, n: RawNode): ExerciseNode {
   const id = `${tree.id}:${n.id}`
-  const goal = GOALS[id] ?? parseGoal(n.advance)
+  const parsed = parseGoal(n.advance)
+  const goal = STEPS[id]?.at(-1) ?? GOALS[id] ?? ADDED.find((a) => `${a.tree}:${a.id}` === id)?.goal ?? (parsed && capGoal(parsed))
   if (!goal) throw new Error(`No goal for ${id}: add one to GOALS in overlay.ts`)
+  const fixed = `${tree.id}:${n.id}` in PARENT_FIX ? PARENT_FIX[`${tree.id}:${n.id}`] : n.parent
+  const parent = fixed && !REMOVED.has(`${tree.id}:${fixed}`) ? fixed : null
   const node: ExerciseNode = {
     id,
     name: n.name,
     branch: meta.branch,
     kind: meta.category === 'skill' ? 'skill' : 'strength',
     tree: tree.id,
-    requires: n.parent ? [`${tree.id}:${n.parent}`] : GATES[tree.id] ?? [],
+    requires: parent ? [`${tree.id}:${parent}`] : GATES[tree.id] ?? [],
     goal,
     cue: n.cues,
     advance: n.advance,
@@ -91,16 +94,22 @@ function toNode(tree: RawTree, meta: TreeMeta, n: RawNode): ExerciseNode {
   if (SHORT[id]) node.short = SHORT[id]
   const equipment = EQUIPMENT_FIX[id] ?? n.equipment
   if (equipment !== 'floor') node.equipment = parseEquipment(equipment)
-  if (n.source && n.source !== 'gen') node.source = n.source
+  if (n.source && n.source !== 'gen' && n.source !== 'up') node.source = n.source
+  if (STEPS[id]) node.steps = STEPS[id]
+  if (n.source === 'up') node.added = true
   const twins = twinsOf(id)
   if (twins.length) node.twins = twins
   return node
 }
 
-/** Every exercise of every tree, in tree order. */
+/** Every exercise of every tree, in tree order, with Up's own additions at the end of their tree. */
 export const TREE_NODES: ExerciseNode[] = TREES.flatMap((meta) => {
   const t = data.trees.find((x) => x.id === meta.id)!
-  return t.nodes.map((n) => toNode(t, meta, n))
+  const added: RawNode[] = ADDED.filter((a) => a.tree === t.id).map((a) => ({
+    id: a.id, parent: a.parent, name: a.name, equipment: a.equipment, primary: a.primary, secondary: a.secondary,
+    advance: a.advance, cues: a.cues, source: 'up', links: [],
+  }))
+  return [...t.nodes, ...added].filter((n) => !REMOVED.has(`${t.id}:${n.id}`)).map((n) => toNode(t, meta, n))
 })
 
 /** The source's YouTube search fallback for an exercise. */

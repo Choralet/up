@@ -7,20 +7,32 @@ import { scheduleIcs } from '../lib/ics'
 import { useServices } from '../store/services'
 import { ConfirmSheet } from './ConfirmSheet'
 import { GithubSection } from './GithubSection'
-import { DAY_LABEL, DAY_TYPES, WEEKDAYS } from '../data/schedule'
-import type { DayType } from '../data/types'
+import { DAY_LABEL, PLAN_DAYS, PLAN_LABEL, WEEKDAYS } from '../data/schedule'
+import type { DayType, WeekPlan } from '../data/types'
 import { useProgress } from '../store/ProgressContext'
 import { EquipmentPicker } from './EquipmentPicker'
 
 const LENGTH_LABEL = { short: 'Short', standard: 'Standard', full: 'Full' } as const
 const LENGTH_HINT = {
-  short: 'About 20 minutes: your skill and the first two exercises of the day.',
-  standard: 'About 35 minutes: every exercise of the day, plus a core finisher on Push and Pull days.',
-  full: 'About 50 minutes: Standard plus the variation you just finished, for extra volume, and one muscle-specific accessory (a different one each week).',
+  full: {
+    short: 'About 30 minutes: your skills and the first two pairs (pull + push, squats + hinge).',
+    standard: 'About 45–55 minutes: your skills, three pairs and one core exercise.',
+    full: 'About 65 minutes: Standard plus the variation you just finished below each exercise, and one muscle-specific accessory.',
+  },
+  ppl: {
+    short: 'About 20 minutes: your skill and the first two exercises of the day.',
+    standard: 'About 35 minutes: every exercise of the day, a core finisher on Push and Pull days, and a third Pull exercise.',
+    full: 'About 55 minutes: Standard plus the variation you just finished, for extra volume, and one muscle-specific accessory (a different one each week).',
+  },
+} as const
+const PLANS: WeekPlan[] = ['full', 'ppl']
+const PLAN_HINT = {
+  full: 'Every session trains pull, push, legs and core in pairs, so each muscle and your skills get 3 sessions a week. Sessions alternate A and B.',
+  ppl: 'One day each for Push, Pull and Legs + Core. Shorter days, but each muscle is trained once a week.',
 } as const
 
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
-  const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings, setEquipment } = useProgress()
+  const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings, setEquipment, setPlan } = useProgress()
   const services = useServices()
   const [askRedo, setAskRedo] = useState(false)
   const [remindAt, setRemindAt] = useState('18:00')
@@ -65,18 +77,28 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <button className="close" onClick={onClose}>Done</button>
         <h1 className="large">Settings</h1>
 
+        <div className="hdr">Weekly Plan</div>
+        <div className="seg" role="radiogroup" aria-label="Weekly Plan">
+          {PLANS.map((p) => (
+            <button key={p} role="radio" aria-checked={progress.settings.plan === p} className={progress.settings.plan === p ? 'on' : ''} onClick={() => setPlan(p)}>
+              {PLAN_LABEL[p]}
+            </button>
+          ))}
+        </div>
+        <p className="note">{PLAN_HINT[progress.settings.plan]}</p>
+
         <div className="hdr">Weekly schedule</div>
         <div className="group">
           {WEEKDAYS.map((name, i) => (
             <label className="row selrow" key={name}>
               <span className="t"><b>{name}</b></span>
               <select aria-label={name} value={progress.schedule[i]} onChange={(e) => setDayType(i, e.target.value as DayType)}>
-                {DAY_TYPES.map((t) => <option key={t} value={t}>{DAY_LABEL[t].replace(' Day', '')}</option>)}
+                {(['rest', ...PLAN_DAYS[progress.settings.plan]] as DayType[]).map((t) => <option key={t} value={t}>{DAY_LABEL[t].replace(' Day', '')}</option>)}
               </select>
             </label>
           ))}
         </div>
-        <p className="note">Default is Monday Push, Wednesday Pull, Friday Legs + Core. Change any day you like.</p>
+        <p className="note">{progress.settings.plan === 'full' ? 'Default is Monday, Wednesday and Friday. Three days a week is ideal; any days work.' : 'Default is Monday Push, Wednesday Pull, Friday Legs + Core. Change any day you like.'}</p>
 
         <div className="hdr">Workout Length</div>
         <div className="seg" role="radiogroup" aria-label="Workout Length">
@@ -86,7 +108,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
             </button>
           ))}
         </div>
-        <p className="note">{LENGTH_HINT[progress.settings.length]}</p>
+        <p className="note">{LENGTH_HINT[progress.settings.plan][progress.settings.length]}</p>
 
         <div className="hdr">My Equipment</div>
         <EquipmentPicker value={progress.settings.equipment ?? null} onChange={setEquipment} />
@@ -106,8 +128,12 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <button className="cta sec" onClick={addReminders}>Add Reminders to Calendar</button>
         <p className="note">Opens a calendar file: add it to Apple Calendar to get an alert each training day. Add it again after you change your schedule.</p>
 
-        <div className="hdr">Hold Timer</div>
+        <div className="hdr">Timers</div>
         <div className="group">
+          <button className="row switchrow" role="switch" aria-checked={progress.settings.restTimer} aria-label="Rest Timer" onClick={() => setSettings({ restTimer: !progress.settings.restTimer })}>
+            <span className="t"><b>Rest Timer</b><span>A countdown after each set: 90 s, or 2 min for skills</span></span>
+            <span className={`switch${progress.settings.restTimer ? ' on' : ''}`} aria-hidden="true" />
+          </button>
           <button className="row switchrow" role="switch" aria-checked={progress.settings.holdSound} aria-label="Sound at Hold Goal" onClick={() => setSettings({ holdSound: !progress.settings.holdSound })}>
             <span className="t"><b>Sound at Hold Goal</b><span>A soft tone when a hold reaches its goal</span></span>
             <span className={`switch${progress.settings.holdSound ? ' on' : ''}`} aria-hidden="true" />

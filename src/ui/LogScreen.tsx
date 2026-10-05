@@ -1,7 +1,9 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { effectiveGoal, goalMet, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
+import { effectiveGoal, goalMet, keepGoal, newlyUnlockedSkills, nodeState, suggestNext, todaysValues } from '../engine/progress'
 import { goalText } from '../lib/format'
-import { stepperStart } from '../engine/workout'
+import { restSeconds, stepperStart } from '../engine/workout'
+import { totalVsLast } from '../engine/stats'
+import { RestTimer } from './RestTimer'
 import { formatClock, localDate } from '../lib/time'
 import { useProgress } from '../store/ProgressContext'
 import { BRANCH_META, nodeAccent } from './branches'
@@ -31,6 +33,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const [holdStart, setHoldStart] = useState<number | null>(null)
   const [askClose, setAskClose] = useState(false)
   const [timerKey, setTimerKey] = useState(0)
+  const [restUntil, setRestUntil] = useState<number | null>(null)
   // during the countdown nothing is running yet: just leave
   const leave = () => (holdStart !== null && Date.now() >= holdStart ? setAskClose(true) : onClose())
   const [, tick] = useReducer((n: number) => n + 1, 0)
@@ -53,9 +56,18 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
   const ready = isFocus && goalMet(final.goal, values)
   // today's sets met this stage: the provider raised the goal, starting next session
   const goalUp = progress.stageRaisedOn[nodeId] === today
-    ? `Goal up: ${goalText(effectiveGoal(final.goal, progress.goalStage[nodeId]))} next time`
-    : null
+    ? `Goal up: ${goalText(effectiveGoal(final.goal, progress.goalStage[nodeId], final.steps))} next time`
+    : progress.keepRaisedOn[nodeId] === today
+      ? `Goal up: ${goalText(keepGoal(final.goal, progress.keepStep[nodeId]))} next time`
+      : null
   const [showHistory, setShowHistory] = useState(false)
+
+  // below the goal, say what you did: sets done and today's total against last time
+  const vs = totalVsLast(progress.logs, nodeId, today)
+  const word = node.goal.type === 'hold' ? 's' : vs.today === 1 ? ' rep' : ' reps'
+  const diff = vs.last === null ? null : vs.today - vs.last
+  const effort = `${entries.length} ${entries.length === 1 ? 'set' : 'sets'} done · ${vs.today}${word} in total${
+    diff === null ? '' : diff > 0 ? ` · +${diff}${node.goal.type === 'hold' ? ' s' : ''} vs last time` : diff === 0 ? ' · same as last time' : ''}`
 
   const lastTap = useRef(-Infinity)
   const [fresh, setFresh] = useState<number | null>(null)
@@ -69,6 +81,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
     // read "today" at tap time so a session left open past midnight counts the right day
     const before = todaysValues(progress, nodeId, localDate())
     log(nodeId, value)
+    if (progress.settings.restTimer) setRestUntil(now + restSeconds(node) * 1000)
     setFresh(progress.logs.length) // index the new set will have: highlight its chip
     const after = [...before, value]
     // the full goal offers the level-up (an easier ramp stage only raises the goal for next time)
@@ -97,6 +110,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           {Array.from({ length: node.goal.sets }, (_, i) => <i key={i} className={i < atGoal ? 'on' : ''} />)}
         </div>
         <div className="sub">{atGoal} of {node.goal.sets} sets at goal</div>
+        {entries.length > 0 && atGoal < node.goal.sets && <div className="sub praise">{effort}</div>}
         {goalUp && <div className="goalup" role="status">{goalUp}</div>}
 
         {node.goal.type === 'reps' ? (
@@ -113,6 +127,8 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
         ) : (
           <HoldTimer key={timerKey} target={node.goal.target} sound={progress.settings.holdSound} onStop={(s) => record(s)} onRunningChange={setHoldStart} />
         )}
+
+        {restUntil !== null && holdStart === null && <RestTimer until={restUntil} onSkip={() => setRestUntil(null)} />}
 
         {ready && !showLevelUp && holdStart === null && (
           <button className="cta sec" onClick={() => setShowLevelUp(true)}>Level Up</button>
@@ -131,6 +147,7 @@ export function LogScreen({ nodeId, onClose }: { nodeId: string; onClose: () => 
           </>
         )}
         <p className="cue sub">{node.cue}</p>
+        {node.advance && <p className="sub moveon"><b>Move on when:</b> {node.advance}</p>}
         {/* a second, thumb-reachable way out */}
         <button className="cta sec spaced" onClick={leave}>Back to Workout</button>
       </div>

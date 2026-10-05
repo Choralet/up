@@ -4,7 +4,7 @@ import {
   goalMet, initialProgress, isUnlocked, levelUp, logSet, newlyUnlockedSkills, nodeState,
   removeSet, restartOnboarding, sanitizeProgress, setDayType, setFocus, setGoalOverride,
   suggestNext, todaysValues, setDayPick, toggleWarm, todayState, effectiveGoal, advanceStage, applyStages, unlockedBy,
-  passedFor, setEquipment,
+  passedFor, setEquipment, setPlan, assignDays, settleKeep, keepGoal, currentKeep,
   type Progress,
 } from './progress'
 import { DEFAULT_SCHEDULE } from '../data/schedule'
@@ -311,8 +311,11 @@ describe('goal overrides', () => {
 
 describe('schedule and onboarding flag', () => {
   it('sets a day type for a valid weekday and rejects bad input', () => {
-    const p = initialProgress(g2)
+    const p = setPlan(initialProgress(g2), 'ppl')
     expect(setDayType(p, 1, 'pull').schedule[1]).toBe('pull')
+    const full = initialProgress(g2)
+    expect(setDayType(full, 1, 'full').schedule[1]).toBe('full')
+    expect(setDayType(full, 1, 'pull')).toBe(full) // not a day of the full-body plan
     expect(setDayType(p, 7, 'pull')).toBe(p)
     expect(setDayType(p, -1, 'pull')).toBe(p)
     expect(setDayType(p, 1.5, 'pull')).toBe(p)
@@ -447,16 +450,18 @@ describe('today state (warm-up ticks and Train Anyway)', () => {
     expect(todayState(p, '2026-09-27')).toEqual({ pick: null, warm: ['push:Wrist circles'] })
   })
   it('changing the schedule clears the pick', () => {
-    const p = setDayType(setDayPick(initialProgress(g2), '2026-09-26', 'pull'), 5, 'legs')
+    const p = setDayType(setDayPick(initialProgress(g2), '2026-09-26', 'full'), 5, 'full')
     expect(todayState(p, '2026-09-26').pick).toBeNull()
   })
   it('sanitize keeps a well-formed day and settings, and defaults the rest', () => {
-    const ok = sanitizeProgress(g2, { day: { date: '2026-09-26', pick: 'push', warm: ['a'] }, settings: { holdSound: false, lastExportAt: 5 } })
+    const ok = sanitizeProgress(g2, { day: { date: '2026-09-26', pick: 'push', warm: ['a'] }, settings: { holdSound: false, lastExportAt: 5, plan: 'ppl', restTimer: false } })
     expect(ok.day).toEqual({ date: '2026-09-26', pick: 'push', warm: ['a'] })
-    expect(ok.settings).toEqual({ holdSound: false, length: 'standard', lastExportAt: 5 })
+    expect(ok.settings).toEqual({ holdSound: false, length: 'standard', lastExportAt: 5, plan: 'ppl', restTimer: false })
     const bad = sanitizeProgress(g2, { day: { date: 3, pick: 'yoga' }, settings: 'x' })
     expect(bad.day).toBeNull()
-    expect(bad.settings).toEqual({ holdSound: true, length: 'standard' })
+    expect(bad.settings).toEqual({ holdSound: true, length: 'standard', plan: 'full', restTimer: true })
+    // a Push pick made under Push/Pull/Legs doesn't fit a full-body save
+    expect(sanitizeProgress(g2, { day: { date: '2026-09-26', pick: 'push', warm: [] }, settings: { holdSound: true, plan: 'full' } }).day?.pick).toBeNull()
   })
 })
 
@@ -515,8 +520,8 @@ describe('Plan 8: twins, ladder gates, equipment', () => {
     expect(p.focus.hpush).toBe('hpush:k') // Incline push-up needs a bench or a table
     expect(p.completed).not.toContain('hpush:i')
     expect(p.focus.vpull).toBe('vpull:dh')
-    // every easier dip needs dip bars, rings or parallettes: with a bar, Dips starts at the straight-bar dip
-    expect(p.focus.dip).toBe('dip:sbd')
+    // every easier dip needs dip bars, rings or parallettes: Dips waits (Plan 9: never more than one step skipped)
+    expect(p.focus.dip).toBeNull()
     expect(setEquipment(NODES, p, ['band']).focus.dip).toBeNull()
   })
   it('changing equipment moves training off what you can no longer do, and never removes progress', () => {
@@ -558,7 +563,7 @@ describe('Plan 8 migration: saves from before the new trees keep their level', (
     expect(p.focus).toMatchObject({ hpush: 'hpush:d', vpull: 'vpull:np', antiext: 'antiext:pl' })
     expect(p.logs).toEqual([{ nodeId: 'hpush:p', value: 8, date: '2026-09-28', at: 1 }]) // decline push-up logs are dropped
     expect(p.goalOverrides).toEqual({ 'hpush:d': { sets: 4, target: 6 } })
-    expect(p.goalStage).toEqual({ 'hpush:d': 1 })
+    expect(p.goalStage['hpush:d']).toBe(1) // kept; other current exercises start at 60% (Plan 9)
     expect(p.stageRaisedOn).toEqual({ 'hpush:d': '2026-09-28' })
   })
   it('easier exercises the new tree adds below your work count as done', () => {
@@ -571,7 +576,7 @@ describe('Plan 8 migration: saves from before the new trees keep their level', (
   })
   it('an exercise with no exact match maps to the nearest easier one', () => {
     const p = old({ completed: ['push-hs-chest', 'push-hs-back'], skillFocus: { handstand: 'push-hs-back' } })
-    expect(p.completed).toEqual(expect.arrayContaining(['hs:cw', 'hs:pk', 'hs:w']))
+    expect(p.completed).toEqual(expect.arrayContaining(['hs:cw', 'hs:pk'])) // Wrist prep is a warm-up item since Plan 9
     expect(p.skillFocus).toEqual({ hs: 'hs:ku' })
   })
   it('the step you were training keeps its easier steps done (Freestanding handstand needs the new Wall heel pulls)', () => {
@@ -605,9 +610,9 @@ describe('smarter goals (goal ramp after a level-up)', () => {
     expect([0, 1, 2].map((st) => effectiveGoal({ type: 'hold', sets: 3, target: 30 }, st).target)).toEqual([18, 24, 30])
     expect(effectiveGoal({ type: 'reps', sets: 3, target: 1 }, 0).target).toBe(1)
   })
-  it('a node reached by level-up starts at stage 0; others keep the full goal', () => {
+  it('a node reached by level-up starts at stage 0 (and since Plan 9 so does the first exercise)', () => {
     const p = levelUp(g2, initialProgress(g2), 'a', 'b')
-    expect(p.goalStage).toEqual({ b: 0 })
+    expect(p.goalStage).toEqual({ b: 0 }) // a finished exercise drops its stage
     expect(applyStages(g2, p.goalStage).find((n) => n.id === 'b')!.goal.target).toBe(6)
     expect(applyStages(g2, p.goalStage).find((n) => n.id === 'a')!.goal.target).toBe(10)
   })
@@ -618,7 +623,7 @@ describe('smarter goals (goal ramp after a level-up)', () => {
     expect(advanceStage(p, 'b')).toBe(p)
   })
   it('sanitize keeps valid stages only', () => {
-    expect(sanitizeProgress(g2, { goalStage: { b: 1, a: 7, ghost: 0, c: 'x' } }).goalStage).toEqual({ b: 1 })
+    expect(sanitizeProgress(g2, { goalStage: { b: 1, a: 7, ghost: 0, c: 'x' }, settings: { holdSound: true, plan: 'full' } }).goalStage).toEqual({ b: 1 })
   })
 })
 
@@ -651,5 +656,136 @@ describe('Plan 8 review fixes: linked exercises never open a locked ladder', () 
     const crow = real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p', 'elbow:cr'] })
     expect(crow.completed).not.toContain('planche:fr')
     expect(activateSkill(NODES, crow, 'planche').skillFocus.planche).toBe('planche:ln')
+  })
+})
+
+describe('Plan 9: weekly plan', () => {
+  const full = ['full', 'rest', 'full', 'rest', 'full', 'rest', 'rest']
+  const ppl = ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest']
+  it('new users get full body on Monday, Wednesday and Friday, with the rest timer on', () => {
+    const p = initialProgress(NODES)
+    expect(p.schedule).toEqual(full)
+    expect(p.settings).toMatchObject({ plan: 'full', restTimer: true })
+  })
+  it('an older save on the old Push/Pull/Legs default moves to full body', () => {
+    const p = sanitizeProgress(NODES, { onboarded: true, schedule: ppl, settings: { holdSound: true } })
+    expect(p.schedule).toEqual(full)
+    expect(p.settings.plan).toBe('full')
+    expect(p.settings.offerFullBody).toBeUndefined()
+  })
+  it('an older custom split keeps its days and is offered full body once', () => {
+    const custom = ['legs', 'push', 'rest', 'pull', 'rest', 'rest', 'rest']
+    const p = sanitizeProgress(NODES, { onboarded: true, schedule: custom, settings: { holdSound: true } })
+    expect(p.schedule).toEqual(custom)
+    expect(p.settings).toMatchObject({ plan: 'ppl', offerFullBody: true })
+    expect(sanitizeProgress(NODES, p).settings.offerFullBody).toBe(true) // stays until answered
+    expect(sanitizeProgress(NODES, { ...p, settings: { ...p.settings, offerFullBody: false } }).settings.offerFullBody).toBeUndefined()
+  })
+  it('a chosen Push/Pull/Legs on the old default days is kept', () => {
+    expect(sanitizeProgress(NODES, { onboarded: true, schedule: ppl, settings: { holdSound: true, plan: 'ppl' } }).schedule).toEqual(ppl)
+  })
+  it('switching plans keeps your training days', () => {
+    const custom = ['full', 'full', 'rest', 'rest', 'full', 'rest', 'full']
+    const p = { ...initialProgress(NODES), schedule: custom as never }
+    const split = setPlan(p, 'ppl')
+    expect(split.schedule).toEqual(['push', 'pull', 'rest', 'rest', 'legs', 'rest', 'push'])
+    expect(setPlan(split, 'full').schedule).toEqual(custom)
+  })
+  it('assignDays fills ticked days with the plan\'s day types', () => {
+    const rest = ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'] as never
+    const ticks = [true, false, true, false, true, false, false]
+    expect(assignDays(rest, ticks, 'full')).toEqual(full)
+    expect(assignDays(rest, ticks, 'ppl')).toEqual(ppl)
+  })
+})
+
+describe('Plan 9: safe skipping and gentle suggestions', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, ...raw })
+  const kit = (equipment: string[]) => ({ settings: { holdSound: true, length: 'standard', plan: 'full', restTimer: true, equipment } })
+  it('a ladder skips at most one exercise: no bench → Knee push-up, but no dip gear → nothing (not Straight-bar dip)', () => {
+    let p = real({ completed: ['hpush:w'], ...kit(['band', 'bar', 'wall']) })
+    expect(p.focus.hpush).toBe('hpush:k')
+    expect(p.focus.dip).toBeNull()
+    p = setEquipment(NODES, p, ['band', 'bar', 'wall', 'pt'])
+    expect(p.focus.dip).toBe('dip:sh')
+  })
+  it('a skipped first exercise still counts as one step (no wall → Bodyweight squat)', () => {
+    expect(real(kit(['band', 'bar'])).focus.squat).toBe('squat:s')
+  })
+  it('level-up suggestions list the gentlest option first', () => {
+    const p = real({ completed: ['squat:as', 'squat:s'], focus: { squat: 'squat:ss' }, ...kit(['band', 'bar', 'wall']) })
+    const ids = suggestNext(NODES, p, 'squat:ss').map((s) => s.node.id)
+    expect(ids[0]).toBe('squat:cs') // Cossack squat before Beginner shrimp squat
+    expect(ids.indexOf('squat:bsh')).toBeGreaterThan(ids.indexOf('squat:sis'))
+  })
+})
+
+describe('Plan 9: every first exercise starts easier', () => {
+  const real = (raw: object = {}) => sanitizeProgress(NODES, { onboarded: true, settings: { holdSound: true, plan: 'full' }, ...raw })
+  it('a new user starts every track at 60% of its goal', () => {
+    const p = initialProgress(NODES)
+    expect(p.goalStage['hpush:w']).toBe(0)
+    expect(p.goalStage['vpull:dh']).toBe(0)
+    expect(effectiveGoal(NODES.find((n) => n.id === 'vpush:pk')!.goal, p.goalStage['vpush:pk'])).toMatchObject({ sets: 3, target: 7 })
+  })
+  it('placements (Find your level, "I can already do this") and a chosen focus start easier too', () => {
+    const placed = completeSteps(NODES, real(), ['hpush:w', 'hpush:i'])
+    expect(placed.focus.hpush).toBe('hpush:k')
+    expect(placed.goalStage['hpush:k']).toBe(0)
+    const chosen = setFocus(NODES, real({ completed: ['hpush:w', 'hpush:i', 'hpush:k', 'hpush:p'] }), 'hpush:dp')
+    expect(chosen.goalStage['hpush:dp']).toBe(0)
+    const skill = activateSkill(NODES, real({ completed: ['antiext:db', 'antiext:pl'] }), 'hs')
+    expect(skill.goalStage['hs:pk']).toBe(0)
+  })
+  it('an older save starts what it is on at 60%, unless it already hit that goal once', () => {
+    const met = [1, 2, 3].map((at) => ({ nodeId: 'hpush:k', value: 8, date: '2026-09-21', at }))
+    const p = sanitizeProgress(NODES, { onboarded: true, completed: ['hpush:w', 'hpush:i'], logs: met, settings: { holdSound: true } })
+    expect(p.goalStage['hpush:k']).toBeUndefined()
+    expect(p.goalStage['vpush:pk']).toBe(0)
+    // a save from Plan 9 on keeps exactly the stages it has
+    expect(real({ completed: ['hpush:w'] }).goalStage).toEqual({})
+  })
+  it("plank and hollow holds build up through the source's own steps", () => {
+    const plank = NODES.find((n) => n.id === 'antiext:pl')!
+    expect(plank.goal).toEqual({ type: 'hold', sets: 1, target: 60 })
+    expect([0, 1, 2, 3, 4].map((st) => effectiveGoal(plank.goal, st, plank.steps))).toEqual([
+      { type: 'hold', sets: 3, target: 10 }, { type: 'hold', sets: 3, target: 20 }, { type: 'hold', sets: 3, target: 30 }, { type: 'hold', sets: 2, target: 45 }, { type: 'hold', sets: 1, target: 60 },
+    ])
+    let p = levelUp(NODES, real(), 'antiext:db', null)
+    expect(p.focus.antiext).toBe('antiext:pl')
+    for (let i = 0; i < 4; i++) p = advanceStage(p, 'antiext:pl', plank.steps)
+    expect(p.goalStage['antiext:pl']).toBe(4)
+    expect(advanceStage(p, 'antiext:pl', plank.steps)).toBe(p)
+  })
+})
+
+describe('Plan 9: keep building a finished exercise', () => {
+  const done3 = (nodeId: string, value: number, date: string) => [1, 2, 3].map((at) => ({ nodeId, value, date, at }))
+  const base = () => sanitizeProgress(NODES, { onboarded: true, completed: ['hpull:vr'], settings: { holdSound: true, plan: 'full' } })
+  const final = NODES.find((n) => n.id === 'hpull:vr')!.goal // 3 × 20 (capped)
+  it('hitting the goal of a finished exercise raises it by 2 reps for next time, once a day', () => {
+    let p = { ...base(), logs: done3('hpull:vr', 20, '2026-10-05') }
+    p = settleKeep(p, 'hpull:vr', final, '2026-10-05')
+    expect(p.keepStep['hpull:vr']).toBe(1)
+    expect(keepGoal(final, currentKeep(p, '2026-10-05')['hpull:vr'] ?? 0).target).toBe(20) // today stays
+    expect(keepGoal(final, currentKeep(p, '2026-10-06')['hpull:vr']).target).toBe(22) // next time
+    expect(settleKeep(p, 'hpull:vr', final, '2026-10-05')).toBe(p) // once a day
+  })
+  it('removing the set that earned it undoes the raise; holds go up 5 s', () => {
+    let p = { ...base(), logs: done3('hpull:vr', 20, '2026-10-05') }
+    p = settleKeep(p, 'hpull:vr', final, '2026-10-05')
+    p = settleKeep({ ...p, logs: p.logs.slice(0, 2) }, 'hpull:vr', final, '2026-10-05')
+    expect(p.keepStep['hpull:vr'] ?? 0).toBe(0)
+    expect(keepGoal({ type: 'hold', sets: 3, target: 30 }, 2).target).toBe(40)
+  })
+  it('an exercise you are still working towards is never raised this way', () => {
+    const p = { ...base(), logs: done3('hpull:ir', 20, '2026-10-05') }
+    expect(settleKeep(p, 'hpull:ir', NODES.find((n) => n.id === 'hpull:ir')!.goal, '2026-10-05')).toBe(p)
+  })
+  it('older saves load with no keep steps; bad entries are dropped', () => {
+    expect(base().keepStep).toEqual({})
+    const p = sanitizeProgress(NODES, { keepStep: { 'hpull:vr': 2, ghost: 1, 'hpush:w': -1 }, keepRaisedOn: { 'hpull:vr': '2026-10-05', 'hpush:w': 'x' } })
+    expect(p.keepStep).toEqual({ 'hpull:vr': 2 })
+    expect(p.keepRaisedOn).toEqual({ 'hpull:vr': '2026-10-05' })
   })
 })

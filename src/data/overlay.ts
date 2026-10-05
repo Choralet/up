@@ -1,13 +1,13 @@
 // App-only facts layered on top of the user's tree export (src/data/trees.json).
 // The export stays a faithful copy; everything the app decided lives here (Plan 8, docs/DECISIONS.md).
-import type { Branch, DayType, Goal } from './types'
+import type { Branch, Goal, SplitDay } from './types'
 
 export interface TreeInfo {
   /** short name for chips, tracks and the Skills tab */
   name: string
   branch: Branch
   /** skill ladders: the day type that trains them */
-  day?: Exclude<DayType, 'rest'>
+  day?: SplitDay
 }
 
 /** In the order tracks are asked in Find your level and listed on a day. */
@@ -87,7 +87,6 @@ export const TWINS: [string, string][] = [
   ['hinge:ghr', 'lowback:l4'],
   ['compress:llr', 'dflag:llr'],
   ['hpush:d', 'tri:x5'],
-  ['grip:g5', 'hs:w'],
   ['planche:fr', 'elbow:cr'],
 ]
 
@@ -105,9 +104,7 @@ export const GOALS: Record<string, Goal> = {
   'hinge:rdl': reps(3, 8),
   'antiext:hro': reps(3, 15),
   'lateral:rpal': reps(3, 12),
-  'grip:g5': hold(1, 180),
   'scap:s3': reps(3, 8),
-  'hs:w': hold(1, 180),
   'hs:ku': reps(3, 5),
   'hs:hp': reps(3, 5),
   'hs:ph': reps(3, 3),
@@ -126,6 +123,10 @@ export const GOALS: Record<string, Goal> = {
   'antiext:hh': hold(1, 60),
   'lateral:sp': hold(1, 60, 'side'),
   'lowback:l2': hold(1, 60),
+  // Plan 9: working goals you can reach (the source's standard stays in "Move on when")
+  'hpull:hr': reps(3, 15),
+  'oap:oapu': reps(1, 3, 'side'),
+  'bmu:smu': reps(3, 3),
   // corrections
   'hs:oah': hold(3, 10), // the text's 60 s is the two-arm prerequisite
   'squat:js': reps(5, 6), // "3–5 sets of 3–6": top of both ranges
@@ -136,6 +137,43 @@ export const GOALS: Record<string, Goal> = {
   'squat:ash': reps(3, 8, 'leg'),
   'pistol:wps': reps(3, 8, 'leg'),
 }
+
+/** Plan 9 caps for goals read from the text: reps at 20, holds at 3 × 30 s or 1 × 60 s. */
+export function capGoal(goal: Goal): Goal {
+  if (goal.type === 'reps') return goal.target > 20 ? { ...goal, target: 20 } : goal
+  const max = goal.sets > 1 ? 30 : 60
+  return goal.target > max ? { ...goal, target: max } : goal
+}
+
+/** "Up to" holds keep the source's build-up as goal steps; the goal is the last step. */
+export const STEPS: Record<string, Goal[]> = {
+  'antiext:pl': [hold(3, 10), hold(3, 20), hold(3, 30), hold(2, 45), hold(1, 60)],
+  'antiext:hh': [hold(3, 10), hold(3, 15), hold(3, 20), hold(2, 30), hold(2, 45), hold(1, 60)],
+  'lateral:sp': [hold(3, 10, 'side'), hold(3, 20, 'side'), hold(3, 30, 'side'), hold(2, 45, 'side'), hold(1, 60, 'side')],
+  'lowback:l2': [hold(3, 10), hold(3, 20), hold(3, 30), hold(2, 45), hold(1, 60)],
+}
+
+/** Ladder steps that become warm-up items (wrist prep is done every session, not finished once). Their children start the ladder. */
+export const REMOVED = new Set(['hs:w', 'grip:g5'])
+
+/** Moved one step down so a band + bar setup reaches it early (Band-assisted pull-up after Dead hang). */
+export const PARENT_FIX: Record<string, string | null> = { 'vpull:bap': 'dh' }
+
+/** Exercises added by Up (not in the export), appended to their tree. Marked "Added by Up". */
+export const ADDED: { tree: string; id: string; parent: string | null; name: string; equipment: string; primary: string[]; secondary: string[]; advance: string; cues: string; goal: Goal }[] = [
+  {
+    tree: 'hpull', id: 'band', parent: null, name: 'Band row (door anchor)', equipment: 'band',
+    primary: ['Upper back', 'Lats'], secondary: ['Biceps', 'Rear delts'],
+    advance: '3×15 with a firm squeeze; then step back for more tension, or move on to rows under a table or on rings',
+    cues: 'Band anchored in the door at chest height; pull the elbows back and squeeze the shoulder blades', goal: reps(3, 15),
+  },
+  {
+    tree: 'hinge', id: 'bgm', parent: null, name: 'Band good morning', equipment: 'band',
+    primary: ['Hamstrings', 'Glutes'], secondary: ['Lower back'],
+    advance: '3×15 slow and controlled, then single-leg Romanian deadlift',
+    cues: 'Band under the feet and behind the neck; soft knees, hinge at the hips with a flat back', goal: reps(3, 15),
+  },
+]
 
 /** Equipment the export lists that doesn't work in practice ("|" = or, "+" = and). */
 export const EQUIPMENT_FIX: Record<string, string> = {

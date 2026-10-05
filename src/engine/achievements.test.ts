@@ -35,6 +35,6 @@ describe('Plan 8 review fixes: achievements count what you trained', () => {
     expect(raise).not.toContain('first-skill') // Dragon flag's lying leg raise came with it
   })
   it('a skill step you trained counts', () => {
-    expect(earned({ completed: ['antiext:db', 'antiext:pl', 'hs:w'], logs: [log('hs:w', '2026-09-21')] })).toContain('first-skill')
+    expect(earned({ completed: ['antiext:db', 'antiext:pl', 'hs:pk'], logs: [log('hs:pk', '2026-09-21')] })).toContain('first-skill')
   })
 })

@@ -17,12 +17,12 @@ export interface SkillStatus {
 export function skillStatus(nodes: ExerciseNode[], progress: Progress, chainId: string): SkillStatus {
   const steps = nodes.filter((n) => n.skill === chainId)
   const completed = new Set(progress.completed)
-  const passed = passedFor(nodes, progress)
   const kit = kitOf(progress)
+  const passed = passedFor(nodes, progress)
   const done = steps.filter((s) => completed.has(s.id)).length
   const first = steps.find((s) => !completed.has(s.id))
   const byId = indexNodes(nodes)
-  const trainable = firstStep(nodes, passed, chainId)
+  const trainable = firstStep(nodes, passed, chainId, kit)
   // what stops you: the first step not done that you can't do or that is still locked
   const blocker = trainable ? undefined : steps.find((s) => !completed.has(s.id) && (!canDo(s, kit) || !isUnlocked(s, passed)))
   const needs = blocker ? blocker.requires.filter((r) => !passed.has(r)).map((r) => byId.get(r)?.name ?? r) : []

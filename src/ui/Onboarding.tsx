@@ -1,32 +1,14 @@
 import { useRef, useState } from 'react'
 import { DAY_LABEL, WEEKDAYS } from '../data/schedule'
 import { MAIN_TRACKS as TRACKS } from '../data/tracks'
-import type { DayType, ExerciseNode } from '../data/types'
-import { levelUp, mainLineNext, setEquipment, type Progress } from '../engine/progress'
+import type { ExerciseNode } from '../data/types'
+import { assignDays, levelUp, mainLineNext, setEquipment, type Progress } from '../engine/progress'
 import { useProgress } from '../store/ProgressContext'
 import { Icon } from './Icon'
 import { EquipmentPicker } from './EquipmentPicker'
 
 /** Ignore a second tap this soon after an answer (a double tap would otherwise answer the next question). */
 export const onboardingTuning = { answerLockMs: 350 }
-
-const ROTATION: DayType[] = ['push', 'pull', 'legs']
-
-/**
- * Workout type per weekday for the ticked days. Days that already had a workout keep it (a custom schedule survives);
- * newly ticked days get the type used least so far (ties: Push, Pull, Legs + Core).
- */
-export function assignDays(schedule: DayType[], ticked: boolean[]): DayType[] {
-  const count: Record<string, number> = { push: 0, pull: 0, legs: 0 }
-  schedule.forEach((d, i) => { if (ticked[i] && d !== 'rest') count[d]++ })
-  return schedule.map((d, i) => {
-    if (!ticked[i]) return 'rest'
-    if (d !== 'rest') return d
-    const pick = [...ROTATION].sort((a, b) => count[a] - count[b])[0]
-    count[pick]++
-    return pick
-  })
-}
 
 export function question(node: ExerciseNode): string {
   const { type, sets, target, per } = node.goal
@@ -48,7 +30,7 @@ export const DEFAULT_KIT = ['wall']
  * Answers change a draft; nothing is saved until Start Training.
  */
 export function Onboarding() {
-  const { progress, nodes, byId, completeSteps, setDayType, setEquipment: saveEquipment, finishOnboarding } = useProgress()
+  const { progress, nodes, byId, finalById, completeSteps, setDayType, setEquipment: saveEquipment, finishOnboarding } = useProgress()
   const [draft, setDraft] = useState<Progress>(progress)
   const [kit, setKit] = useState<string[]>(() => progress.settings.equipment ?? DEFAULT_KIT)
   const [step, setStep] = useState(-1)
@@ -60,7 +42,8 @@ export function Onboarding() {
   let s = step
   while (s >= 1 && s <= TRACKS.length && !draft.focus[TRACKS[s - 1].id]) s++
   const track = s >= 1 && s <= TRACKS.length ? TRACKS[s - 1] : null
-  const node = track ? byId.get(draft.focus[track.id]!) : undefined
+  // ask about the full goal: placement is about what you can already do, not the easier start
+  const node = track ? finalById.get(draft.focus[track.id]!) : undefined
 
   const answer = (next: () => void) => () => {
     const now = Date.now()
@@ -82,7 +65,7 @@ export function Onboarding() {
     saveEquipment(draft.settings.equipment ?? null)
     const known = new Set(progress.completed)
     completeSteps(draft.completed.filter((id) => !known.has(id)))
-    assignDays(progress.schedule, days).forEach((type, weekday) => setDayType(weekday, type))
+    assignDays(progress.schedule, days, progress.settings.plan).forEach((type, weekday) => setDayType(weekday, type))
     finishOnboarding()
   }
 
@@ -121,7 +104,7 @@ export function Onboarding() {
     )
   } else {
     const picked = days.filter(Boolean).length
-    const plan = assignDays(progress.schedule, days)
+    const plan = assignDays(progress.schedule, days, progress.settings.plan)
     body = (
       <>
         <h1 className="large">You're set</h1>
@@ -137,7 +120,7 @@ export function Onboarding() {
           })}
         </div>
         <h2 className="hdr">Training days</h2>
-        <p className="note">Each day you pick gets a workout; days you already train keep theirs. Change any day later in Settings.</p>
+        <p className="note">{progress.settings.plan === 'full' ? 'Each day you pick gets a full-body workout (three days is ideal). Change days or the plan later in Settings.' : 'Each day you pick gets a workout; days you already train keep theirs. Change any day later in Settings.'}</p>
         <div className="group">
           {WEEKDAYS.map((name, i) => (
             <button key={name} className="check pick" role="checkbox" aria-checked={days[i]} aria-label={name}
@@ -150,7 +133,7 @@ export function Onboarding() {
         </div>
         <button className="cta" onClick={apply}>Start Training</button>
         {picked === 0 && <p className="note">No days picked: every day will be a rest day until you set some in Settings.</p>}
-        {picked > 0 && picked < 3 && <p className="note">With {picked === 1 ? 'one day' : 'two days'}, some muscle groups wait until you add more days.</p>}
+        {picked > 0 && picked < 3 && progress.settings.plan === 'ppl' && <p className="note">With {picked === 1 ? 'one day' : 'two days'}, some muscle groups wait until you add more days.</p>}
       </>
     )
   }

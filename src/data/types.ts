@@ -44,15 +44,23 @@ export interface ExerciseNode {
   links?: HowToLink[]
   /** the same exercise in other trees: finishing one finishes them all */
   twins?: string[]
+  /** the source's own build-up (3 × 10 s → … → 1 × 60 s); the goal ramp walks these instead of 60/80/100% */
+  steps?: Goal[]
+  /** not in the user's export: added by the app (shown as "Added by Up") */
+  added?: true
 }
 
-export type DayType = 'push' | 'pull' | 'legs' | 'rest'
+/** `full` = a full-body session (A or B, alternating); push / pull / legs = the Push-Pull-Legs plan. */
+export type DayType = 'push' | 'pull' | 'legs' | 'full' | 'rest'
+export type SplitDay = 'push' | 'pull' | 'legs'
+/** Full body 3× a week (default since Plan 9) or Push / Pull / Legs. */
+export type WeekPlan = 'full' | 'ppl'
 
 export interface SkillChain {
   id: string
   name: string
   /** day type whose workout trains this skill */
-  day: Exclude<DayType, 'rest'>
+  day: SplitDay
   /** chain made only of Roadmap moves (listed via the Roadmap) */
   roadmapOnly?: boolean
 }

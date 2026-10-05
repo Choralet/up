@@ -3,6 +3,7 @@ import { skillName } from '../data/names'
 import { ROADMAP } from '../data/roadmap'
 import { DAY_LABEL } from '../data/schedule'
 import { SKILLS } from '../data/skills'
+import type { SplitDay } from '../data/types'
 import { firstStep, MAX_ACTIVE_SKILLS } from '../engine/progress'
 import { skillStatus } from '../engine/skills'
 import { goalText, plural } from '../lib/format'
@@ -23,10 +24,11 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
   const [replacing, setReplacing] = useState<{ chain: string; name: string } | null>(null)
   const activeIds = Object.keys(progress.skillFocus)
   const full = activeIds.length >= MAX_ACTIVE_SKILLS
+  const when = (day: SplitDay) => (progress.settings.plan === 'full' ? 'Every session' : DAY_LABEL[day])
 
   const ready = SKILLS.filter((c) => skillStatus(nodes, progress, c.id).status === 'available')
     .map((chain) => {
-      const step = byId.get(firstStep(nodes, passed, chain.id)!)!
+      const step = byId.get(firstStep(nodes, passed, chain.id, progress.settings.equipment)!)!
       return { chain, step, name: skillName(chain.id, step.id), steps: nodes.filter((n) => n.skill === chain.id).length }
     })
     .sort((a, b) => roadmapOrder(a.step.id) - roadmapOrder(b.step.id))
@@ -42,7 +44,7 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
         <RoadmapView onLog={onLog} />
       ) : (
         <>
-          <div className="sub">Train up to {MAX_ACTIVE_SKILLS} skills alongside your workouts. They show up on their day.</div>
+          <div className="sub">Train up to {MAX_ACTIVE_SKILLS} skills alongside your workouts. {progress.settings.plan === 'full' ? 'They open every session, while you are fresh.' : 'They show up on their day.'}</div>
 
           <div className="hdr">Training · {activeIds.length} of {MAX_ACTIVE_SKILLS}</div>
           <ul className="group list">
@@ -55,7 +57,7 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
                 <li className="row skillrow" key={chain.id}>
                   <span className="t">
                     <b>{name}</b>
-                    <span>{DAY_LABEL[chain.day]} · step {Math.min(s.done + 1, s.total)} of {s.total}</span>
+                    <span>{when(chain.day)} · step {Math.min(s.done + 1, s.total)} of {s.total}</span>
                     {step ? (
                       <button className="linkbtn" onClick={() => onLog(step.id)}>{step.name} · {goalText(step.goal)}</button>
                     ) : (
@@ -78,7 +80,7 @@ export function SkillsScreen({ onLog, view, onView }: { onLog: (nodeId: string) 
               <li className="row skillrow" key={chain.id}>
                 <span className="t">
                   <b>{name}</b>
-                  <span>{DAY_LABEL[chain.day]} · {plural(steps, 'step')} · first: {step.name}, {goalText(step.goal)}</span>
+                  <span>{when(chain.day)} · {plural(steps, 'step')} · first: {step.name}, {goalText(step.goal)}</span>
                 </span>
                 {full ? (
                   <button className="pillbtn" aria-label={`Replace for ${name}`} onClick={() => setReplacing({ chain: chain.id, name })}>Replace</button>

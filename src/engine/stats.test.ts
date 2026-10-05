@@ -100,8 +100,8 @@ describe('history', () => {
   it('groups one exercise by session, oldest first, with best and sets', () => {
     const logs = [L('2026-09-21', 'a', 6, 1), L('2026-09-14', 'a', 5, 0), L('2026-09-21', 'a', 8, 2), L('2026-09-21', 'b', 9, 3)]
     expect(history(logs, 'a')).toEqual([
-      { date: '2026-09-14', best: 5, sets: 1 },
-      { date: '2026-09-21', best: 8, sets: 2 },
+      { date: '2026-09-14', best: 5, sets: 1, total: 5 },
+      { date: '2026-09-21', best: 8, sets: 2, total: 14 },
     ])
     expect(history(logs, 'zzz')).toEqual([])
   })

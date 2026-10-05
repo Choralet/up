@@ -72,7 +72,7 @@ describe('ProgressProvider actions (Plan 2)', () => {
 
   it('applies goal overrides to nodes and keeps the defaults', async () => {
     const user = userEvent.setup()
-    mount()
+    mount({ settings: { holdSound: true, plan: 'full' } }) // no ramp stage (a fresh user would start at 60%)
     expect(await screen.findByTestId('goal')).toHaveTextContent('3x8 default:8')
     await user.click(screen.getByText('goal'))
     expect(screen.getByTestId('goal')).toHaveTextContent('4x12 default:8')
@@ -82,7 +82,7 @@ describe('ProgressProvider actions (Plan 2)', () => {
 
   it('changes the schedule', async () => {
     const user = userEvent.setup()
-    mount()
+    mount({ settings: { holdSound: true, plan: 'ppl' }, schedule: ['push', 'rest', 'pull', 'rest', 'legs', 'rest', 'rest'] })
     expect(await screen.findByTestId('monday')).toHaveTextContent('push')
     await user.click(screen.getByText('monday-pull'))
     expect(screen.getByTestId('monday')).toHaveTextContent('pull')

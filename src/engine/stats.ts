@@ -122,14 +122,22 @@ export function weeklyGain(logs: SetLog[], nodeId: string, today: string): numbe
 }
 
 /** One exercise's sessions, oldest first: the best set and how many sets. */
-export function history(logs: SetLog[], nodeId: string): { date: string; best: number; sets: number }[] {
-  const byDate = new Map<string, { best: number; sets: number }>()
+export function history(logs: SetLog[], nodeId: string): { date: string; best: number; sets: number; total: number }[] {
+  const byDate = new Map<string, { best: number; sets: number; total: number }>()
   for (const l of logs) {
     if (l.nodeId !== nodeId) continue
-    const d = byDate.get(l.date) ?? { best: 0, sets: 0 }
-    byDate.set(l.date, { best: Math.max(d.best, l.value), sets: d.sets + 1 })
+    const d = byDate.get(l.date) ?? { best: 0, sets: 0, total: 0 }
+    byDate.set(l.date, { best: Math.max(d.best, l.value), sets: d.sets + 1, total: d.total + l.value })
   }
   return [...byDate.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([date, d]) => ({ date, ...d }))
+}
+
+/** Today's total (reps or seconds) of an exercise, and the last earlier session's, for "+3 reps vs last time". */
+export function totalVsLast(logs: SetLog[], nodeId: string, today: string): { today: number; last: number | null } {
+  const mine = logs.filter((l) => l.nodeId === nodeId)
+  const sum = (d: string) => mine.filter((l) => l.date === d).reduce((s, l) => s + l.value, 0)
+  const lastDate = mine.filter((l) => l.date < today).map((l) => l.date).sort().pop()
+  return { today: sum(today), last: lastDate ? sum(lastDate) : null }
 }
 
 /** Whole minutes between the first and the last set logged on `date`. */
