@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { formatStamp, videoUrl, type RoadmapItem } from '../data/roadmap'
 import { MAX_ACTIVE_SKILLS } from '../engine/progress'
 import { roadmapStatus } from '../engine/roadmap'
-import { goalText } from '../lib/format'
+import { gearText, goalText } from '../lib/format'
+import { EQUIPMENT } from '../data/trees'
 import { useProgress } from '../store/ProgressContext'
 import { ConfirmSheet } from './ConfirmSheet'
 import { GoalEditor } from './GoalEditor'
@@ -13,10 +14,10 @@ import { accentStyle } from './branches'
 const LABEL = { done: 'Done', training: 'Training', ready: 'Ready', locked: 'Locked' } as const
 
 export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onClose: () => void; onLog: (id: string) => void }) {
-  const { finalById, byId, defaults, progress, activateSkill, deactivateSkill, setFocus, completeSteps, setGoal } = useProgress()
+  const { finalById, byId, nodes, passed, defaults, progress, activateSkill, deactivateSkill, setFocus, completeSteps, setGoal } = useProgress()
   const [confirm, setConfirm] = useState(false)
   const [editing, setEditing] = useState(false)
-  const s = roadmapStatus(byId, progress, item)
+  const s = roadmapStatus(byId, progress, item, nodes)
   const next = s.next
   const full = Object.keys(progress.skillFocus).length >= MAX_ACTIVE_SKILLS
   const completed = new Set(progress.completed)
@@ -43,7 +44,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
             <ul className="needs" aria-label="Needs">
               {first.requires.length === 0 && <li className="req">Nothing, start any time</li>}
               {first.requires.map((id) => {
-                const ok = completed.has(id)
+                const ok = passed.has(id)
                 return (
                   <li className="req" key={id}>
                     <span className={ok ? 'ok' : 'nx'} aria-hidden="true"><Icon name={ok ? 'check' : 'dots'} size={12} /></span>
@@ -54,6 +55,7 @@ export function RoadmapSheet({ item, onClose, onLog }: { item: RoadmapItem; onCl
             </ul>
           </>
         )}
+        {s.status === 'locked' && s.gear.length > 0 && <p className="gearnote">Needs {gearText(s.gear, EQUIPMENT)}. Add it in Settings, My Equipment, when you have it.</p>}
         <div className="hdr inset">Steps</div>
         <ol className="steplist">
           {item.steps.map((id) => {

@@ -26,7 +26,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
   const { pick, warm } = todayState(progress, today)
   const weekday = weekdayIndex(now)
   const day = pick ?? progress.schedule[weekday]
-  const workout = useMemo(() => buildWorkout(nodes, progress, day, SKILLS, progress.settings.length), [nodes, progress, day])
+  const workout = useMemo(() => buildWorkout(nodes, progress, day, SKILLS, progress.settings.length, today), [nodes, progress, day, today])
   const next = nextTrainingDay(progress.schedule, weekday)
   const heading = now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })
 
@@ -133,7 +133,7 @@ export function TodayScreen({ onOpen, onSettings, settingsOpen = false }: { onOp
           {workout.extra.length > 0 && (
             <>
               <h2 className="hdr">Also Today</h2>
-              <div className="quests">{workout.extra.map((e) => quest(e.node, e.role === 'volume' ? 'Volume' : 'Core finisher'))}</div>
+              <div className="quests">{workout.extra.map((e) => quest(e.node, e.role === 'volume' ? 'Volume' : e.role === 'accessory' ? `Accessory · ${trackById(e.track!)!.name}` : 'Core finisher'))}</div>
             </>
           )}
           {workoutDone(workout, progress, today) && <div className="done-banner">Workout complete</div>}

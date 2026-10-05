@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { TRACKS } from '../data/tracks'
+import { TREES, treeById, type TreeMeta } from '../data/trees'
 import type { Branch } from '../data/types'
 import { BRANCHES } from '../engine/graph'
 import { useProgress } from '../store/ProgressContext'
@@ -23,10 +23,16 @@ export function zoomScroll(prev: number, next: number, v: { top: number; left: n
   }
 }
 
+const CATEGORY_ORDER = { main: 0, skill: 1, supp: 2 } as const
+/** A branch's ladders as chips: main trees, then skill ladders, then muscle trees. */
+export const branchTrees = (branch: Branch): TreeMeta[] =>
+  TREES.filter((t) => t.branch === branch).sort((a, b) => CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category])
+
 export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
   const { byId, progress, justUnlocked, clearUnlocked } = useProgress()
   // open where the new exercise is, so you see it light up
-  const [branch, setBranch] = useState<Branch>(() => byId.get(justUnlocked[0])?.branch ?? 'push')
+  const [tree, setTree] = useState<string>(() => byId.get(justUnlocked[0])?.tree ?? 'hpush')
+  const branch = treeById(tree)!.branch
   const [selected, setSelected] = useState<string | null>(null)
   const [zoom, setZoom] = useState(1)
   const shownZoom = useRef(1)
@@ -36,7 +42,7 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
   zoomRef.current = zoom
 
   // the unlock animation plays once where you can see it, then the highlight goes away
-  const unlockShown = justUnlocked.some((id) => byId.get(id)?.branch === branch)
+  const unlockShown = justUnlocked.some((id) => byId.get(id)?.tree === tree)
   useEffect(() => {
     if (!unlockShown) return
     const id = setTimeout(clearUnlocked, 3400)
@@ -73,7 +79,7 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
   // the tree grows upward, so start at the bottom where the beginner exercises are
   useEffect(() => {
     if (scroller.current) scroller.current.scrollTop = scroller.current.scrollHeight
-  }, [branch])
+  }, [tree])
   // keep a tapped node visible above the sheet: move it into the top third of the tree area
   useEffect(() => {
     const el = scroller.current
@@ -84,13 +90,16 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
     if (r.bottom > box.top + box.height * 0.45) el.scrollTop += r.top - box.top - box.height * 0.25
   }, [selected])
   const node = selected ? byId.get(selected) : undefined
+  const meta = treeById(tree)!
+  const nowId = meta.category === 'skill' ? progress.skillFocus[tree] : progress.focus[tree]
+  const now = nowId ? byId.get(nowId) : undefined
 
   return (
     <>
       <div className="tree-screen">
         <div className="tree-head" style={accentStyle(branch)}>
           <h1 className="navt">Skill Tree</h1>
-          <p className="sub center treehint">Your main exercises. Tap one to see what it needs and unlocks.</p>
+          <p className="sub center treehint">Pick a ladder. Tap an exercise to see what it needs and unlocks.</p>
           <div className="seg" role="tablist" aria-label="Branch">
             {BRANCHES.map((b) => (
               <button
@@ -99,27 +108,30 @@ export function TreeScreen({ onLog }: { onLog: (nodeId: string) => void }) {
                 aria-selected={b === branch}
                 className={b === branch ? 'on' : ''}
                 style={accentStyle(b)}
-                onClick={() => { setBranch(b); setSelected(null) }}
+                onClick={() => { setTree(branchTrees(b)[0].id); setSelected(null) }}
               >
                 {BRANCH_META[b].label}
               </button>
             ))}
           </div>
           <BranchLevel branch={branch} />
-          <div className="trackchips">
-            {TRACKS.filter((t) => t.branch === branch).map((t) => {
-              const id = progress.focus[t.id]
-              const n = id ? byId.get(id) : undefined
-              return (
-                <button key={t.id} className="pillbtn chipbtn" aria-label={`${t.name}: ${n ? n.name : 'Complete'}`} disabled={!n} onClick={() => n && setSelected(n.id)}>
-                  <span className="chiptrack">{t.name}</span> {n ? n.name : 'Complete'}
-                </button>
-              )
-            })}
+          <div className="trackchips" role="tablist" aria-label="Ladder">
+            {branchTrees(branch).map((t) => (
+              <button key={t.id} role="tab" aria-selected={t.id === tree} className={`pillbtn chipbtn${t.id === tree ? ' on' : ''}${t.category === 'skill' ? ' sk' : ''}`}
+                onClick={() => { setTree(t.id); setSelected(null) }}>
+                {t.name}
+              </button>
+            ))}
           </div>
+          <p className="sub center treenow">
+            {now ? (
+              <button className="linkbtn inline" onClick={() => setSelected(now.id)}>{meta.category === 'skill' ? 'Training' : 'Now'}: {now.name}</button>
+            ) : meta.category === 'skill' ? (tree in progress.skillFocus ? 'Waiting for the next step to unlock' : 'Start this skill from its first exercise or the Skills tab')
+              : 'Nothing to train here right now'}
+          </p>
         </div>
         <div className={node ? 'tree-scroll has-sheet' : 'tree-scroll'} ref={scroller}>
-          <TreeView branch={branch} selectedId={selected} onSelect={setSelected} zoom={zoom} />
+          <TreeView tree={tree} selectedId={selected} onSelect={setSelected} zoom={zoom} />
         </div>
         <div className="zoombar" aria-label="Zoom">
           <button className="pillbtn" aria-label="Zoom Out" onClick={() => setZoom((z) => clampZoom(z - 0.25))}><Icon name="minus" size={18} /></button>

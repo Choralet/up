@@ -10,16 +10,17 @@ import { GithubSection } from './GithubSection'
 import { DAY_LABEL, DAY_TYPES, WEEKDAYS } from '../data/schedule'
 import type { DayType } from '../data/types'
 import { useProgress } from '../store/ProgressContext'
+import { EquipmentPicker } from './EquipmentPicker'
 
 const LENGTH_LABEL = { short: 'Short', standard: 'Standard', full: 'Full' } as const
 const LENGTH_HINT = {
   short: 'About 20 minutes: your skill and the first two exercises of the day.',
   standard: 'About 35 minutes: every exercise of the day, plus a core finisher on Push and Pull days.',
-  full: 'About 50 minutes: Standard plus the variation you just finished, for extra volume.',
+  full: 'About 50 minutes: Standard plus the variation you just finished, for extra volume, and one muscle-specific accessory (a different one each week).',
 } as const
 
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
-  const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings } = useProgress()
+  const { progress, nodes, setDayType, restartOnboarding, replaceProgress, setSettings, setEquipment } = useProgress()
   const services = useServices()
   const [askRedo, setAskRedo] = useState(false)
   const [remindAt, setRemindAt] = useState('18:00')
@@ -86,6 +87,14 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <p className="note">{LENGTH_HINT[progress.settings.length]}</p>
+
+        <div className="hdr">My Equipment</div>
+        <EquipmentPicker value={progress.settings.equipment ?? null} onChange={setEquipment} />
+        <p className="note">
+          {progress.settings.equipment
+            ? 'Exercises that need something you don\'t have are greyed out and stepped over, so a ladder never gets stuck. Tick more as you get it; your progress always stays.'
+            : 'Not set yet: Up offers every exercise. Tick what you have to skip the rest. A sturdy chair or bench counts as Bench / box, a table edge as Low bar / table.'}
+        </p>
 
         <div className="hdr">Reminders</div>
         <div className="group">

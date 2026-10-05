@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { ROADMAP, VIDEOS, type RoadmapItem } from '../data/roadmap'
 import { roadmapStatus, type RoadmapStatus } from '../engine/roadmap'
+import { EQUIPMENT } from '../data/trees'
+import { gearText } from '../lib/format'
+
+/** What a locked item waits for: exercises, then equipment. */
+export const needsText = (s: RoadmapStatus) => [...s.needs, ...(s.gear.length ? [gearText(s.gear, EQUIPMENT)] : [])].join(', ')
 import { plural } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
 import { RoadmapSheet } from './RoadmapSheet'
@@ -26,9 +31,9 @@ function StatusIcon({ status }: { status: RoadmapStatus['status'] }) {
 }
 
 export function RoadmapView({ onLog }: { onLog: (id: string) => void }) {
-  const { byId, progress } = useProgress()
+  const { byId, nodes, progress } = useProgress()
   const [open, setOpen] = useState<RoadmapItem | null>(null)
-  const rows = ROADMAP.map((item) => ({ item, s: roadmapStatus(byId, progress, item) }))
+  const rows = ROADMAP.map((item) => ({ item, s: roadmapStatus(byId, progress, item, nodes) }))
   const firstOpenYear = ([1, 2, 3] as const).find((y) => rows.some((r) => r.item.year === y && r.s.status !== 'done')) ?? 1
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set([firstOpenYear]))
   const readyNow = rows.filter((r) => r.s.status === 'ready')
@@ -41,7 +46,7 @@ export function RoadmapView({ onLog }: { onLog: (id: string) => void }) {
   })
 
   const detail = (s: RoadmapStatus, steps: number) =>
-    `${s.status === 'locked' ? `Needs: ${s.needs.join(', ')}` : TEXT[s.status]}${s.done > 0 && s.status !== 'done' ? ` · ${s.done} of ${plural(steps, 'step')}` : ''}`
+    `${s.status === 'locked' ? `Needs: ${needsText(s)}` : TEXT[s.status]}${s.done > 0 && s.status !== 'done' ? ` · ${s.done} of ${plural(steps, 'step')}` : ''}`
 
   return (
     <>
@@ -85,7 +90,7 @@ export function RoadmapView({ onLog }: { onLog: (id: string) => void }) {
                     <button
                       key={item.id}
                       className={`row rmrow ${s.status}`}
-                      aria-label={`${i + 1}. ${item.name}, ${WORD[s.status]}${s.status === 'locked' ? `, needs ${s.needs.join(', ')}` : ''}`}
+                      aria-label={`${i + 1}. ${item.name}, ${WORD[s.status]}${s.status === 'locked' ? `, needs ${needsText(s)}` : ''}`}
                       onClick={() => setOpen(item)}
                     >
                       <span className="rmnum">{i + 1}</span>

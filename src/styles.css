@@ -282,6 +282,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .tsvg .sel { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 4 4; }
 .tsvg .ic { fill: none; stroke: var(--on-color); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
 .tsvg .dotc { fill: var(--on-color); }
+.tsvg .n.gear .sh { fill: var(--bg); stroke: var(--line); stroke-dasharray: 5 4; }
+.tsvg .n.gear .edge { fill: none; }
+.tsvg .gx { stroke: var(--ink2); stroke-width: 2.5; stroke-linecap: round; }
+.tsvg .n.gear .lb { font-weight: 700; font-style: italic; }
 .tsvg .lk rect { fill: var(--ink2); }
 .tsvg .lk path { fill: none; stroke: var(--ink2); stroke-width: 2; }
 .tsvg .lb { font-size: 9px; font-weight: 800; text-anchor: middle; fill: var(--ink2); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
@@ -290,6 +294,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .trackchips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 6px; }
 .chipbtn { gap: 6px; white-space: nowrap; font-size: var(--fs-small); color: var(--ink); margin: 0; flex: none; text-transform: none; letter-spacing: 0; box-shadow: 0 3px 0 var(--line); }
 .chipbtn .chiptrack { color: var(--accent-text); font-weight: 900; }
+.chipbtn.on { background: var(--accent); border-color: var(--accent-edge); box-shadow: 0 3px 0 var(--accent-edge); color: var(--on-color); }
+.chipbtn.sk:not(.on) { color: var(--skill-text); }
+.chipbtn.sk.on { background: var(--skill); border-color: var(--skill-edge); box-shadow: 0 3px 0 var(--skill-edge); }
+.treenow { margin: 2px 0 0; min-height: 22px; }
 .zoombar { position: absolute; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; align-items: center; padding: 2px; border-radius: var(--r-md); background: var(--bg); border: 2px solid var(--line); box-shadow: 0 var(--edge) 0 var(--line); }
 .zoombar .pillbtn { margin: 0; min-height: 44px; min-width: 44px; padding: 0 8px; border: 0; box-shadow: none; font-size: var(--fs-small); }
 .zoombar .pillbtn:nth-child(2) { min-width: 56px; font-variant-numeric: tabular-nums; }
@@ -297,6 +305,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* ============ Skills and Roadmap ============ */
 .hdr.flush { margin-bottom: 8px; }
 .hdr.inset { margin: 14px 0 4px; }
+.details { margin-top: 18px; padding-top: 4px; border-top: 2px solid var(--line); }
+.details p { margin: 2px 0 0; }
+.details .ink { color: var(--ink); }
+.links { list-style: none; padding: 0; margin: 0; }
+.links .linkbtn { padding: 0; min-height: 44px; display: flex; align-items: center; }
+.gearnote { font-weight: 800; color: var(--ink) !important; background: var(--fill); border-radius: var(--r-lg); padding: 10px 12px; }
 .hint.inset { margin: 0 4px 8px; }
 .skillrow { align-items: flex-start; }
 .rmrow .rmnum { width: 28px; flex: none; color: var(--ink2); font-variant-numeric: tabular-nums; font-weight: 900; }

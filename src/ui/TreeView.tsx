@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import type { Branch } from '../data/types'
-import { layoutBranch, NODE_R } from '../engine/layout'
+import { treeById } from '../data/trees'
+import { layoutTree, NODE_R } from '../engine/layout'
 import { nodeState, type NodeState } from '../engine/progress'
 import { wrapLabel } from '../lib/format'
 import { useProgress } from '../store/ProgressContext'
-import { accentStyle, BRANCH_META } from './branches'
+import { accentStyle } from './branches'
 
 // the same words as everywhere else in the app (Locked / Ready / Training / Done)
 /** A label's first line sits this far below the node's edge; each further line adds 10. */
@@ -18,20 +18,26 @@ export function edgePath(a: { x: number; y: number }, b: { x: number; y: number 
   return `M${a.x} ${a.y - R} C${a.x} ${my},${b.x} ${my},${b.x} ${endY}`
 }
 
-const WORD = { locked: 'locked', available: 'ready', focus: 'training', completed: 'done' } as const
+const WORD = { locked: 'locked', available: 'ready', focus: 'training', completed: 'done', gear: 'needs equipment' } as const
+
+/** The drawing's width: about 1.27× its natural size, fitting the screen when that is narrower but never below 0.9×. */
+export const treeWidth = (natural: number, zoom: number) => `calc(clamp(${Math.round(natural * 0.9)}px, 100%, ${Math.round(natural * 1.27)}px) * ${zoom})`
 
 interface Props {
-  branch: Branch
+  tree: string
   selectedId: string | null
   onSelect: (id: string) => void
   zoom?: number
 }
 
-export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
-  const { nodes, progress, justUnlocked } = useProgress()
-  const layout = useMemo(() => layoutBranch(nodes, branch), [nodes, branch])
+export function TreeView({ tree, selectedId, onSelect, zoom = 1 }: Props) {
+  const { nodes, progress, passed, justUnlocked } = useProgress()
+  const layout = useMemo(() => layoutTree(nodes, tree), [nodes, tree])
+  const meta = treeById(tree)!
   const pos = new Map(layout.placed.map((p) => [p.node.id, p]))
-  const states = new Map<string, NodeState>(layout.placed.map((p) => [p.node.id, nodeState(p.node, progress)]))
+  const states = new Map<string, NodeState>(layout.placed.map((p) => [p.node.id, nodeState(p.node, progress, passed)]))
+  // a stepped-over exercise (no equipment) passes the line on like a finished one
+  const through = (id: string) => states.get(id) === 'completed' || (states.get(id) === 'gear' && passed.has(id))
   const R = NODE_R
 
   return (
@@ -39,17 +45,16 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
       className="tsvg"
       viewBox={`0 0 ${layout.width} ${layout.height}`}
       role="group"
-      aria-label={`${BRANCH_META[branch].label} skill tree`}
-      style={{ ...accentStyle(branch), width: `${Math.round(zoom * 100)}%` }}
+      aria-label={`${meta.name} tree`}
+      style={{ ...accentStyle(meta.branch), width: treeWidth(layout.width, zoom) }}
     >
       {layout.edges.map(({ from, to }) => {
         const a = pos.get(from)!
         const b = pos.get(to)!
-        const sa = states.get(from)
         const sb = states.get(to)
         const cls =
-          sa === 'completed' && (sb === 'completed' || sb === 'focus') ? 'done'
-          : sa === 'completed' && sb === 'available' ? 'avail'
+          through(from) && (sb === 'completed' || sb === 'focus') ? 'done'
+          : through(from) && sb === 'available' ? 'avail'
           : 'lock'
         return (
           <path
@@ -95,6 +100,7 @@ export function TreeView({ branch, selectedId, onSelect, zoom = 1 }: Props) {
             {state === 'available' && <path className="plus" d="M-5 0 H5 M0 -5 V5" />}
             {state === 'completed' && <path className="ic" d="M-5 0 L-1.5 3.5 L5 -4" />}
             {state === 'focus' && <circle className="dotc" r={4.5} />}
+            {state === 'gear' && <path className="gx" d="M-5 5 L5 -5" />}
             {state === 'locked' && (
               <g className="lk">
                 <rect x={-5} y={-1} width={10} height={8} rx={2} />

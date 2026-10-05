@@ -21,7 +21,9 @@ const shortDate = (date: string) => new Date(`${date}T12:00:00`).toLocaleDateStr
 export function HistorySheet({ node, onClose }: { node: ExerciseNode; onClose: () => void }) {
   const { progress } = useProgress()
   const [tip, setTip] = useState<number | null>(null)
-  const all = history(progress.logs, node.id)
+  // the same exercise in another tree (a twin) shares its history
+  const ids = [node.id, ...(node.twins ?? [])]
+  const all = history(progress.logs.filter((l) => ids.includes(l.nodeId)).map((l) => ({ ...l, nodeId: node.id })), node.id)
   const rows = all.slice(-12)
   const unit = node.goal.type === 'hold' ? 's' : 'reps'
   const color = BRANCH_META[node.branch].color

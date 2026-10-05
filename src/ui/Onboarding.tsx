@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react'
 import { DAY_LABEL, WEEKDAYS } from '../data/schedule'
-import { TRACKS } from '../data/tracks'
+import { MAIN_TRACKS as TRACKS } from '../data/tracks'
 import type { DayType, ExerciseNode } from '../data/types'
-import { levelUp, type Progress } from '../engine/progress'
+import { levelUp, setEquipment, type Progress } from '../engine/progress'
 import { useProgress } from '../store/ProgressContext'
 import { Icon } from './Icon'
+import { EquipmentPicker } from './EquipmentPicker'
 
 /** Ignore a second tap this soon after an answer (a double tap would otherwise answer the next question). */
 export const onboardingTuning = { answerLockMs: 350 }
@@ -38,19 +39,26 @@ interface Snapshot {
   step: number
 }
 
-/** step -1 = intro, 0..3 = one branch each, 4 = summary. Answers change a draft; nothing is saved until Start Training. */
+/** New users start with a wall (the floor is always there). */
+export const DEFAULT_KIT = ['wall']
+
+/**
+ * step -1 = intro, 0 = your equipment, 1..n = one main track each, then the summary.
+ * Answers change a draft; nothing is saved until Start Training.
+ */
 export function Onboarding() {
-  const { progress, nodes, byId, completeSteps, setDayType, finishOnboarding } = useProgress()
+  const { progress, nodes, byId, completeSteps, setDayType, setEquipment: saveEquipment, finishOnboarding } = useProgress()
   const [draft, setDraft] = useState<Progress>(progress)
+  const [kit, setKit] = useState<string[]>(() => progress.settings.equipment ?? DEFAULT_KIT)
   const [step, setStep] = useState(-1)
   const [history, setHistory] = useState<Snapshot[]>([])
   const [days, setDays] = useState<boolean[]>(() => progress.schedule.map((d) => d !== 'rest'))
   const lastAnswer = useRef(-Infinity)
 
-  // skip branches with nothing left to ask, so no empty frame is ever drawn
+  // skip tracks with nothing left to ask, so no empty frame is ever drawn
   let s = step
-  while (s >= 0 && s < TRACKS.length && !draft.focus[TRACKS[s].id]) s++
-  const track = s >= 0 && s < TRACKS.length ? TRACKS[s] : null
+  while (s >= 1 && s <= TRACKS.length && !draft.focus[TRACKS[s - 1].id]) s++
+  const track = s >= 1 && s <= TRACKS.length ? TRACKS[s - 1] : null
   const node = track ? byId.get(draft.focus[track.id]!) : undefined
 
   const answer = (next: () => void) => () => {
@@ -70,6 +78,7 @@ export function Onboarding() {
   }
 
   const apply = () => {
+    saveEquipment(draft.settings.equipment ?? null)
     const known = new Set(progress.completed)
     completeSteps(draft.completed.filter((id) => !known.has(id)))
     assignDays(progress.schedule, days).forEach((type, weekday) => setDayType(weekday, type))
@@ -84,14 +93,24 @@ export function Onboarding() {
         <p className="sub intro">
           A few quick questions so Up starts each movement (push-ups, pull-ups, squats…) at the right exercise. It takes about a minute, and nothing changes until you finish.
         </p>
-        <button className="cta" onClick={() => setStep(0)}>Start</button>
+        <button className="cta" onClick={answer(() => setStep(0))}>Start</button>
         <button className="cta sec" onClick={finishOnboarding}>Skip for Now</button>
+      </>
+    )
+  } else if (s === 0) {
+    body = (
+      <>
+        <h1 className="large title-sm intro-title">What do you have?</h1>
+        <p className="sub intro">Up only suggests exercises you can do. The floor is always there; tick the rest. You can change this any time in Settings.</p>
+        <EquipmentPicker value={kit} onChange={setKit} />
+        <p className="note">A sturdy chair or bench counts as Bench / box, a table edge as Low bar / table.</p>
+        <button className="cta spaced" onClick={answer(() => { setDraft((d) => setEquipment(nodes, d, kit)); setStep(1) })}>Next</button>
       </>
     )
   } else if (track && node) {
     body = (
       <>
-        <div className="eyebrow">{track.name} · {s + 1} of {TRACKS.length}</div>
+        <div className="eyebrow">{track.name} · {s} of {TRACKS.length}</div>
         <h1 className="large title-sm intro-title">{node.name}</h1>
         <p className="question">{question(node)}</p>
         <p className="sub">{node.cue}</p>
@@ -108,9 +127,10 @@ export function Onboarding() {
         <div className="group">
           {TRACKS.map((t) => {
             const id = draft.focus[t.id]
+            const finished = nodes.every((n) => n.track !== t.id || draft.completed.includes(n.id))
             return (
               <div className="row" key={t.id}>
-                <span className="t"><b>{t.name}: {id ? byId.get(id)!.name : 'Complete'}</b></span>
+                <span className="t"><b>{t.name}: {id ? byId.get(id)!.name : finished ? 'Complete' : 'Needs equipment'}</b></span>
               </div>
             )
           })}

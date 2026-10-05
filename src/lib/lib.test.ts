@@ -1,5 +1,5 @@
 import { addDays, formatClock, localDate, weekdayIndex, weekStart } from './time'
-import { goalText, plural, wrapLabel } from './format'
+import { gearText, goalText, plural, wrapLabel } from './format'
 
 describe('time helpers', () => {
   it('formats local dates with zero padding', () => {
@@ -17,6 +17,8 @@ describe('goalText', () => {
     // no-break spaces, so a goal never splits across two lines ("4 ×" / "20 s")
     expect(goalText({ type: 'reps', sets: 3, target: 10 })).toBe('3\u00a0×\u00a010')
     expect(goalText({ type: 'hold', sets: 3, target: 30 })).toBe('3\u00a0×\u00a030\u00a0s')
+    expect(goalText({ type: 'reps', sets: 3, target: 8, per: 'leg' })).toBe('3\u00a0×\u00a08\u00a0/\u00a0leg')
+    expect(goalText({ type: 'hold', sets: 3, target: 10, per: 'side' })).toBe('3\u00a0×\u00a010\u00a0s\u00a0/\u00a0side')
   })
 })
 
@@ -57,5 +59,12 @@ describe('plural', () => {
     expect(plural(1, 'step')).toBe('1 step')
     expect(plural(0, 'step')).toBe('0 steps')
     expect(plural(3, 'step')).toBe('3 steps')
+  })
+})
+
+describe('gearText', () => {
+  it('joins equipment labels, keeping unknown codes', () => {
+    expect(gearText(['box', 'rings'], { box: 'Bench / box', rings: 'Rings' })).toBe('Bench / box + Rings')
+    expect(gearText(['x'], {})).toBe('x')
   })
 })
