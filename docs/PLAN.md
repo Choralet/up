@@ -149,8 +149,8 @@ See [DEMOS.md](DEMOS.md). Short version: good GIF sources exist, but the ones wi
 | 6 | Backup: export/import, then GitHub backup | **Done** (Plan 3) |
 | 7 | How-to demos (per your choice) | **Done** (Plan 3) |
 | 8 | Polish (dark mode, accessibility, offline) | **Done** (Plan 3) |
-| 9 | New tree data: 34 trees, 229 exercises, equipment filter, accessories | **Built** (Plan 8), waiting for the user's look before `main` |
-| 10 | Programming: full body 3× default, safe skipping, reachable goals, keep building, rest timer | **Built** (Plan 9), waiting for the user's look before `main` |
+| 9 | New tree data: 34 trees, 229 exercises, equipment filter, accessories | **Done** (Plan 8), deployed 2026-10-06 |
+| 10 | Programming: full body 3× default, safe skipping, reachable goals, keep building, rest timer | **Done** (Plan 9), deployed 2026-10-06 |
 
 Apple Health and widgets are dropped (web app). 
 
